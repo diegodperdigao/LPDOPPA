@@ -195,9 +195,9 @@ img,svg{display:block;max-width:100%}
   filter:blur(22px);opacity:.5;animation:spin 18s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .mascot{position:relative;width:74%;animation:floatY 5s ease-in-out infinite;filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
-.eye-follow{position:relative;width:100%;aspect-ratio:1}
+.eye-follow{position:relative;width:100%;aspect-ratio:987/854}
 .eye-follow__base{width:100%;height:auto;display:block}
-.eye-follow__iris{position:absolute;left:51.435%;top:56.778%;width:25.837%;height:auto;
+.eye-follow__iris{position:absolute;left:51.165%;top:63.232%;width:31.611%;height:auto;
   transform:translate(-50%,-50%) translate(var(--ex,0px),var(--ey,0px));will-change:transform}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 

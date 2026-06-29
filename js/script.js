@@ -118,7 +118,7 @@ $("#year").textContent = new Date().getFullYear();
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (window.matchMedia("(hover: none)").matches) return;
 
-  const MAX_FRAC = 0.034;  // deslocamento máx. da íris = 3,4% da largura do olho
+  const MAX_FRAC = 0.042;  // deslocamento máx. da íris = 4,2% da largura do olho
   const MAX_DIST = 460;    // px de cursor p/ deflexão máxima
   let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
 
