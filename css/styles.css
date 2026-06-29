@@ -70,7 +70,7 @@ img,svg{display:block;max-width:100%}
 .brand-logo{height:42px;width:auto;display:block;filter:drop-shadow(0 3px 10px rgba(107,61,255,.45))}
 .brand-eye{height:42px;width:42px;display:block;transition:height .3s,width .3s;filter:drop-shadow(0 3px 10px rgba(107,61,255,.5))}
 .nav.scrolled .brand-eye{height:36px;width:36px}
-.hero__logo{width:min(300px,72%);height:auto;margin:0 auto 22px;filter:drop-shadow(0 8px 24px rgba(107,61,255,.4))}
+.hero__logo{width:min(470px,90%);height:auto;margin:0 auto 22px;filter:drop-shadow(0 12px 34px rgba(107,61,255,.5))}
 .modal__eye{width:60px;height:60px;margin:0 auto 12px;display:block;filter:drop-shadow(0 4px 12px rgba(107,61,255,.5))}
 
 /* ---------- Tipografia base ---------- */
@@ -88,15 +88,16 @@ img,svg{display:block;max-width:100%}
 .ic--arrow{width:18px;height:18px;transition:transform .25s var(--ease)}
 .btn:hover .ic--arrow{transform:translateX(3px)}
 
-/* ---------- Tiles de ícone ---------- */
+/* ---------- Tiles de ícone (vibrantes, consistentes) ---------- */
 .tile{
-  width:56px;height:56px;flex:none;display:grid;place-items:center;border-radius:14px;
-  background:var(--surface-2);border:1px solid var(--line-2);color:#fff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  width:56px;height:56px;flex:none;display:grid;place-items:center;border-radius:16px;
+  background:var(--g-primary);color:#fff;
+  box-shadow:0 10px 22px -8px rgba(60,80,255,.65), inset 0 1px 0 rgba(255,255,255,.3);
 }
-.tile--blue{background:linear-gradient(150deg,rgba(30,58,255,.35),rgba(30,58,255,.1));border-color:rgba(70,110,255,.5);color:#bcd0ff}
-.tile--purple{background:linear-gradient(150deg,rgba(107,61,255,.4),rgba(107,61,255,.12));border-color:rgba(140,100,255,.5);color:#d9caff}
-.tile--green{background:linear-gradient(150deg,rgba(34,212,110,.35),rgba(34,212,110,.1));border-color:rgba(60,220,140,.5);color:#a7f3cf}
+.tile .ic{color:#fff}
+.tile--blue{background:linear-gradient(150deg,#2a52ff,#1e3aff)}
+.tile--purple{background:var(--g-accent);box-shadow:0 10px 22px -8px rgba(107,61,255,.7),inset 0 1px 0 rgba(255,255,255,.3)}
+.tile--green{background:var(--g-green);box-shadow:0 10px 22px -8px rgba(34,212,110,.6),inset 0 1px 0 rgba(255,255,255,.3)}
 
 /* ---------- Botões ---------- */
 .btn{
@@ -129,8 +130,14 @@ img,svg{display:block;max-width:100%}
 .head__lead{color:var(--muted);font-size:clamp(1rem,2.6vw,1.1rem);margin-top:16px}
 
 /* ---------- Sections ---------- */
-.section{padding:var(--section-y) 0}
+.section{padding:var(--section-y) 0;position:relative;overflow:hidden}
 .section--alt{background:var(--bg-800);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+/* brilho sutil e consistente no topo de cada seção — evita o "chapado" */
+.section::before{content:"";position:absolute;top:-120px;left:50%;transform:translateX(-50%);
+  width:760px;height:420px;pointer-events:none;z-index:0;
+  background:radial-gradient(closest-side, rgba(107,61,255,.16), transparent 72%)}
+.section--alt::before{background:radial-gradient(closest-side, rgba(0,209,255,.12), transparent 72%)}
+.section .container{position:relative;z-index:1}
 
 /* ============================================================
    NAVBAR
@@ -180,7 +187,7 @@ img,svg{display:block;max-width:100%}
 @keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(0,32px)}}
 
 .hero__inner{position:relative;z-index:2;display:flex;flex-direction:column;gap:clamp(36px,8vw,56px);text-align:center;align-items:center}
-.hero__title{font-family:var(--font-display);font-weight:400;font-size:clamp(2.6rem,11vw,4.4rem);line-height:.97;letter-spacing:.5px;margin:20px 0 0}
+.hero__title{font-family:var(--font-display);font-weight:400;font-size:clamp(1.55rem,4.4vw,2.5rem);line-height:1.06;letter-spacing:.4px;margin:4px 0 0}
 .hero__sub{color:var(--muted);font-size:clamp(1rem,3.4vw,1.15rem);max-width:480px;margin:18px auto 0}
 .hero__cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px;width:100%}
 .hero__cta .btn{flex:1 1 auto;max-width:260px}
@@ -199,6 +206,9 @@ img,svg{display:block;max-width:100%}
 .eye-follow__base{width:100%;height:auto;display:block}
 .eye-follow__iris{position:absolute;left:51.165%;top:63.232%;width:31.611%;height:auto;
   transform:translate(-50%,-50%) translate(var(--ex,0px),var(--ey,0px));will-change:transform}
+/* olho do mascote (geometria própria) */
+.eye-follow--mascot{aspect-ratio:926/989}
+.eye-follow--mascot .eye-follow__iris{left:59.4%;top:44.39%;width:30.02%}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 
 .earn-card{
@@ -222,8 +232,11 @@ img,svg{display:block;max-width:100%}
   font-family:var(--font-display);font-size:.85rem;letter-spacing:.5px;color:#fff;
   padding:8px 13px;border-radius:12px;box-shadow:var(--shadow-1)}
 .chip .ic{width:15px;height:15px;color:#fff}
-.chip--pts{top:4%;right:-2%;background:var(--g-green);color:#06351c;animation:floatY 4.2s ease-in-out .15s infinite}
+.chip--pts{background:var(--g-green);color:#06351c}
 .chip--pts .ic{color:#06351c}
+.chip--a{top:2%;right:-4%;animation:floatY 4.2s ease-in-out .15s infinite}
+.chip--b{bottom:10%;left:-6%;background:var(--g-accent);color:#fff;animation:floatY 5s ease-in-out .5s infinite}
+.chip--b .ic{color:#fff}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* ============================================================
@@ -316,6 +329,9 @@ img,svg{display:block;max-width:100%}
 .cta__glow{position:absolute;inset:0;opacity:.5;pointer-events:none;
   background:radial-gradient(circle at 88% 8%,rgba(34,212,110,.65),transparent 42%),
             radial-gradient(circle at 6% 100%,rgba(0,209,255,.5),transparent 45%)}
+.cta__box--mascot{overflow:visible}
+.cta__mascot{position:absolute;right:18px;bottom:-6px;width:clamp(110px,15vw,180px);height:auto;z-index:2;
+  filter:drop-shadow(0 14px 24px rgba(0,0,0,.45));display:none}
 .cta__title{position:relative;font-family:var(--font-display);font-weight:400;font-size:clamp(1.9rem,6vw,3rem);line-height:1.03;letter-spacing:.5px}
 .cta__title .hl{-webkit-text-fill-color:#FFD300;background:none;color:#FFD300}
 .cta__sub{position:relative;color:#eef0ff;max-width:440px;margin:14px auto 26px;font-size:1rem}
@@ -461,6 +477,10 @@ img,svg{display:block;max-width:100%}
   .creators{grid-template-columns:repeat(3,1fr);max-width:none}
   .creator{flex-direction:column;text-align:center;gap:10px;padding:28px 22px}
   .creator__info{flex:none}
+
+  .cta__mascot{display:block}
+  .cta__box--mascot{padding-right:220px;text-align:left}
+  .cta__box--mascot .cta__sub{margin-left:0}
 
   .mobile-cta{display:none}
 }

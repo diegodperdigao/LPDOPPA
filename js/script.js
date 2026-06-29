@@ -118,7 +118,10 @@ $("#year").textContent = new Date().getFullYear();
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (window.matchMedia("(hover: none)").matches) return;
 
-  const MAX_FRAC = 0.042;  // deslocamento máx. da íris = 4,2% da largura do olho
+  // limites (% da largura do olho) — assimétricos: o mascote tem pouca folga embaixo
+  const MX = (parseFloat(wrap.dataset.maxx) || 4.2) / 100;
+  const MUP = (parseFloat(wrap.dataset.maxup) || 4.2) / 100;
+  const MDN = (parseFloat(wrap.dataset.maxdown) || 4.2) / 100;
   const MAX_DIST = 460;    // px de cursor p/ deflexão máxima
   let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
 
@@ -130,9 +133,9 @@ $("#year").textContent = new Date().getFullYear();
     const dy = e.clientY - ey;
     const dist = Math.min(Math.hypot(dx, dy) / MAX_DIST, 1);
     const ang = Math.atan2(dy, dx);
-    const max = r.width * MAX_FRAC;
-    tx = Math.cos(ang) * dist * max;
-    ty = Math.sin(ang) * dist * max;
+    tx = Math.cos(ang) * dist * (r.width * MX);
+    const vy = Math.sin(ang) * dist;
+    ty = vy * r.width * (vy > 0 ? MDN : MUP);
     if (!raf) raf = requestAnimationFrame(tick);
   };
 

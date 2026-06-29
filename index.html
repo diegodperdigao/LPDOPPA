@@ -23,7 +23,7 @@
 <header class="nav" id="nav">
   <div class="container nav__inner">
     <a href="#hero" class="nav__brand" aria-label="Doppa — início">
-      <img src="assets/doppa-logo.png" class="brand-logo" alt="Doppa" width="130" height="61" />
+      <img src="assets/doppa-eye.png" class="brand-eye" alt="Doppa" width="44" height="44" />
     </a>
 
     <nav class="nav__links" id="nav-links" aria-label="Navegação principal">
@@ -52,13 +52,10 @@
 
   <div class="container hero__inner">
     <div class="hero__copy">
-      <span class="eyebrow eyebrow--pill reveal">
-        <span class="dot"></span> Pra criadores iniciantes · 18+
-      </span>
+      <img src="assets/doppa-logo.png" class="hero__logo reveal" alt="Doppa" width="1499" height="706" />
 
       <h1 class="hero__title reveal">
-        Sua porta de entrada<br />
-        para <span class="hl">viver de conteúdo.</span>
+        Sua porta de entrada para <span class="hl">viver de conteúdo.</span>
       </h1>
 
       <p class="hero__sub reveal">
@@ -74,8 +71,8 @@
       </div>
 
       <ul class="hero__trust reveal">
-        <li><svg class="ic"><use href="#i-check"></use></svg> Grátis pra participar</li>
-        <li><svg class="ic"><use href="#i-check"></use></svg> Vagas limitadas</li>
+        <li><svg class="ic"><use href="#i-check"></use></svg> Pra iniciantes · 18+</li>
+        <li><svg class="ic"><use href="#i-check"></use></svg> Grátis · vagas limitadas</li>
       </ul>
     </div>
 
@@ -83,23 +80,14 @@
     <div class="hero__visual reveal" aria-hidden="true">
       <span class="hero__halo"></span>
       <div class="mascot" id="mascot">
-        <div class="eye-follow" id="eye-follow">
-          <img src="assets/eye-base.png" class="eye-follow__base" alt="Doppa" width="1254" height="1254" />
-          <img src="assets/eye-iris.png" class="eye-follow__iris" id="eye-iris" alt="" width="324" height="324" />
+        <div class="eye-follow eye-follow--mascot" id="eye-follow" data-maxx="4.0" data-maxup="4.2" data-maxdown="1.6">
+          <img src="assets/mascote-base.png" class="eye-follow__base" alt="Doppa" width="926" height="989" />
+          <img src="assets/mascote-iris.png" class="eye-follow__iris" id="eye-iris" alt="" width="278" height="278" />
         </div>
       </div>
 
-      <div class="earn-card">
-        <div class="earn-card__head">
-          <span class="earn-card__logo">DOPPA</span>
-          <span class="earn-card__live"><span class="dot"></span>HOJE</span>
-        </div>
-        <span class="earn-card__label">Seu roteiro</span>
-        <strong class="earn-card__value earn-card__value--sm">Pronto pra gravar</strong>
-        <div class="earn-card__bar"><span></span></div>
-      </div>
-
-      <div class="chip chip--pts"><svg class="ic"><use href="#i-check"></use></svg> Sem experiência</div>
+      <div class="chip chip--pts chip--a"><svg class="ic"><use href="#i-check"></use></svg> Sem experiência</div>
+      <div class="chip chip--b"><svg class="ic"><use href="#i-doc"></use></svg> Roteiro pronto</div>
     </div>
   </div>
 </section>
@@ -207,8 +195,9 @@
 <!-- ===================== CTA BAND ===================== -->
 <section class="cta">
   <div class="container">
-    <div class="cta__box reveal">
+    <div class="cta__box cta__box--mascot reveal">
       <span class="cta__glow" aria-hidden="true"></span>
+      <img src="assets/mascote.png" class="cta__mascot" alt="" aria-hidden="true" />
       <h2 class="cta__title">As vagas são <span class="hl">limitadas.</span></h2>
       <p class="cta__sub">Não tem ninguém no mercado oferecendo uma oportunidade assim pra quem está começando do zero. Garanta a sua antes que acabe.</p>
       <button class="btn btn--light btn--xl js-open-form" data-source="cta-band">
