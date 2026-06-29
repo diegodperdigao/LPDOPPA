@@ -85,8 +85,39 @@
     <!-- Visual -->
     <div class="hero__visual reveal" aria-hidden="true">
       <span class="hero__halo"></span>
-      <div class="mascot">
-        <svg viewBox="0 0 200 200" class="mascot__eye"><use href="#doppa-eye"></use></svg>
+      <div class="mascot" id="mascot">
+        <svg viewBox="0 0 200 200" class="mascot__eye" id="hero-eye">
+          <!-- sunburst (estático, no estilo da logo) -->
+          <g class="eye-rays">
+            <polygon points="100.0,20.0 93.9,42.3 106.1,42.3" fill="#FF8A1E"/>
+            <polygon points="140.0,30.7 123.6,47.0 134.1,53.1" fill="#1E3AFF"/>
+            <polygon points="169.3,60.0 146.9,65.9 153.0,76.4" fill="#6B3DFF"/>
+            <polygon points="180.0,100.0 157.7,93.9 157.7,106.1" fill="#22D46E"/>
+            <polygon points="169.3,140.0 153.0,123.6 146.9,134.1" fill="#E040FB"/>
+            <polygon points="140.0,169.3 134.1,146.9 123.6,153.0" fill="#FFD300"/>
+            <polygon points="100.0,180.0 106.1,157.7 93.9,157.7" fill="#00D1FF"/>
+            <polygon points="60.0,169.3 76.4,153.0 65.9,146.9" fill="#FF6BAA"/>
+            <polygon points="30.7,140.0 53.1,134.1 47.0,123.6" fill="#7B4DFF"/>
+            <polygon points="20.0,100.0 42.3,106.1 42.3,93.9" fill="#2BD96F"/>
+            <polygon points="30.7,60.0 47.0,76.4 53.1,65.9" fill="#FF8A1E"/>
+            <polygon points="60.0,30.7 65.9,53.1 76.4,47.0" fill="#1E3AFF"/>
+            <path d="M150,48 L151.2,50.8 L154,52 L151.2,53.2 L150,56 L148.8,53.2 L146,52 L148.8,50.8 Z" fill="#00D1FF"/>
+            <path d="M52,146.5 L53.05,148.95 L55.5,150 L53.05,151.05 L52,153.5 L50.95,151.05 L48.5,150 L50.95,148.95 Z" fill="#E040FB"/>
+            <path d="M158,137 L158.9,139.1 L161,140 L158.9,140.9 L158,143 L157.1,140.9 L155,140 L157.1,139.1 Z" fill="#FFD300"/>
+          </g>
+          <!-- esfera -->
+          <circle cx="100" cy="100" r="54" fill="url(#eye-sphere)"/>
+          <circle cx="100" cy="100" r="54" fill="none" stroke="#2A1570" stroke-width="3"/>
+          <!-- esclera (parte branca, estática) -->
+          <ellipse cx="100" cy="100" rx="40" ry="41" fill="#F4F6FF"/>
+          <!-- íris + pupila (move com o cursor) -->
+          <g id="eye-iris">
+            <circle cx="100" cy="100" r="25" fill="url(#eye-iris)"/>
+            <circle cx="100" cy="100" r="12" fill="#0A0E2B"/>
+            <circle cx="108" cy="92" r="6" fill="#FFFFFF" opacity="0.95"/>
+            <circle cx="93" cy="106" r="3" fill="#FFFFFF" opacity="0.7"/>
+          </g>
+        </svg>
       </div>
 
       <div class="earn-card">

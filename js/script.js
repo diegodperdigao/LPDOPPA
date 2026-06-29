@@ -106,6 +106,52 @@ $$(".stat__num").forEach(el => countIO.observe(el));
 $("#year").textContent = new Date().getFullYear();
 
 /* ============================================================
+   Olho que segue o cursor (hero)
+   ------------------------------------------------------------
+   Move a íris/pupila dentro da esclera na direção do mouse.
+   ============================================================ */
+(() => {
+  const eye = $("#hero-eye");
+  const iris = $("#eye-iris");
+  if (!eye || !iris) return;
+  // sem efeito em quem prefere menos movimento ou em telas de toque
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (window.matchMedia("(hover: none)").matches) return;
+
+  const MAX_OFFSET = 11;   // unidades do viewBox (esclera 41 − íris 25 ≈ folga)
+  const MAX_DIST = 420;    // px de cursor p/ deflexão máxima
+  let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+
+  const onMove = e => {
+    const r = eye.getBoundingClientRect();
+    const ex = r.left + r.width / 2;
+    const ey = r.top + r.height / 2;
+    const dx = e.clientX - ex;
+    const dy = e.clientY - ey;
+    const dist = Math.min(Math.hypot(dx, dy) / MAX_DIST, 1);
+    const ang = Math.atan2(dy, dx);
+    tx = Math.cos(ang) * dist * MAX_OFFSET;
+    ty = Math.sin(ang) * dist * MAX_OFFSET;
+    if (!raf) raf = requestAnimationFrame(tick);
+  };
+
+  const tick = () => {
+    cx += (tx - cx) * 0.18;
+    cy += (ty - cy) * 0.18;
+    iris.setAttribute("transform", `translate(${cx.toFixed(2)} ${cy.toFixed(2)})`);
+    if (Math.abs(tx - cx) > 0.05 || Math.abs(ty - cy) > 0.05) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      raf = null;
+    }
+  };
+
+  window.addEventListener("mousemove", onMove, { passive: true });
+  // volta ao centro quando o mouse sai da janela
+  document.addEventListener("mouseleave", () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(tick); });
+})();
+
+/* ============================================================
    MODAL
    ============================================================ */
 const modal = $("#form-modal");
