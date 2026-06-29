@@ -29,7 +29,13 @@ const $$ = (s, c = document) => [...c.querySelectorAll(s)];
    Navbar: shrink no scroll + menu mobile
    ============================================================ */
 const nav = $("#nav");
-const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 30);
+const mobileCta = $(".mobile-cta");
+const onScroll = () => {
+  const y = window.scrollY;
+  nav.classList.toggle("scrolled", y > 30);
+  // mostra a barra fixa mobile depois de passar do hero
+  if (mobileCta) mobileCta.classList.toggle("show", y > 520);
+};
 window.addEventListener("scroll", onScroll, { passive: true });
 onScroll();
 
@@ -136,10 +142,10 @@ document.addEventListener("keydown", e => {
    Validação
    ============================================================ */
 const showError = (name, msg) => {
-  const span = $(`.form__error[data-for="${name}"]`);
+  const span = $(`.field__error[data-for="${name}"]`);
   if (span) span.textContent = msg;
 };
-const clearErrors = () => $$(".form__error").forEach(s => (s.textContent = ""));
+const clearErrors = () => $$(".field__error").forEach(s => (s.textContent = ""));
 
 const validateEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 

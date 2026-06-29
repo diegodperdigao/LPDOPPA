@@ -5,14 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#0A0E2B" />
 <title>DOPPA — Crie conteúdo. Ganhe dinheiro.</title>
-<meta name="description" content="A Doppa transforma sua criatividade em renda. Crie conteúdo, ganhe pontos, suba de nível e desbloqueie recompensas. Seja visto. Seja recompensado." />
+<meta name="description" content="A Doppa transforma sua criatividade em renda. Crie conteúdo, participe e desbloqueie recompensas reais. Seja visto. Seja recompensado." />
 
-<!-- Open Graph -->
 <meta property="og:title" content="DOPPA — Crie conteúdo. Ganhe dinheiro." />
 <meta property="og:description" content="A plataforma feita para criadores que querem viver do que fazem. Seja visto. Seja recompensado." />
 <meta property="og:type" content="website" />
 
-<!-- Fonts: Anton (display) + Poppins (texto) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -28,18 +26,18 @@
       <span class="logo-eye logo-eye--sm" aria-hidden="true">
         <svg viewBox="0 0 100 100" class="eye-svg"><use href="#doppa-eye"></use></svg>
       </span>
-      <span class="nav__wordmark">DOPPA</span>
+      <span class="wordmark">DOPPA</span>
     </a>
 
-    <nav class="nav__links" aria-label="Navegação principal">
+    <nav class="nav__links" id="nav-links" aria-label="Navegação principal">
       <a href="#como-funciona">Como funciona</a>
       <a href="#beneficios">Benefícios</a>
+      <a href="#criadores">Criadores</a>
       <a href="#faq">FAQ</a>
+      <button class="btn btn--primary btn--sm js-open-form nav__cta-mobile" data-source="nav-menu">Quero participar</button>
     </nav>
 
-    <button class="btn btn--primary btn--sm js-open-form" data-source="navbar">
-      Quero participar
-    </button>
+    <button class="btn btn--primary btn--sm js-open-form nav__cta" data-source="navbar">Quero participar</button>
 
     <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -50,259 +48,218 @@
 <!-- ===================== HERO ===================== -->
 <section class="hero" id="hero">
   <div class="hero__bg" aria-hidden="true">
-    <div class="hero__halftone"></div>
-    <div class="hero__glow hero__glow--1"></div>
-    <div class="hero__glow hero__glow--2"></div>
-    <div class="hero__stars"></div>
+    <span class="orb orb--a"></span>
+    <span class="orb orb--b"></span>
+    <span class="grid-dots"></span>
   </div>
 
   <div class="container hero__inner">
-    <div class="hero__copy reveal">
-      <span class="badge-pill">
+    <div class="hero__copy">
+      <span class="eyebrow eyebrow--pill reveal">
         <span class="dot"></span> Programa de criadores UGC
       </span>
 
-      <h1 class="hero__title">
-        CRIE CONTEÚDO.<br />
-        <span class="grad-text-green">GANHE DINHEIRO.</span>
+      <h1 class="hero__title reveal">
+        Crie conteúdo.<br />
+        <span class="hl">Ganhe dinheiro.</span>
       </h1>
 
-      <p class="hero__sub">
+      <p class="hero__sub reveal">
         Sua criatividade pode ser sua próxima renda. A Doppa te dá visibilidade
-        e te conecta com <strong>oportunidades reais de monetização</strong>.
+        e te conecta com oportunidades reais de monetização.
       </p>
 
-      <div class="hero__cta">
+      <div class="hero__cta reveal">
         <button class="btn btn--primary btn--lg js-open-form" data-source="hero">
-          Quero participar <span class="btn__arrow">→</span>
+          Quero participar <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg>
         </button>
-        <a href="#como-funciona" class="btn btn--ghost btn--lg">Ver como funciona</a>
+        <a href="#como-funciona" class="btn btn--ghost btn--lg">Como funciona</a>
       </div>
 
-      <div class="hero__tagline">
-        <strong>SEJA VISTO.</strong> <span class="grad-text-green">SEJA RECOMPENSADO.</span>
-      </div>
+      <ul class="hero__trust reveal">
+        <li><svg class="ic"><use href="#i-check"></use></svg> Grátis pra começar</li>
+        <li><svg class="ic"><use href="#i-check"></use></svg> Comunidade no Discord</li>
+      </ul>
     </div>
 
-    <!-- Hero visual: mascote + member card -->
+    <!-- Visual -->
     <div class="hero__visual reveal" aria-hidden="true">
-      <div class="hero__rays"></div>
-
-      <div class="mascot mascot--float">
+      <span class="hero__halo"></span>
+      <div class="mascot">
         <svg viewBox="0 0 200 200" class="mascot__eye"><use href="#doppa-eye"></use></svg>
-        <div class="confetti">
-          <i style="--c:var(--yellow);--x:-120px;--y:-40px;--r:18deg"></i>
-          <i style="--c:var(--green);--x:130px;--y:-30px;--r:-22deg"></i>
-          <i style="--c:var(--cyan);--x:-90px;--y:90px;--r:30deg"></i>
-          <i style="--c:var(--purple);--x:110px;--y:80px;--r:-14deg"></i>
-          <i style="--c:#E040FB;--x:0;--y:-120px;--r:8deg"></i>
-        </div>
       </div>
 
-      <!-- Member card flutuante -->
-      <div class="member-card float-slow">
-        <div class="member-card__sheen"></div>
-        <div class="member-card__top">
-          <span class="member-card__logo">DOPPA</span>
-          <span class="member-card__type">Loyalty Member</span>
+      <div class="earn-card">
+        <div class="earn-card__head">
+          <span class="earn-card__logo">DOPPA</span>
+          <span class="earn-card__live"><span class="dot"></span>LIVE</span>
         </div>
-        <div class="member-card__badge">
-          <svg viewBox="0 0 100 100" class="eye-svg"><use href="#doppa-eye"></use></svg>
-        </div>
-        <div class="member-card__bottom">
-          <span class="member-card__name">DOPPA FAN</span>
-          <span class="member-card__id">MEMBER #24789</span>
-        </div>
+        <span class="earn-card__label">Ganhos do mês</span>
+        <strong class="earn-card__value">R$ 2.450</strong>
+        <div class="earn-card__bar"><span></span></div>
       </div>
 
-      <!-- Mini popup pontos -->
-      <div class="points-pop float-fast">+100 PTS ✦</div>
-      <div class="level-pop float-mid">NÍVEL UP! </div>
+      <div class="chip chip--pts"><svg class="ic"><use href="#i-star"></use></svg> +100 PTS</div>
     </div>
-  </div>
-
-  <div class="hero__bar" aria-hidden="true">
-    <span style="--c:var(--purple)"></span>
-    <span style="--c:var(--green)"></span>
-    <span style="--c:var(--yellow)"></span>
-    <span style="--c:#E040FB"></span>
   </div>
 </section>
 
-<!-- ===================== LOGOS / STAT STRIP ===================== -->
-<section class="stats">
-  <div class="container stats__grid">
-    <div class="stat reveal"><span class="stat__num" data-count="2450" data-prefix="R$ ">R$ 0</span><span class="stat__label">Ganhos médios/mês de um criador</span></div>
-    <div class="stat reveal"><span class="stat__num" data-count="3">0</span><span class="stat__label">Passos: crie, publique e ganhe</span></div>
-    <div class="stat reveal"><span class="stat__num" data-count="100" data-suffix="%">0%</span><span class="stat__label">Grátis pra começar</span></div>
-    <div class="stat reveal"><span class="stat__num" data-count="24" data-suffix="/7">0</span><span class="stat__label">Comunidade ativa no Discord</span></div>
-  </div>
-</section>
-
-<!-- ===================== DE OLHO / CONCEITO ===================== -->
-<section class="concept" id="conceito">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">De olho em quem faz acontecer</span>
-      <h2 class="section-title">A DOPPA ESTÁ <span class="grad-text">DE OLHO</span><br/>EM QUEM FAZ ACONTECER.</h2>
-      <p class="section-lead">
-        A Doppa é a plataforma para criadores que transforma conteúdo em
-        oportunidades e reconhecimento.
-      </p>
-    </div>
-
-    <div class="concept__flow reveal">
-      <div class="flow-step">
-        <div class="flow-step__icon flow-step__icon--blue">
-          <svg viewBox="0 0 100 100" class="eye-svg"><use href="#doppa-eye"></use></svg>
-        </div>
-        <h3>Visibilidade</h3>
-        <p>Seu conteúdo ganha alcance e chega em mais gente.</p>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">
-        <div class="flow-step__icon flow-step__icon--purple">⚡</div>
-        <h3>Ação</h3>
-        <p>Você cria, publica, participa e interage com a comunidade.</p>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">
-        <div class="flow-step__icon flow-step__icon--green">$</div>
-        <h3>Recompensa</h3>
-        <p>Quanto mais você faz, mais a Doppa retribui.</p>
-      </div>
-    </div>
+<!-- ===================== TRUST STRIP ===================== -->
+<section class="strip">
+  <div class="container strip__grid">
+    <div class="strip__item reveal"><strong class="stat__num" data-count="2450" data-prefix="R$ ">R$ 0</strong><span>ganhos médios/mês</span></div>
+    <div class="strip__item reveal"><strong class="stat__num" data-count="3" data-suffix=" passos">0</strong><span>crie, publique e ganhe</span></div>
+    <div class="strip__item reveal"><strong class="stat__num" data-count="100" data-suffix="%">0%</strong><span>grátis pra entrar</span></div>
+    <div class="strip__item reveal"><strong>24/7</strong><span>comunidade ativa</span></div>
   </div>
 </section>
 
 <!-- ===================== COMO FUNCIONA ===================== -->
-<section class="how" id="como-funciona">
+<section class="section section--alt" id="como-funciona">
   <div class="container">
-    <div class="section-head reveal">
+    <header class="head reveal">
       <span class="eyebrow">Simples assim</span>
-      <h2 class="section-title">TRANSFORME VIEWS<br/><span class="grad-text-green">EM DINHEIRO</span></h2>
-      <p class="section-lead">A plataforma feita para criadores que querem viver do que fazem.</p>
-    </div>
+      <h2 class="head__title">Transforme conteúdo em <span class="hl">dinheiro</span></h2>
+      <p class="head__lead">Três passos pra começar a viver do que você ama fazer.</p>
+    </header>
 
-    <div class="how__grid">
-      <article class="how-card reveal">
-        <span class="how-card__num">01</span>
-        <div class="how-card__icon">🎥</div>
+    <ol class="steps">
+      <li class="step reveal">
+        <span class="step__num">01</span>
+        <span class="tile tile--blue"><svg class="ic ic--lg"><use href="#i-video"></use></svg></span>
         <h3>Crie</h3>
-        <p>Vídeos, lives, shorts, tutoriais e muito mais. Faça o que você ama.</p>
-      </article>
-      <article class="how-card reveal">
-        <span class="how-card__num">02</span>
-        <div class="how-card__icon">🚀</div>
+        <p>Vídeos, lives, shorts, tutoriais e muito mais. Faça o conteúdo que você ama.</p>
+      </li>
+      <li class="step reveal">
+        <span class="step__num">02</span>
+        <span class="tile tile--purple"><svg class="ic ic--lg"><use href="#i-upload"></use></svg></span>
         <h3>Publique</h3>
-        <p>Publique na Doppa e ganhe visibilidade pra crescer sua audiência.</p>
-      </article>
-      <article class="how-card reveal">
-        <span class="how-card__num">03</span>
-        <div class="how-card__icon">💰</div>
+        <p>Ganhe visibilidade e alcance pra crescer sua audiência de verdade.</p>
+      </li>
+      <li class="step reveal">
+        <span class="step__num">03</span>
+        <span class="tile tile--green"><svg class="ic ic--lg"><use href="#i-money"></use></svg></span>
         <h3>Ganhe</h3>
-        <p>Acumule pontos, suba de nível e desbloqueie recompensas reais.</p>
-      </article>
-    </div>
+        <p>Participe, acumule pontos e desbloqueie recompensas reais.</p>
+      </li>
+    </ol>
   </div>
 </section>
 
 <!-- ===================== BENEFÍCIOS ===================== -->
-<section class="perks" id="beneficios">
+<section class="section" id="beneficios">
   <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Member perks</span>
-      <h2 class="section-title">SUA JORNADA<br/><span class="grad-text-green">VALE RECOMPENSAS.</span></h2>
-    </div>
+    <header class="head reveal">
+      <span class="eyebrow">Benefícios de membro</span>
+      <h2 class="head__title">Sua jornada vale <span class="hl">recompensas</span></h2>
+      <p class="head__lead">Quanto mais você faz, mais a Doppa retribui.</p>
+    </header>
 
-    <div class="perks__grid">
-      <div class="perk reveal"><span class="perk__ico">🎁</span><h4>Recompensas Exclusivas</h4><p>Benefícios que só quem é Doppa tem acesso.</p></div>
-      <div class="perk reveal"><span class="perk__ico">⚡</span><h4>Acesso Antecipado</h4><p>Seja o primeiro a saber dos drops e novidades.</p></div>
-      <div class="perk reveal"><span class="perk__ico">🏷️</span><h4>Descontos de Membro</h4><p>Condições especiais só para a comunidade.</p></div>
-      <div class="perk reveal"><span class="perk__ico">🎉</span><h4>Surpresas de Aniversário</h4><p>No seu dia, a Doppa comemora com você.</p></div>
-      <div class="perk reveal"><span class="perk__ico">🎧</span><h4>Suporte Prioritário</h4><p>Atendimento rápido pra quem faz acontecer.</p></div>
-      <div class="perk reveal"><span class="perk__ico">📈</span><h4>Crescimento Real</h4><p>Ferramentas e visibilidade pra aumentar sua audiência.</p></div>
+    <div class="perks">
+      <article class="perk reveal">
+        <span class="tile"><svg class="ic"><use href="#i-gift"></use></svg></span>
+        <h3>Recompensas exclusivas</h3><p>Benefícios que só quem é Doppa tem acesso.</p>
+      </article>
+      <article class="perk reveal">
+        <span class="tile"><svg class="ic"><use href="#i-clock"></use></svg></span>
+        <h3>Acesso antecipado</h3><p>Seja o primeiro a saber dos drops e novidades.</p>
+      </article>
+      <article class="perk reveal">
+        <span class="tile"><svg class="ic"><use href="#i-tag"></use></svg></span>
+        <h3>Descontos de membro</h3><p>Condições especiais só para a comunidade.</p>
+      </article>
+      <article class="perk reveal">
+        <span class="tile"><svg class="ic"><use href="#i-award"></use></svg></span>
+        <h3>Surpresas de aniversário</h3><p>No seu dia, a Doppa comemora com você.</p>
+      </article>
+      <article class="perk reveal">
+        <span class="tile"><svg class="ic"><use href="#i-headset"></use></svg></span>
+        <h3>Suporte prioritário</h3><p>Atendimento rápido pra quem faz acontecer.</p>
+      </article>
+      <article class="perk reveal">
+        <span class="tile"><svg class="ic"><use href="#i-trend"></use></svg></span>
+        <h3>Crescimento real</h3><p>Visibilidade e ferramentas pra aumentar sua audiência.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- ===================== CRIADORES QUE GANHAM ===================== -->
-<section class="creators">
+<!-- ===================== CRIADORES ===================== -->
+<section class="section section--alt" id="criadores">
   <div class="container">
-    <div class="section-head reveal">
+    <header class="head reveal">
       <span class="eyebrow">Criadores que ganham</span>
-      <h2 class="section-title">FAÇA O QUE VOCÊ AMA.<br/><span class="grad-text">GANHE POR ISSO.</span></h2>
-    </div>
+      <h2 class="head__title">Faça o que você ama. <span class="hl">Ganhe por isso.</span></h2>
+      <p class="head__lead">Criadores reais transformando conteúdo em renda na Doppa.</p>
+    </header>
 
-    <div class="creators__grid">
-      <article class="creator-card reveal">
-        <div class="creator-card__avatar" style="--g:linear-gradient(135deg,#22D46E,#00D1FF)">RL</div>
-        <h4>Rafa</h4>
-        <span class="creator-card__tag">Lifestyle</span>
-        <div class="creator-card__earn">R$ 3.200<small>/mês</small></div>
+    <div class="creators">
+      <article class="creator reveal">
+        <span class="creator__avatar" style="--g:linear-gradient(135deg,#22D46E,#00D1FF)">RL</span>
+        <div class="creator__info"><h3>Rafa</h3><span class="creator__tag">Lifestyle</span></div>
+        <span class="creator__earn">R$ 3.200<small>/mês</small></span>
       </article>
-      <article class="creator-card reveal">
-        <div class="creator-card__avatar" style="--g:linear-gradient(135deg,#6B3DFF,#E040FB)">LC</div>
-        <h4>Léo</h4>
-        <span class="creator-card__tag">Comédia</span>
-        <div class="creator-card__earn">R$ 5.800<small>/mês</small></div>
+      <article class="creator reveal">
+        <span class="creator__avatar" style="--g:linear-gradient(135deg,#6B3DFF,#E040FB)">LC</span>
+        <div class="creator__info"><h3>Léo</h3><span class="creator__tag">Comédia</span></div>
+        <span class="creator__earn">R$ 5.800<small>/mês</small></span>
       </article>
-      <article class="creator-card reveal">
-        <div class="creator-card__avatar" style="--g:linear-gradient(135deg,#1E3AFF,#00D1FF)">MG</div>
-        <h4>Mari</h4>
-        <span class="creator-card__tag">Games</span>
-        <div class="creator-card__earn">R$ 7.450<small>/mês</small></div>
+      <article class="creator reveal">
+        <span class="creator__avatar" style="--g:linear-gradient(135deg,#1E3AFF,#00D1FF)">MG</span>
+        <div class="creator__info"><h3>Mari</h3><span class="creator__tag">Games</span></div>
+        <span class="creator__earn">R$ 7.450<small>/mês</small></span>
       </article>
     </div>
-    <p class="creators__foot reveal">Você pode ser o próximo. <strong>Comece agora.</strong></p>
   </div>
 </section>
 
-<!-- ===================== CTA FAIXA ===================== -->
-<section class="cta-band">
-  <div class="container cta-band__inner reveal">
-    <div class="cta-band__copy">
-      <h2>VOCÊ NÃO PRECISA<br/>FICAR <span class="grad-text-green">DE FORA!</span></h2>
-      <p>Entre para o programa, comece a pontuar e transforme sua participação em recompensas.</p>
+<!-- ===================== CTA BAND ===================== -->
+<section class="cta">
+  <div class="container">
+    <div class="cta__box reveal">
+      <span class="cta__glow" aria-hidden="true"></span>
+      <h2 class="cta__title">Você não precisa<br/>ficar <span class="hl">de fora.</span></h2>
+      <p class="cta__sub">Entre para o programa, comece a pontuar e transforme sua participação em recompensas.</p>
+      <button class="btn btn--light btn--xl js-open-form" data-source="cta-band">
+        Entrar para o programa <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg>
+      </button>
+      <span class="cta__tag">Seja visto. Seja recompensado.</span>
     </div>
-    <button class="btn btn--primary btn--xl js-open-form" data-source="cta-band">
-      Entre para o programa <span class="btn__arrow">→</span>
-    </button>
   </div>
 </section>
 
 <!-- ===================== FAQ ===================== -->
-<section class="faq" id="faq">
-  <div class="container faq__container">
-    <div class="section-head reveal">
+<section class="section" id="faq">
+  <div class="container container--narrow">
+    <header class="head reveal">
       <span class="eyebrow">Perguntas frequentes</span>
-      <h2 class="section-title">FICOU COM<br/><span class="grad-text">ALGUMA DÚVIDA?</span></h2>
-    </div>
+      <h2 class="head__title">Ficou com alguma <span class="hl">dúvida?</span></h2>
+    </header>
 
-    <div class="faq__list reveal">
-      <details class="faq-item">
-        <summary>O que é a Doppa?<span class="faq-item__icon">+</span></summary>
-        <div class="faq-item__body"><p>A Doppa é uma plataforma e programa de recompensas para criadores de conteúdo UGC. Você cria, publica e participa — e acumula pontos que viram benefícios, recompensas e oportunidades reais de monetização.</p></div>
+    <div class="faq reveal">
+      <details class="faq__item">
+        <summary>O que é a Doppa?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <div class="faq__body"><p>A Doppa é uma plataforma e programa de recompensas para criadores de conteúdo UGC. Você cria, publica e participa — e isso vira benefícios, recompensas e oportunidades reais de monetização.</p></div>
       </details>
-      <details class="faq-item">
-        <summary>Quanto custa para participar?<span class="faq-item__icon">+</span></summary>
-        <div class="faq-item__body"><p>Nada. Entrar na Doppa é <strong>100% grátis</strong>. Você começa no nível Starter e evolui conforme cria conteúdo e participa da comunidade.</p></div>
+      <details class="faq__item">
+        <summary>Quanto custa para participar?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <div class="faq__body"><p>Nada. Entrar na Doppa é <strong>100% grátis</strong>. Você participa, acumula pontos e desbloqueia benefícios conforme cria conteúdo.</p></div>
       </details>
-      <details class="faq-item">
-        <summary>Preciso já ter muitos seguidores?<span class="faq-item__icon">+</span></summary>
-        <div class="faq-item__body"><p>Não! A Doppa é pra todo mundo — do criador que está começando do zero ao profissional. Inclusive temos um nível pra quem nunca criou conteúdo mas tem vontade de aprender.</p></div>
+      <details class="faq__item">
+        <summary>Preciso já ter muitos seguidores?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <div class="faq__body"><p>Não! A Doppa é pra todo mundo — do criador que está começando do zero ao profissional. Inclusive pra quem nunca criou conteúdo mas tem vontade de aprender.</p></div>
       </details>
-      <details class="faq-item">
-        <summary>Como eu ganho pontos e recompensas?<span class="faq-item__icon">+</span></summary>
-        <div class="faq-item__body"><p>Você pontua criando conteúdo, participando de desafios, indicando amigos e interagindo na comunidade. Quanto mais você participa, mais benefícios e recompensas desbloqueia.</p></div>
+      <details class="faq__item">
+        <summary>Como eu ganho pontos e recompensas?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <div class="faq__body"><p>Você pontua criando conteúdo, participando de desafios, indicando amigos e interagindo na comunidade. Quanto mais participa, mais benefícios e recompensas desbloqueia.</p></div>
       </details>
-      <details class="faq-item">
-        <summary>Preciso ser maior de idade?<span class="faq-item__icon">+</span></summary>
-        <div class="faq-item__body"><p>Sim. Para aproveitar as oportunidades comerciais da Doppa é necessário ser <strong>maior de 18 anos</strong>. Se você ainda não tem, fica de olho — quando completar, será muito bem-vindo(a)!</p></div>
+      <details class="faq__item">
+        <summary>Preciso ser maior de idade?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <div class="faq__body"><p>Sim. Para aproveitar as oportunidades comerciais da Doppa é necessário ser <strong>maior de 18 anos</strong>. Se você ainda não tem, fica de olho — quando completar, será muito bem-vindo(a)!</p></div>
       </details>
-      <details class="faq-item">
-        <summary>Como eu entro?<span class="faq-item__icon">+</span></summary>
-        <div class="faq-item__body"><p>É só clicar em <strong>"Quero participar"</strong>, preencher o formulário rapidinho e você será direcionado(a) para a nossa comunidade no Discord, onde tudo acontece.</p></div>
+      <details class="faq__item">
+        <summary>Como eu entro?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <div class="faq__body"><p>É só clicar em <strong>"Quero participar"</strong>, preencher o formulário rapidinho e você será direcionado(a) para a nossa comunidade no Discord, onde tudo acontece.</p></div>
       </details>
     </div>
   </div>
@@ -313,108 +270,127 @@
   <div class="container footer__inner">
     <div class="footer__brand">
       <span class="logo-eye logo-eye--sm"><svg viewBox="0 0 100 100" class="eye-svg"><use href="#doppa-eye"></use></svg></span>
-      <span class="nav__wordmark">DOPPA</span>
+      <span class="wordmark">DOPPA</span>
     </div>
-    <p class="footer__tag"><strong>MORE YOU DO,</strong> <span class="grad-text-green">MORE YOU DOPPA.</span></p>
+    <p class="footer__tag">More you do, <span class="hl">more you Doppa.</span></p>
     <button class="btn btn--primary btn--sm js-open-form" data-source="footer">Quero participar</button>
   </div>
-  <div class="footer__copy">© <span id="year"></span> Doppa · Programa de criadores. Feito para quem cria.</div>
+  <p class="footer__copy">© <span id="year"></span> Doppa · Programa de criadores. Feito para quem cria.</p>
 </footer>
+
+<!-- ===================== MOBILE STICKY CTA ===================== -->
+<div class="mobile-cta">
+  <button class="btn btn--primary js-open-form" data-source="mobile-bar">Quero participar <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg></button>
+</div>
 
 <!-- ===================== MODAL FORM ===================== -->
 <div class="modal" id="form-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="form-title">
   <div class="modal__overlay js-close-form"></div>
-  <div class="modal__dialog">
-    <button class="modal__close js-close-form" aria-label="Fechar">×</button>
+  <div class="modal__dialog" role="document">
+    <button class="modal__close js-close-form" aria-label="Fechar">
+      <svg class="ic"><use href="#i-close"></use></svg>
+    </button>
 
     <div class="modal__head">
       <span class="logo-eye logo-eye--md"><svg viewBox="0 0 100 100" class="eye-svg"><use href="#doppa-eye"></use></svg></span>
-      <h2 id="form-title">Bora fazer parte da <span class="grad-text-green">Doppa</span>?</h2>
-      <p>Preenche rapidinho e a gente te leva direto pra comunidade no Discord. 🚀</p>
+      <h2 id="form-title">Bora fazer parte da <span class="hl">Doppa?</span></h2>
+      <p>Preenche rapidinho e a gente te leva direto pra comunidade no Discord.</p>
     </div>
 
     <form class="form" id="lead-form" novalidate>
-      <div class="form__group">
+      <div class="field">
         <label for="f-email">Email <span class="req">*</span></label>
         <input type="email" id="f-email" name="email" placeholder="seu@email.com" required autocomplete="email" />
-        <span class="form__error" data-for="email"></span>
+        <span class="field__error" data-for="email"></span>
       </div>
 
-      <div class="form__group">
-        <label for="f-nome">Nome Completo <span class="req">*</span></label>
+      <div class="field">
+        <label for="f-nome">Nome completo <span class="req">*</span></label>
         <input type="text" id="f-nome" name="nome" placeholder="Seu nome completo" required autocomplete="name" />
-        <span class="form__error" data-for="nome"></span>
+        <span class="field__error" data-for="nome"></span>
       </div>
 
-      <div class="form__group">
-        <label>Qual o seu nível atual de experiência com criação de conteúdo? <span class="req">*</span></label>
-        <div class="radio-list">
-          <label class="radio"><input type="radio" name="experiencia" value="Nunca criei conteúdo antes, mas tenho muita vontade de aprender" required /><span>Nunca criei conteúdo antes, mas tenho muita vontade de aprender</span></label>
-          <label class="radio"><input type="radio" name="experiencia" value="Iniciante (algumas publicações esporádicas)" /><span>Iniciante (algumas publicações esporádicas)</span></label>
-          <label class="radio"><input type="radio" name="experiencia" value="Intermediário (público com certa frequência)" /><span>Intermediário (público com certa frequência)</span></label>
-          <label class="radio"><input type="radio" name="experiencia" value="Profissional (trabalho com isso)" /><span>Profissional (trabalho com isso)</span></label>
+      <fieldset class="field">
+        <legend>Qual o seu nível atual de experiência com criação de conteúdo? <span class="req">*</span></legend>
+        <div class="options">
+          <label class="option"><input type="radio" name="experiencia" value="Nunca criei conteúdo antes, mas tenho muita vontade de aprender" required /><span class="option__mark"></span><span>Nunca criei conteúdo antes, mas tenho muita vontade de aprender</span></label>
+          <label class="option"><input type="radio" name="experiencia" value="Iniciante (algumas publicações esporádicas)" /><span class="option__mark"></span><span>Iniciante (algumas publicações esporádicas)</span></label>
+          <label class="option"><input type="radio" name="experiencia" value="Intermediário (público com certa frequência)" /><span class="option__mark"></span><span>Intermediário (público com certa frequência)</span></label>
+          <label class="option"><input type="radio" name="experiencia" value="Profissional (trabalho com isso)" /><span class="option__mark"></span><span>Profissional (trabalho com isso)</span></label>
         </div>
-        <span class="form__error" data-for="experiencia"></span>
-      </div>
+        <span class="field__error" data-for="experiencia"></span>
+      </fieldset>
 
-      <div class="form__group">
-        <label>Para aproveitar as oportunidades comerciais da Doppa é necessário ser maior de idade. <span class="req">*</span></label>
-        <div class="radio-list">
-          <label class="radio"><input type="radio" name="maioridade" value="De acordo, sou maior de idade" required /><span>De acordo, sou maior de idade</span></label>
-          <label class="radio"><input type="radio" name="maioridade" value="Vou esperar mais um pouco" /><span>Vou esperar mais um pouco</span></label>
+      <fieldset class="field">
+        <legend>Para aproveitar as oportunidades comerciais da Doppa é necessário ser maior de idade. <span class="req">*</span></legend>
+        <div class="options">
+          <label class="option"><input type="radio" name="maioridade" value="De acordo, sou maior de idade" required /><span class="option__mark"></span><span>De acordo, sou maior de idade</span></label>
+          <label class="option"><input type="radio" name="maioridade" value="Vou esperar mais um pouco" /><span class="option__mark"></span><span>Vou esperar mais um pouco</span></label>
         </div>
-        <span class="form__error" data-for="maioridade"></span>
-      </div>
+        <span class="field__error" data-for="maioridade"></span>
+      </fieldset>
 
       <button type="submit" class="btn btn--primary btn--lg form__submit" id="submit-btn">
-        <span class="form__submit-label">Entrar para a Doppa <span class="btn__arrow">→</span></span>
-        <span class="form__submit-loader" hidden>Enviando…</span>
+        <span class="form__submit-label">Entrar para a Doppa <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg></span>
+        <span class="form__submit-loader" hidden><span class="spinner"></span> Enviando…</span>
       </button>
 
-      <p class="form__disclaimer">Ao enviar, você concorda em ser direcionado(a) para a comunidade da Doppa no Discord.</p>
+      <p class="form__disclaimer">Ao enviar, você será direcionado(a) para a comunidade da Doppa no Discord.</p>
     </form>
 
-    <!-- Tela de sucesso -->
-    <div class="form-success" id="form-success" hidden>
-      <div class="form-success__icon">🎉</div>
-      <h2>VOCÊ <span class="grad-text-green">DOPPA!</span></h2>
-      <p>Cadastro recebido com sucesso. Te redirecionando pro Discord…</p>
+    <div class="form-end" id="form-success" hidden>
+      <div class="form-end__icon form-end__icon--ok"><svg class="ic"><use href="#i-check"></use></svg></div>
+      <h2>Você <span class="hl">Doppa!</span></h2>
+      <p>Cadastro recebido com sucesso. Te levando pro Discord…</p>
       <a href="https://discord.gg/JYGM6zuHhG" class="btn btn--primary btn--lg" id="discord-link">Entrar no Discord agora</a>
     </div>
 
-    <!-- Tela menor de idade -->
-    <div class="form-wait" id="form-wait" hidden>
-      <div class="form-success__icon">👀</div>
-      <h2>QUASE LÁ!</h2>
+    <div class="form-end" id="form-wait" hidden>
+      <div class="form-end__icon form-end__icon--wait"><svg class="ic"><use href="#i-eye"></use></svg></div>
+      <h2>Quase lá!</h2>
       <p>As oportunidades comerciais da Doppa são para maiores de 18 anos. Quando você completar, vai ser muito bem-vindo(a) — fica de olho na gente!</p>
       <button class="btn btn--ghost btn--lg js-close-form">Entendi</button>
     </div>
   </div>
 </div>
 
-<!-- ===================== SVG SPRITE (mascote olho) ===================== -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<!-- ===================== SVG SPRITE ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <radialGradient id="eye-sphere" cx="38%" cy="32%" r="72%">
-      <stop offset="0%" stop-color="#8B5BFF"/>
-      <stop offset="55%" stop-color="#6B3DFF"/>
-      <stop offset="100%" stop-color="#3A1E9E"/>
+      <stop offset="0%" stop-color="#8B5BFF"/><stop offset="55%" stop-color="#6B3DFF"/><stop offset="100%" stop-color="#3A1E9E"/>
     </radialGradient>
     <radialGradient id="eye-iris" cx="45%" cy="40%" r="65%">
-      <stop offset="0%" stop-color="#4DA8FF"/>
-      <stop offset="60%" stop-color="#1E3AFF"/>
-      <stop offset="100%" stop-color="#0A1A8C"/>
+      <stop offset="0%" stop-color="#4DA8FF"/><stop offset="60%" stop-color="#1E3AFF"/><stop offset="100%" stop-color="#0A1A8C"/>
     </radialGradient>
-    <g id="doppa-eye">
-      <circle cx="50" cy="50" r="46" fill="url(#eye-sphere)"/>
-      <circle cx="50" cy="50" r="46" fill="none" stroke="#2A1570" stroke-width="2"/>
-      <ellipse cx="50" cy="50" rx="34" ry="35" fill="#FFFFFF"/>
-      <circle cx="50" cy="50" r="20" fill="url(#eye-iris)"/>
-      <circle cx="50" cy="50" r="9" fill="#0A0E2B"/>
-      <circle cx="43" cy="43" r="5" fill="#FFFFFF" opacity="0.95"/>
-      <circle cx="56" cy="57" r="2.4" fill="#FFFFFF" opacity="0.7"/>
-    </g>
   </defs>
+
+  <!-- mascote -->
+  <g id="doppa-eye">
+    <circle cx="50" cy="50" r="46" fill="url(#eye-sphere)"/>
+    <circle cx="50" cy="50" r="46" fill="none" stroke="#2A1570" stroke-width="2"/>
+    <ellipse cx="50" cy="50" rx="34" ry="35" fill="#FFFFFF"/>
+    <circle cx="50" cy="50" r="20" fill="url(#eye-iris)"/>
+    <circle cx="50" cy="50" r="9" fill="#0A0E2B"/>
+    <circle cx="43" cy="43" r="5" fill="#FFFFFF" opacity="0.95"/>
+    <circle cx="56" cy="57" r="2.4" fill="#FFFFFF" opacity="0.7"/>
+  </g>
+
+  <!-- ícones de linha (24x24, stroke=currentColor) -->
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="M16 10l5-3v10l-5-3"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+  <symbol id="i-money" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5.5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><line x1="7" y1="7" x2="7.01" y2="7"/></symbol>
+  <symbol id="i-award" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><polyline points="8.2 14.5 7 22 12 19 17 22 15.8 14.5"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13" width="4" height="7" rx="1.5"/><rect x="17.5" y="13" width="4" height="7" rx="1.5"/><path d="M20 19v.5a3 3 0 0 1-3 3h-3"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9.5 10.5 13.5 14.5 21 7"/><polyline points="16 7 21 7 21 12"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></symbol>
 </svg>
 
 <script src="js/script.js"></script>
