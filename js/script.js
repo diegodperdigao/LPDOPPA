@@ -111,35 +111,37 @@ $("#year").textContent = new Date().getFullYear();
    Move a íris/pupila dentro da esclera na direção do mouse.
    ============================================================ */
 (() => {
-  const eye = $("#hero-eye");
+  const wrap = $("#eye-follow");
   const iris = $("#eye-iris");
-  if (!eye || !iris) return;
+  if (!wrap || !iris) return;
   // sem efeito em quem prefere menos movimento ou em telas de toque
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (window.matchMedia("(hover: none)").matches) return;
 
-  const MAX_OFFSET = 11;   // unidades do viewBox (esclera 41 − íris 25 ≈ folga)
-  const MAX_DIST = 420;    // px de cursor p/ deflexão máxima
+  const MAX_FRAC = 0.034;  // deslocamento máx. da íris = 3,4% da largura do olho
+  const MAX_DIST = 460;    // px de cursor p/ deflexão máxima
   let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
 
   const onMove = e => {
-    const r = eye.getBoundingClientRect();
+    const r = wrap.getBoundingClientRect();
     const ex = r.left + r.width / 2;
     const ey = r.top + r.height / 2;
     const dx = e.clientX - ex;
     const dy = e.clientY - ey;
     const dist = Math.min(Math.hypot(dx, dy) / MAX_DIST, 1);
     const ang = Math.atan2(dy, dx);
-    tx = Math.cos(ang) * dist * MAX_OFFSET;
-    ty = Math.sin(ang) * dist * MAX_OFFSET;
+    const max = r.width * MAX_FRAC;
+    tx = Math.cos(ang) * dist * max;
+    ty = Math.sin(ang) * dist * max;
     if (!raf) raf = requestAnimationFrame(tick);
   };
 
   const tick = () => {
     cx += (tx - cx) * 0.18;
     cy += (ty - cy) * 0.18;
-    iris.setAttribute("transform", `translate(${cx.toFixed(2)} ${cy.toFixed(2)})`);
-    if (Math.abs(tx - cx) > 0.05 || Math.abs(ty - cy) > 0.05) {
+    iris.style.setProperty("--ex", cx.toFixed(2) + "px");
+    iris.style.setProperty("--ey", cy.toFixed(2) + "px");
+    if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) {
       raf = requestAnimationFrame(tick);
     } else {
       raf = null;

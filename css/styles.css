@@ -66,6 +66,13 @@ img,svg{display:block;max-width:100%}
 .container{width:100%;max-width:var(--container);margin:0 auto;padding:0 20px}
 .container--narrow{max-width:780px}
 
+/* ---------- Logos (imagens reais) ---------- */
+.brand-logo{height:42px;width:auto;display:block;filter:drop-shadow(0 3px 10px rgba(107,61,255,.45))}
+.brand-eye{height:42px;width:42px;display:block;transition:height .3s,width .3s;filter:drop-shadow(0 3px 10px rgba(107,61,255,.5))}
+.nav.scrolled .brand-eye{height:36px;width:36px}
+.hero__logo{width:min(300px,72%);height:auto;margin:0 auto 22px;filter:drop-shadow(0 8px 24px rgba(107,61,255,.4))}
+.modal__eye{width:60px;height:60px;margin:0 auto 12px;display:block;filter:drop-shadow(0 4px 12px rgba(107,61,255,.5))}
+
 /* ---------- Tipografia base ---------- */
 .wordmark{font-family:var(--font-display);font-size:1.4rem;letter-spacing:1px;color:#fff}
 .hl{
@@ -187,7 +194,11 @@ img,svg{display:block;max-width:100%}
   background:conic-gradient(from 0deg,#1E3AFF,#6B3DFF,#00D1FF,#22D46E,#FFD300,#1E3AFF);
   filter:blur(22px);opacity:.5;animation:spin 18s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.mascot{position:relative;width:62%;animation:floatY 5s ease-in-out infinite;filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
+.mascot{position:relative;width:74%;animation:floatY 5s ease-in-out infinite;filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
+.eye-follow{position:relative;width:100%;aspect-ratio:1}
+.eye-follow__base{width:100%;height:auto;display:block}
+.eye-follow__iris{position:absolute;left:51.435%;top:56.778%;width:25.837%;height:auto;
+  transform:translate(-50%,-50%) translate(var(--ex,0px),var(--ey,0px));will-change:transform}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 
 .earn-card{
@@ -410,6 +421,7 @@ img,svg{display:block;max-width:100%}
   .hero__copy{flex:1.05}
   .hero__visual{flex:.95;width:auto;max-width:420px}
   .hero__sub{margin-left:0;margin-right:0}
+  .hero__logo{margin-left:0;margin-right:0}
   .hero__cta{justify-content:flex-start;width:auto}
   .hero__cta .btn{flex:0 0 auto}
   .hero__trust{justify-content:flex-start}
