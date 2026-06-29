@@ -212,6 +212,42 @@ img,svg{display:block;max-width:100%}
 /* olho do mascote (geometria própria) */
 .eye-follow--mascot{aspect-ratio:926/989}
 .eye-follow--mascot .eye-follow__iris{left:59.4%;top:44.39%;width:30.02%}
+
+/* ============================================================
+   HERO COM VÍDEO (VSL)
+   ============================================================ */
+.hero--video .hero__inner{flex-direction:column;text-align:center;align-items:center;gap:clamp(16px,2.6vw,24px)}
+.hero--video .hero__logo{margin:0}
+.hero--video .hero__title{margin:0}
+.hero--video .hero__sub{margin:0 auto;max-width:560px}
+.hero--video .hero__cta{justify-content:center;width:auto;margin-top:2px}
+.hero--video .hero__trust{justify-content:center}
+
+.vsl{width:100%;max-width:1040px;margin:2px auto 0}
+.vsl__stage{display:flex;flex-direction:column;align-items:center;gap:18px}
+.vsl__player{position:relative;width:100%;max-width:780px;aspect-ratio:16/9;border-radius:20px;overflow:hidden;
+  background:radial-gradient(120% 120% at 50% 0%, #1a2150, #0b1030);
+  border:1px solid rgba(107,61,255,.45);
+  box-shadow:0 30px 70px -25px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.06)}
+.vsl__player iframe,.vsl__player video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.vsl__play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:84px;height:84px;border-radius:50%;display:grid;place-items:center;
+  background:var(--g-primary);box-shadow:0 12px 32px -6px rgba(60,80,255,.85);
+  transition:transform .2s var(--ease);animation:pulsePlay 2.4s ease-in-out infinite}
+.vsl__play:hover{transform:translate(-50%,-50%) scale(1.08);animation:none}
+.vsl__play .ic{width:34px;height:34px;color:#fff;margin-left:5px}
+@keyframes pulsePlay{0%,100%{box-shadow:0 12px 32px -6px rgba(60,80,255,.85),0 0 0 0 rgba(107,61,255,.5)}50%{box-shadow:0 12px 32px -6px rgba(60,80,255,.85),0 0 0 18px rgba(107,61,255,0)}}
+.vsl__label{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:var(--muted);font-size:.86rem;font-weight:500;pointer-events:none}
+.vsl__player--playing .vsl__play,.vsl__player--playing .vsl__label{display:none}
+
+.vsl__eye{position:relative;flex:none;width:clamp(116px,30vw,150px);display:grid;place-items:center}
+.vsl__eye .eye-follow{width:100%}
+.hero__halo--sm{position:absolute;inset:8%;opacity:.4;filter:blur(16px)}
+
+@media (min-width:900px){
+  .vsl__stage{flex-direction:row;justify-content:center;gap:clamp(16px,2.5vw,30px)}
+  .vsl__eye{width:clamp(160px,17vw,215px)}
+}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 
 .earn-card{

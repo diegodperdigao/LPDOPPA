@@ -15,6 +15,13 @@ const CONFIG = {
   // e o resto continua funcionando normalmente.
   SHEET_ENDPOINT: "",
 
+  // Vídeo da VSL. Cole a URL de EMBED:
+  //   YouTube:  "https://www.youtube.com/embed/SEU_ID"
+  //   Vimeo:    "https://player.vimeo.com/video/SEU_ID"
+  //   ou um MP4 direto: "https://.../video.mp4"
+  // Enquanto vazio (""), mostra só o player com o botão de play.
+  VIDEO_URL: "",
+
   // Tempo (ms) até redirecionar pro Discord depois do sucesso.
   REDIRECT_DELAY: 2600,
 };
@@ -154,6 +161,50 @@ $("#year").textContent = new Date().getFullYear();
   window.addEventListener("mousemove", onMove, { passive: true });
   // volta ao centro quando o mouse sai da janela
   document.addEventListener("mouseleave", () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(tick); });
+})();
+
+/* ============================================================
+   VÍDEO da VSL
+   ============================================================ */
+(() => {
+  const player = $("#vsl-player");
+  const playBtn = $("#vsl-play");
+  if (!player || !playBtn) return;
+
+  const isFile = url => /\.(mp4|webm|ogg)(\?|$)/i.test(url);
+
+  const mount = () => {
+    const url = CONFIG.VIDEO_URL;
+    if (!url) {
+      // sem vídeo configurado ainda — só dá um feedback visual
+      playBtn.animate(
+        [{ transform: "translate(-50%,-50%) scale(1)" }, { transform: "translate(-50%,-50%) scale(.9)" }, { transform: "translate(-50%,-50%) scale(1)" }],
+        { duration: 260 }
+      );
+      console.warn("Defina CONFIG.VIDEO_URL no script.js para ativar o vídeo da VSL.");
+      return;
+    }
+    let media;
+    if (isFile(url)) {
+      media = document.createElement("video");
+      media.src = url;
+      media.controls = true;
+      media.autoplay = true;
+      media.playsInline = true;
+    } else {
+      media = document.createElement("iframe");
+      media.src = url + (url.includes("?") ? "&" : "?") + "autoplay=1";
+      media.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
+      media.allowFullscreen = true;
+      media.setAttribute("title", "Vídeo Doppa");
+    }
+    player.classList.add("vsl__player--playing");
+    player.appendChild(media);
+  };
+
+  playBtn.addEventListener("click", mount);
+
+  // Se o vídeo já estiver configurado, deixa pronto pra tocar no clique.
 })();
 
 /* ============================================================

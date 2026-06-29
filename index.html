@@ -43,7 +43,7 @@
 </header>
 
 <!-- ===================== HERO ===================== -->
-<section class="hero" id="hero">
+<section class="hero hero--video" id="hero">
   <div class="hero__bg" aria-hidden="true">
     <span class="orb orb--a"></span>
     <span class="orb orb--b"></span>
@@ -51,41 +51,47 @@
   </div>
 
   <div class="container hero__inner">
-    <div class="hero__copy">
-      <img src="assets/doppa-logo.png" class="hero__logo reveal" alt="Doppa" width="1499" height="706" />
+    <img src="assets/doppa-logo.png" class="hero__logo reveal" alt="Doppa" width="1499" height="706" />
 
-      <h1 class="hero__title reveal">
-        Sua porta de entrada para <span class="hl">viver de conteúdo.</span>
-      </h1>
+    <h1 class="hero__title reveal">
+      Sua porta de entrada para <span class="hl">viver de conteúdo.</span>
+    </h1>
 
-      <p class="hero__sub reveal">
-        Ganhe pra criar desde o primeiro dia — <strong>sem experiência e sem seguidores</strong>.
-        A Doppa entrega o roteiro pronto: você só grava e posta.
-      </p>
+    <p class="hero__sub reveal">
+      Aperta o play e descubra como ganhar pra criar — <strong>sem experiência e sem seguidores</strong>.
+    </p>
 
-      <div class="hero__cta reveal">
-        <button class="btn btn--primary btn--lg js-open-form" data-source="hero">
-          Quero minha vaga <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg>
-        </button>
-        <a href="#como-funciona" class="btn btn--ghost btn--lg">Como funciona</a>
-      </div>
+    <div class="vsl reveal">
+      <div class="vsl__stage">
+        <div class="vsl__player" id="vsl-player">
+          <!-- O vídeo da VSL entra aqui (definido em CONFIG.VIDEO_URL no script.js) -->
+          <button class="vsl__play" id="vsl-play" aria-label="Assistir ao vídeo">
+            <svg class="ic"><use href="#i-play"></use></svg>
+          </button>
+          <span class="vsl__label">Assista ao vídeo</span>
+        </div>
 
-      <ul class="hero__trust reveal">
-        <li><svg class="ic"><use href="#i-check"></use></svg> Pra iniciantes · 18+</li>
-        <li><svg class="ic"><use href="#i-check"></use></svg> Grátis · vagas limitadas</li>
-      </ul>
-    </div>
-
-    <!-- Visual -->
-    <div class="hero__visual reveal" aria-hidden="true">
-      <span class="hero__halo"></span>
-      <div class="mascot" id="mascot">
-        <div class="eye-follow" id="eye-follow" data-maxx="4.2" data-maxup="4.2" data-maxdown="4.2">
-          <img src="assets/eye-base.png" class="eye-follow__base" alt="Doppa" width="987" height="854" />
-          <img src="assets/eye-iris.png" class="eye-follow__iris" id="eye-iris" alt="" width="312" height="312" />
+        <!-- olho vivo acompanhando quem assiste -->
+        <div class="vsl__eye" aria-hidden="true">
+          <span class="hero__halo hero__halo--sm"></span>
+          <div class="eye-follow" id="eye-follow" data-maxx="4.2" data-maxup="4.2" data-maxdown="4.2">
+            <img src="assets/eye-base.png" class="eye-follow__base" alt="Doppa" width="987" height="854" />
+            <img src="assets/eye-iris.png" class="eye-follow__iris" id="eye-iris" alt="" width="312" height="312" />
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="hero__cta reveal">
+      <button class="btn btn--primary btn--xl js-open-form" data-source="hero">
+        Quero minha vaga <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg>
+      </button>
+    </div>
+
+    <ul class="hero__trust reveal">
+      <li><svg class="ic"><use href="#i-check"></use></svg> Pra iniciantes · 18+</li>
+      <li><svg class="ic"><use href="#i-check"></use></svg> Grátis · vagas limitadas</li>
+    </ul>
   </div>
 </section>
 
@@ -374,6 +380,7 @@
   <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><polyline points="14 3 14 8 19 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M7 4.5v15a1 1 0 0 0 1.5.87l13-7.5a1 1 0 0 0 0-1.74l-13-7.5A1 1 0 0 0 7 4.5z"/></symbol>
 </svg>
 
 <script src="js/script.js"></script>
