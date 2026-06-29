@@ -67,10 +67,10 @@ img,svg{display:block;max-width:100%}
 .container--narrow{max-width:780px}
 
 /* ---------- Logos (imagens reais) ---------- */
-.brand-logo{height:42px;width:auto;display:block;filter:drop-shadow(0 3px 10px rgba(107,61,255,.45))}
+.brand-logo{height:36px;width:auto;display:block;filter:drop-shadow(0 3px 10px rgba(107,61,255,.45))}
 .brand-eye{height:42px;width:42px;display:block;transition:height .3s,width .3s;filter:drop-shadow(0 3px 10px rgba(107,61,255,.5))}
 .nav.scrolled .brand-eye{height:36px;width:36px}
-.hero__logo{width:min(470px,90%);height:auto;margin:0 auto 22px;filter:drop-shadow(0 12px 34px rgba(107,61,255,.5))}
+.hero__logo{width:min(470px,90%);height:auto;margin:0 auto clamp(34px,5vw,52px);filter:drop-shadow(0 12px 34px rgba(107,61,255,.5))}
 .modal__eye{width:60px;height:60px;margin:0 auto 12px;display:block;filter:drop-shadow(0 4px 12px rgba(107,61,255,.5))}
 
 /* ---------- Tipografia base ---------- */
@@ -145,7 +145,10 @@ img,svg{display:block;max-width:100%}
 .nav{position:fixed;inset:0 0 auto 0;z-index:60;padding:14px 0;transition:background .3s,padding .3s,box-shadow .3s,backdrop-filter .3s}
 .nav.scrolled{background:rgba(10,14,43,.85);backdrop-filter:blur(14px);box-shadow:0 4px 24px -10px rgba(0,0,0,.7);padding:9px 0}
 .nav__inner{display:flex;align-items:center;gap:16px}
-.nav__brand{display:flex;align-items:center;gap:9px}
+/* logo da navbar só aparece ao scrollar (ao entrar, só a logo grande do hero) */
+.nav__brand{display:flex;align-items:center;gap:9px;opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .3s var(--ease),transform .3s var(--ease),visibility .3s}
+.nav.scrolled .nav__brand{opacity:1;visibility:visible;transform:none}
 .nav__links{display:none}
 .nav__cta{display:none}
 .nav__burger{display:flex;flex-direction:column;gap:5px;padding:8px;margin-left:auto;border-radius:10px}
