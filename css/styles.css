@@ -249,6 +249,37 @@ img,svg{display:block;max-width:100%}
 .step p{color:var(--muted);font-size:.96rem}
 
 /* ============================================================
+   JOURNEY (passo a passo)
+   ============================================================ */
+.journey{display:flex;flex-direction:column;max-width:620px;margin:0 auto}
+.journey__item{display:flex;gap:18px;padding-bottom:28px;position:relative;text-align:left}
+.journey__item:last-child{padding-bottom:0}
+.journey__num{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--font-display);font-size:1.15rem;color:#fff;background:var(--g-primary);
+  box-shadow:0 6px 16px -6px rgba(60,80,255,.7);z-index:1}
+.journey__item:not(:last-child)::before{content:"";position:absolute;left:21px;top:46px;bottom:-2px;width:2px;
+  background:linear-gradient(var(--purple),rgba(107,61,255,.15))}
+.journey__item h3{font-size:1.12rem;margin-bottom:4px;padding-top:9px}
+.journey__item p{color:var(--muted);font-size:.95rem}
+
+/* ============================================================
+   NOTICE (transparência)
+   ============================================================ */
+.notice{display:flex;gap:18px;align-items:flex-start;padding:clamp(22px,5vw,32px);border-radius:var(--radius-lg);
+  background:linear-gradient(160deg,rgba(255,211,0,.09),rgba(224,64,251,.05));border:1px solid rgba(255,211,0,.32)}
+.notice__icon{flex:none;width:56px;height:56px;border-radius:14px;display:grid;place-items:center;
+  background:rgba(255,211,0,.14);border:1px solid rgba(255,211,0,.4);color:var(--yellow)}
+.notice h3{font-size:1.12rem;margin-bottom:10px}
+.notice p{color:var(--muted);font-size:.95rem}
+.notice p+p{margin-top:10px}
+
+/* utilitários */
+.center{text-align:center}
+.center .head{margin-left:auto;margin-right:auto}
+.ic--xs{width:16px;height:16px}
+.earn-card__value--sm{font-size:1.05rem;line-height:1.25}
+
+/* ============================================================
    PERKS
    ============================================================ */
 .perks{display:grid;gap:16px}
