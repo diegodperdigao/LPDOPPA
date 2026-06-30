@@ -174,9 +174,9 @@ img,svg{display:block;max-width:100%}
    ============================================================ */
 .hero{position:relative;padding:clamp(104px,15vw,150px) 0 clamp(40px,7vw,64px);overflow:hidden}
 /* logo grande do hero, no canto superior esquerdo (some no scroll, junto com o hero) */
-.hero__brand{position:absolute;top:clamp(14px,2.4vw,22px);left:50%;transform:translateX(-50%);
-  width:100%;max-width:var(--container);padding:0 20px;z-index:6;pointer-events:none}
-.hero__brand img{width:clamp(160px,20vw,250px);height:auto;display:block;pointer-events:auto;
+.hero__brand{position:absolute;top:clamp(14px,2.4vw,22px);left:clamp(16px,3.2vw,46px);
+  z-index:6;pointer-events:none}
+.hero__brand img{width:clamp(150px,17vw,226px);height:auto;display:block;pointer-events:auto;
   filter:drop-shadow(0 8px 22px rgba(107,61,255,.5))}
 .hero__bg{position:absolute;inset:0;z-index:0;pointer-events:none}
 .hero__bg::before{content:"";position:absolute;inset:0;
