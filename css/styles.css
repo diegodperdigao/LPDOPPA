@@ -108,14 +108,14 @@ img,svg{display:block;max-width:100%}
   transition:transform .2s var(--ease),box-shadow .2s var(--ease),filter .2s var(--ease),background .2s;
   white-space:nowrap;
 }
-.btn--primary{background:var(--g-primary);color:#fff;position:relative;overflow:hidden;isolation:isolate;
-  box-shadow:0 8px 22px -8px rgba(60,80,255,.7),inset 0 1px 0 rgba(255,255,255,.25)}
-.btn--primary::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.45) 50%,transparent 75%);
-  transform:translateX(-130%);transition:transform .6s var(--ease)}
-.btn--primary:hover{transform:translateY(-2px);filter:brightness(1.07);box-shadow:0 16px 34px -10px rgba(107,61,255,.85)}
-.btn--primary:hover::before{transform:translateX(130%)}
-.btn:active{transform:translateY(0) scale(.97)}
+.btn--primary{color:#fff;
+  background:linear-gradient(120deg,#1E3AFF 0%,#6B3DFF 42%,#00D1FF 100%);
+  background-size:210% 100%;background-position:0% 50%;
+  box-shadow:0 8px 22px -8px rgba(60,80,255,.7),inset 0 1px 0 rgba(255,255,255,.25);
+  transition:background-position .55s var(--ease),transform .22s var(--ease),box-shadow .25s var(--ease),filter .2s}
+.btn--primary:hover{background-position:100% 50%;transform:translateY(-2px) scale(1.02);
+  box-shadow:0 18px 42px -12px rgba(0,160,255,.65),0 8px 22px -8px rgba(107,61,255,.85)}
+.btn:active{transform:translateY(0) scale(.96)}
 .btn--ghost{background:rgba(255,255,255,.04);color:#fff;border:1.5px solid var(--line-2)}
 .btn--ghost:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-2px)}
 .btn--light{background:#fff;color:#1a2bdd}
@@ -294,11 +294,9 @@ img,svg{display:block;max-width:100%}
    TRUST STRIP
    ============================================================ */
 .strip{background:var(--bg-800);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.strip__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line)}
-.strip__item{background:var(--bg-800);padding:26px 16px;text-align:center}
-.strip__item strong{display:block;font-family:var(--font-display);font-size:clamp(1.6rem,6vw,2.1rem);line-height:1;
-  background:linear-gradient(120deg,#fff,#bcd0ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.strip__item span{display:block;font-size:.82rem;color:var(--muted);margin-top:8px}
+.strip__row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 28px;padding:18px 24px}
+.strip__item{display:inline-flex;align-items:center;gap:9px;font-size:.92rem;font-weight:500;color:var(--text)}
+.strip__item .ic{width:18px;height:18px;color:var(--green);flex:none}
 
 /* ============================================================
    STEPS (como funciona)
@@ -412,11 +410,20 @@ img,svg{display:block;max-width:100%}
 /* ============================================================
    FOOTER
    ============================================================ */
-.footer{padding:48px 0 28px;border-top:1px solid var(--line)}
-.footer__inner{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
-.footer__brand{display:flex;align-items:center;gap:9px}
-.footer__tag{font-family:var(--font-display);letter-spacing:.5px;font-size:1rem}
-.footer__copy{text-align:center;color:var(--dim);font-size:.8rem;margin-top:26px}
+.footer{padding:clamp(40px,6vw,60px) 0 26px;border-top:1px solid var(--line);background:var(--bg-800)}
+.footer__inner{display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center}
+.footer__col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.footer__logo{height:42px;width:auto;display:block;filter:drop-shadow(0 4px 12px rgba(107,61,255,.45))}
+.footer__tag{color:var(--muted);font-size:.95rem;max-width:300px}
+.footer__nav{display:flex;flex-wrap:wrap;gap:14px 22px;justify-content:center}
+.footer__nav a{color:var(--muted);font-size:.92rem;transition:color .2s}
+.footer__nav a:hover{color:#fff}
+.footer__base{display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:center;color:var(--dim);font-size:.8rem;
+  margin-top:24px;padding-top:22px;border-top:1px solid var(--line);text-align:center}
+@media(min-width:820px){
+  .footer__inner{flex-direction:row;justify-content:space-between;align-items:center;text-align:left}
+  .footer__col{align-items:flex-start;text-align:left}
+}
 
 /* ============================================================
    MOBILE STICKY CTA

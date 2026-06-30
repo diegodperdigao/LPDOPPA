@@ -100,11 +100,11 @@
 
 <!-- ===================== TRUST STRIP ===================== -->
 <section class="strip">
-  <div class="container strip__grid">
-    <div class="strip__item reveal"><strong>0</strong><span>experiência necessária</span></div>
-    <div class="strip__item reveal"><strong>~2h</strong><span>por dia, no celular</span></div>
-    <div class="strip__item reveal"><strong class="stat__num" data-count="100" data-suffix="%">0%</strong><span>grátis pra participar</span></div>
-    <div class="strip__item reveal"><strong>Discord</strong><span>comunidade ativa</span></div>
+  <div class="container strip__row reveal">
+    <span class="strip__item"><svg class="ic"><use href="#i-check"></use></svg> Sem experiência ou seguidores</span>
+    <span class="strip__item"><svg class="ic"><use href="#i-clock"></use></svg> Cerca de 2h por dia</span>
+    <span class="strip__item"><svg class="ic"><use href="#i-video"></use></svg> Grave só com o celular</span>
+    <span class="strip__item"><svg class="ic"><use href="#i-users"></use></svg> Comunidade no Discord</span>
   </div>
 </section>
 
@@ -112,8 +112,8 @@
 <section class="section" id="sem-complicacao">
   <div class="container">
     <header class="head reveal">
-      <span class="eyebrow">Comece sem travas</span>
-      <h2 class="head__title">Esqueça os <span class="hl">pré-requisitos</span></h2>
+      <span class="eyebrow">Comece agora</span>
+      <h2 class="head__title">Você já tem <span class="hl">tudo que precisa</span></h2>
       <p class="head__lead">O que costuma travar a maioria, na Doppa já está resolvido.</p>
     </header>
 
@@ -249,6 +249,10 @@
         <div class="faq__body"><p>Os valores e as condições explicamos em detalhe na <strong>próxima etapa</strong>, já dentro do processo. O importante: é uma renda extra recorrente, e participar é grátis.</p></div>
       </details>
       <details class="faq__item">
+        <summary>Como funciona o recebimento?<span class="faq__plus" aria-hidden="true"></span></summary>
+        <div class="faq__body"><p>O recebimento é por <strong>vínculo PJ</strong>: você assina um termo e recebe como pessoa jurídica, normalmente por um <strong>MEI</strong> (ou outra categoria de CNPJ que você já tenha), emitindo nota fiscal. Se você ainda não tem CNPJ, abrir um MEI é simples e a gente te orienta no passo a passo.</p></div>
+      </details>
+      <details class="faq__item">
         <summary>Como eu entro?<span class="faq__plus" aria-hidden="true"></span></summary>
         <div class="faq__body"><p>É só clicar em <strong>"Quero minha vaga"</strong>, preencher o formulário rapidinho e você será direcionado(a) para a nossa comunidade no Discord, onde tudo começa. Lembrando que as <strong>vagas são limitadas</strong>.</p></div>
       </details>
@@ -259,13 +263,22 @@
 <!-- ===================== FOOTER ===================== -->
 <footer class="footer">
   <div class="container footer__inner">
-    <div class="footer__brand">
-      <img src="assets/doppa-logo.png" class="brand-logo" alt="Doppa" width="130" height="69" />
+    <div class="footer__col">
+      <img src="assets/doppa-logo.png" class="footer__logo" alt="Doppa" />
+      <p class="footer__tag">Sua porta de entrada para <span class="hl">viver de conteúdo.</span></p>
     </div>
-    <p class="footer__tag">Sua porta de entrada para <span class="hl">viver de conteúdo.</span></p>
+    <nav class="footer__nav" aria-label="Rodapé">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#passos">Passo a passo</a>
+      <a href="#oportunidade">A oportunidade</a>
+      <a href="#faq">FAQ</a>
+    </nav>
     <button class="btn btn--primary btn--sm js-open-form" data-source="footer">Quero minha vaga</button>
   </div>
-  <p class="footer__copy">© <span id="year"></span> Doppa · Conteúdo para maiores de 18 anos · Jogue com responsabilidade.</p>
+  <div class="footer__base">
+    <span>© <span id="year"></span> Doppa. Todos os direitos reservados.</span>
+    <span>Feito para quem cria · +18</span>
+  </div>
 </footer>
 
 <!-- ===================== MOBILE STICKY CTA ===================== -->
