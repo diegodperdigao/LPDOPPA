@@ -338,10 +338,11 @@ img,svg{display:block;max-width:100%}
 .vs-col__tag{display:inline-block;font-family:var(--font-display);font-size:.82rem;letter-spacing:1px;text-transform:uppercase;padding:5px 16px;border-radius:999px;margin-bottom:16px}
 .vs-col--old .vs-col__tag{background:var(--g-accent);color:#fff}
 .vs-col--doppa .vs-col__tag{background:var(--g-green);color:#06351c}
-.vs-col__icon{width:66px;height:66px;margin:0 auto 14px;border-radius:20px;display:grid;place-items:center}
-.vs-col__icon .ic{width:32px;height:32px;color:#fff}
-.vs-col--old .vs-col__icon{background:var(--g-accent);box-shadow:0 14px 30px -10px rgba(107,61,255,.8),inset 0 2px 0 rgba(255,255,255,.3)}
-.vs-col--doppa .vs-col__icon{background:var(--g-green);box-shadow:0 14px 30px -10px rgba(34,212,110,.7),inset 0 2px 0 rgba(255,255,255,.3)}
+.vs-col__icon{width:72px;height:72px;margin:0 auto 14px;border-radius:22px;display:grid;place-items:center;
+  box-shadow:0 16px 32px -12px rgba(0,0,0,.7), inset 0 2px 0 rgba(255,255,255,.14), inset 0 -4px 10px rgba(0,0,0,.45)}
+.vs-col__icon .ic{width:38px;height:38px}
+.vs-col--old .vs-col__icon{background:radial-gradient(120% 120% at 50% 12%, #2b1f63, #14112f)}
+.vs-col--doppa .vs-col__icon{background:radial-gradient(120% 120% at 50% 12%, #133e22, #0b2014)}
 .vs-col__base{display:block;font-family:var(--font-display);font-size:1.2rem;letter-spacing:.5px;color:var(--muted)}
 .vs-col__base strong{font-weight:400}
 .vs-col--old .vs-col__base strong{color:#b6a0ff}
@@ -375,11 +376,12 @@ img,svg{display:block;max-width:100%}
 .notice p+p{margin-top:10px}
 
 /* bullets compactos (pré-requisitos) */
-.bullets{display:grid;grid-template-columns:1fr;gap:12px;max-width:780px;margin:0 auto}
-.bullet{display:flex;align-items:center;gap:12px;padding:15px 18px;border-radius:14px;
-  background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:1rem;color:var(--text)}
-.bullet .ic{width:20px;height:20px;color:var(--green);flex:none}
-@media(min-width:640px){.bullets{grid-template-columns:1fr 1fr}}
+.bullets{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:840px;margin:0 auto}
+.bullet{display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:999px;
+  background:var(--surface-2);border:1px solid var(--line-2);font-weight:600;font-size:.95rem;color:var(--text);
+  transition:border-color .25s,background .25s,transform .25s var(--ease)}
+.bullet:hover{border-color:rgba(34,212,110,.55);background:rgba(34,212,110,.09);transform:translateY(-2px)}
+.bullet .ic{width:17px;height:17px;color:var(--green);flex:none}
 
 /* mascote no mobile (some no desktop, que já tem o do CTA) */
 .comunidade__mascot{display:block;width:clamp(120px,34vw,170px);height:auto;margin:0 auto 16px;
