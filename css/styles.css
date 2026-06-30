@@ -67,7 +67,7 @@ img,svg{display:block;max-width:100%}
 .container--narrow{max-width:780px}
 
 /* ---------- Logos (imagens reais) ---------- */
-.brand-logo{height:36px;width:auto;display:block;filter:drop-shadow(0 3px 10px rgba(107,61,255,.45))}
+.brand-logo{height:40px;width:auto;display:block;filter:drop-shadow(0 3px 10px rgba(107,61,255,.45))}
 .brand-eye{height:42px;width:42px;display:block;transition:height .3s,width .3s;filter:drop-shadow(0 3px 10px rgba(107,61,255,.5))}
 .nav.scrolled .brand-eye{height:36px;width:36px}
 .hero__logo{width:min(300px,64%);height:auto;margin:0 auto clamp(34px,5vw,52px);filter:drop-shadow(0 10px 26px rgba(107,61,255,.5))}
@@ -146,9 +146,7 @@ img,svg{display:block;max-width:100%}
 .nav.scrolled{background:rgba(10,14,43,.85);backdrop-filter:blur(14px);box-shadow:0 4px 24px -10px rgba(0,0,0,.7);padding:9px 0}
 .nav__inner{display:flex;align-items:center;gap:16px}
 /* logo da navbar só aparece ao scrollar (ao entrar, só a logo grande do hero) */
-.nav__brand{display:flex;align-items:center;gap:9px;opacity:0;visibility:hidden;transform:translateY(-8px);
-  transition:opacity .3s var(--ease),transform .3s var(--ease),visibility .3s}
-.nav.scrolled .nav__brand{opacity:1;visibility:visible;transform:none}
+.nav__brand{display:flex;align-items:center;gap:9px}
 .nav__links{display:none}
 .nav__cta{display:none}
 .nav__burger{display:flex;flex-direction:column;gap:5px;padding:8px;margin-left:auto;border-radius:10px}
@@ -171,7 +169,7 @@ img,svg{display:block;max-width:100%}
 /* ============================================================
    HERO
    ============================================================ */
-.hero{position:relative;padding:clamp(110px,22vw,150px) 0 clamp(48px,9vw,80px);overflow:hidden}
+.hero{position:relative;padding:clamp(82px,12vw,104px) 0 clamp(40px,7vw,64px);overflow:hidden}
 .hero__bg{position:absolute;inset:0;z-index:0;pointer-events:none}
 .hero__bg::before{content:"";position:absolute;inset:0;
   background:
@@ -223,7 +221,8 @@ img,svg{display:block;max-width:100%}
 .hero--video .hero__cta{justify-content:center;width:auto;margin-top:2px}
 .hero--video .hero__trust{justify-content:center}
 
-.vsl{width:100%;max-width:1080px;margin:4px auto 0}
+/* limita o player p/ caber inteiro na primeira dobra (altura da viewport) */
+.vsl{width:100%;max-width:min(1120px, calc((100vh - 285px) * 16 / 9));margin:4px auto 0}
 .vsl__stage{position:relative}
 .vsl__player{position:relative;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;
   background:radial-gradient(120% 120% at 50% 0%, #1a2150, #0b1030);
