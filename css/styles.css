@@ -325,6 +325,30 @@ img,svg{display:block;max-width:100%}
 .journey__item p{color:var(--muted);font-size:.95rem}
 
 /* ============================================================
+   VERSUS (lógica invertida)
+   ============================================================ */
+.versus{display:grid;grid-template-columns:1fr;gap:16px;max-width:920px;margin:0 auto}
+.vs-col{padding:26px 24px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--line)}
+.vs-col--old{border-color:rgba(107,61,255,.32)}
+.vs-col--doppa{border-color:rgba(34,212,110,.4);background:linear-gradient(165deg,rgba(34,212,110,.08),rgba(255,255,255,.02))}
+.vs-col__tag{display:inline-block;font-family:var(--font-display);font-size:.92rem;letter-spacing:.5px;padding:6px 16px;border-radius:999px;margin-bottom:18px}
+.vs-col--old .vs-col__tag{background:var(--g-accent);color:#fff}
+.vs-col--doppa .vs-col__tag{background:var(--g-green);color:#06351c}
+.vs-list{display:flex;flex-direction:column;gap:11px}
+.vs-list li{display:flex;align-items:center;gap:12px;font-size:.97rem;color:var(--text)}
+.vs-num{flex:none;width:27px;height:27px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.82rem}
+.vs-col--old .vs-num{background:rgba(107,61,255,.2);color:#bdaaff;border:1px solid rgba(107,61,255,.5)}
+.vs-col--doppa .vs-num{background:rgba(34,212,110,.16);color:#7df0b4;border:1px solid rgba(34,212,110,.5)}
+.vs-foot{margin-top:18px;padding-top:15px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.vs-col--old .vs-foot strong{color:#bdaaff}
+.vs-col--doppa .vs-foot strong{color:var(--green)}
+.vs-or{display:none}
+@media(min-width:768px){
+  .versus{grid-template-columns:1fr auto 1fr;align-items:stretch;gap:18px}
+  .vs-or{display:grid;place-items:center;align-self:center;font-family:var(--font-display);font-size:1.5rem;color:var(--muted)}
+}
+
+/* ============================================================
    NOTICE (transparência)
    ============================================================ */
 .notice{display:flex;gap:18px;align-items:flex-start;padding:clamp(22px,5vw,32px);border-radius:var(--radius-lg);
