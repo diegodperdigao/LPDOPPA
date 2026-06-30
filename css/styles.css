@@ -249,7 +249,7 @@ img,svg{display:block;max-width:100%}
   background:var(--g-primary);box-shadow:0 12px 32px -6px rgba(60,80,255,.85);
   transition:transform .2s var(--ease);animation:pulsePlay 2.4s ease-in-out infinite}
 .vsl__play:hover{transform:translate(-50%,-50%) scale(1.08);animation:none}
-.vsl__play .ic{width:32px;height:32px;color:#fff;margin-left:3px}
+.vsl__play .ic{width:32px;height:32px;color:#fff;margin-left:2px}
 @keyframes pulsePlay{0%,100%{box-shadow:0 12px 32px -6px rgba(60,80,255,.85),0 0 0 0 rgba(107,61,255,.5)}50%{box-shadow:0 12px 32px -6px rgba(60,80,255,.85),0 0 0 18px rgba(107,61,255,0)}}
 .vsl__label{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:var(--muted);font-size:.86rem;font-weight:500;pointer-events:none}
 .vsl__player--playing .vsl__play,.vsl__player--playing .vsl__label{display:none}
