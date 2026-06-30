@@ -338,23 +338,20 @@ img,svg{display:block;max-width:100%}
 .vs-col__tag{display:inline-block;font-family:var(--font-display);font-size:.82rem;letter-spacing:1px;text-transform:uppercase;padding:5px 16px;border-radius:999px;margin-bottom:16px}
 .vs-col--old .vs-col__tag{background:var(--g-accent);color:#fff}
 .vs-col--doppa .vs-col__tag{background:var(--g-green);color:#06351c}
-.vs-col__icon{width:62px;height:62px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center}
-.vs-col__icon .ic{width:30px;height:30px;color:#fff}
-.vs-col--old .vs-col__icon{background:var(--g-accent);box-shadow:0 12px 28px -8px rgba(107,61,255,.75)}
-.vs-col--doppa .vs-col__icon{background:var(--g-green);box-shadow:0 12px 28px -8px rgba(34,212,110,.7)}
+.vs-col__icon{width:66px;height:66px;margin:0 auto 14px;border-radius:20px;display:grid;place-items:center}
+.vs-col__icon .ic{width:32px;height:32px;color:#fff}
+.vs-col--old .vs-col__icon{background:var(--g-accent);box-shadow:0 14px 30px -10px rgba(107,61,255,.8),inset 0 2px 0 rgba(255,255,255,.3)}
+.vs-col--doppa .vs-col__icon{background:var(--g-green);box-shadow:0 14px 30px -10px rgba(34,212,110,.7),inset 0 2px 0 rgba(255,255,255,.3)}
 .vs-col__base{display:block;font-family:var(--font-display);font-size:1.2rem;letter-spacing:.5px;color:var(--muted)}
 .vs-col__base strong{font-weight:400}
 .vs-col--old .vs-col__base strong{color:#b6a0ff}
 .vs-col--doppa .vs-col__base strong{color:var(--green)}
-.vs-list{display:flex;flex-direction:column;gap:13px;position:relative}
-.vs-list::before{content:"";position:absolute;left:13px;top:14px;bottom:14px;width:2px;z-index:0}
-.vs-col--old .vs-list::before{background:linear-gradient(rgba(107,61,255,.5),rgba(107,61,255,.12))}
-.vs-col--doppa .vs-list::before{background:linear-gradient(rgba(34,212,110,.5),rgba(34,212,110,.12))}
-.vs-list li{display:flex;align-items:center;gap:13px;font-size:.97rem;color:var(--text);position:relative}
+.vs-list{display:flex;flex-direction:column;gap:13px}
+.vs-list li{display:flex;align-items:center;gap:13px;font-size:.97rem;color:var(--text)}
 .vs-num{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.82rem;z-index:1}
 .vs-col--old .vs-num{background:rgba(107,61,255,.25);color:#c2b0ff;border:1px solid rgba(107,61,255,.6)}
 .vs-col--doppa .vs-num{background:rgba(34,212,110,.2);color:#86f2bb;border:1px solid rgba(34,212,110,.6)}
-.vs-foot{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted);text-align:center}
+.vs-foot{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted);text-align:left;line-height:1.75}
 .vs-col--old .vs-foot strong{color:#b6a0ff}
 .vs-col--doppa .vs-foot strong{color:var(--green)}
 .vs-or{display:flex;align-items:center;justify-content:center;margin:-4px 0}
@@ -376,6 +373,13 @@ img,svg{display:block;max-width:100%}
 .notice h3{font-size:1.12rem;margin-bottom:10px}
 .notice p{color:var(--muted);font-size:.95rem}
 .notice p+p{margin-top:10px}
+
+/* bullets compactos (pré-requisitos) */
+.bullets{display:grid;grid-template-columns:1fr;gap:12px;max-width:780px;margin:0 auto}
+.bullet{display:flex;align-items:center;gap:12px;padding:15px 18px;border-radius:14px;
+  background:var(--surface);border:1px solid var(--line);font-weight:600;font-size:1rem;color:var(--text)}
+.bullet .ic{width:20px;height:20px;color:var(--green);flex:none}
+@media(min-width:640px){.bullets{grid-template-columns:1fr 1fr}}
 
 /* mascote no mobile (some no desktop, que já tem o do CTA) */
 .comunidade__mascot{display:block;width:clamp(120px,34vw,170px);height:auto;margin:0 auto 16px;
