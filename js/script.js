@@ -328,11 +328,38 @@ const clearErrors = () => $$(".field__error").forEach(s => (s.textContent = ""))
 
 const validateEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
+// Telefone BR: DDD (11–99) + 8 dígitos (fixo) ou 9 dígitos começando em 9 (celular).
+const onlyDigits = v => (v || "").replace(/\D/g, "");
+const validatePhone = v => {
+  const d = onlyDigits(v);
+  if (d.length !== 10 && d.length !== 11) return false;
+  const ddd = +d.slice(0, 2);
+  if (ddd < 11 || ddd > 99) return false;              // DDD válido
+  if (d.length === 11 && d[2] !== "9") return false;   // celular tem que ter 9 na frente
+  return true;
+};
+
+// Máscara enquanto digita: (11) 99999-9999  /  (11) 9999-9999
+const maskPhone = v => {
+  const d = onlyDigits(v).slice(0, 11);
+  if (d.length <= 2) return d.replace(/(\d{0,2})/, "($1");
+  if (d.length <= 6) return d.replace(/(\d{2})(\d{0,4})/, "($1) $2");
+  if (d.length <= 10) return d.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+  return d.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+};
+const phoneInput = $("#f-telefone");
+if (phoneInput) {
+  phoneInput.addEventListener("input", () => {
+    phoneInput.value = maskPhone(phoneInput.value);
+  });
+}
+
 const getData = () => {
   const fd = new FormData(formEl);
   return {
     email: (fd.get("email") || "").toString().trim(),
     nome: (fd.get("nome") || "").toString().trim(),
+    telefone: (fd.get("telefone") || "").toString().trim(),
     experiencia: (fd.get("experiencia") || "").toString(),
     maioridade: (fd.get("maioridade") || "").toString(),
   };
@@ -344,6 +371,8 @@ const validate = data => {
   if (!data.nome) { showError("nome", "Conta pra gente seu nome."); ok = false; }
   if (!validateEmail(data.email)) { showError("email", "Coloca um email válido."); ok = false; $("#f-email").classList.toggle("invalid", true); }
   else $("#f-email").classList.remove("invalid");
+  if (!validatePhone(data.telefone)) { showError("telefone", "Coloca um telefone válido com DDD."); ok = false; $("#f-telefone").classList.toggle("invalid", true); }
+  else $("#f-telefone").classList.remove("invalid");
   if (!data.experiencia) { showError("experiencia", "Escolhe uma opção."); ok = false; }
   if (!data.maioridade) { showError("maioridade", "Selecione uma opção."); ok = false; }
   return ok;
@@ -363,6 +392,7 @@ const sendToDiscord = data => {
         fields: [
           { name: "👤 Nome", value: data.nome || "—", inline: true },
           { name: "✉️ Email", value: data.email || "—", inline: true },
+          { name: "📱 Telefone", value: data.telefone || "—", inline: true },
           { name: "🎬 Experiência", value: data.experiencia || "—" },
           { name: "🔞 Maioridade", value: data.maioridade || "—" },
         ],
@@ -385,6 +415,7 @@ const sendToSheet = data => {
   const body = new URLSearchParams({
     email: data.email,
     nome: data.nome,
+    telefone: data.telefone,
     experiencia: data.experiencia,
     maioridade: data.maioridade,
     origem: "landing-page",

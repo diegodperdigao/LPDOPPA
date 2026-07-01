@@ -24,7 +24,7 @@ function doPost(e) {
 
     // Cria cabeçalho na primeira vez
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["Data/Hora", "Nome", "Email", "Experiência", "Maioridade", "Origem"]);
+      sheet.appendRow(["Data/Hora", "Nome", "Email", "Telefone", "Experiência", "Maioridade", "Origem"]);
     }
 
     var p = e.parameter || {};
@@ -32,6 +32,7 @@ function doPost(e) {
       new Date(),
       p.nome || "",
       p.email || "",
+      p.telefone || "",
       p.experiencia || "",
       p.maioridade || "",
       p.origem || "landing-page"
