@@ -36,8 +36,8 @@ const CONFIG = {
   // cole a URL de uma imagem aqui (ex: "assets/capa-vsl.jpg").
   VIDEO_POSTER: "",
 
-  // (Não usado no momento) O acesso ao Discord agora é por clique no botão,
-  // que abre em aba nova — sem redirect automático, pra pessoa poder rever a LP.
+  // Tempo (ms) até redirecionar pro Discord depois do sucesso.
+  // (o usuário também pode clicar no botão "Entrar no Discord" na hora)
   REDIRECT_DELAY: 1400,
 };
 
@@ -495,8 +495,10 @@ formEl.addEventListener("submit", async e => {
   successEl.hidden = false;
   $("#discord-link").href = CONFIG.DISCORD_INVITE;
   fireConfetti();
-  // Sem redirect automático: a pessoa fica na LP e entra no Discord pelo botão
-  // (que abre em aba nova), podendo rever o vídeo/infos antes.
+
+  setTimeout(() => {
+    window.location.href = CONFIG.DISCORD_INVITE;
+  }, CONFIG.REDIRECT_DELAY);
 });
 
 /* ============================================================
