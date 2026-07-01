@@ -1,0 +1,10 @@
+{
+  // Nome do Worker (precisa ser minúsculo).
+  "name": "doppa",
+  "compatibility_date": "2026-07-01",
+  // Site 100% estático: serve os arquivos da raiz do repositório
+  // como assets, sem precisar de um script de Worker.
+  "assets": {
+    "directory": "."
+  }
+}
