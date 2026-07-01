@@ -26,6 +26,11 @@ const CONFIG = {
   // false = mantém os controles (o usuário pode pausar/ajustar volume).
   VIDEO_HIDE_CONTROLS: false,
 
+  // Capa/thumbnail do vídeo (aparece antes do play). Se vazio e for YouTube,
+  // usa a thumb automática do próprio vídeo. Para uma capa personalizada,
+  // cole a URL de uma imagem aqui (ex: "assets/capa-vsl.jpg").
+  VIDEO_POSTER: "",
+
   // Tempo (ms) até redirecionar pro Discord depois do sucesso.
   REDIRECT_DELAY: 2600,
 };
@@ -181,6 +186,22 @@ $("#year").textContent = new Date().getFullYear();
   const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   const vimeoId = vimeoMatch ? vimeoMatch[1] : null;
   const isFile = /\.(mp4|webm|ogg)(\?|$)/i.test(url);
+
+  // capa/thumb antes do play
+  if (url) {
+    const poster = CONFIG.VIDEO_POSTER || (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : "");
+    if (poster) {
+      const img = document.createElement("img");
+      img.className = "vsl__poster";
+      img.alt = "";
+      img.decoding = "async";
+      img.src = poster;
+      if (ytId && !CONFIG.VIDEO_POSTER) {
+        img.onerror = () => { img.onerror = null; img.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`; };
+      }
+      player.insertBefore(img, player.firstChild);
+    }
+  }
 
   const buildIframe = src => {
     const f = document.createElement("iframe");
