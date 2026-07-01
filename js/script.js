@@ -13,7 +13,7 @@ const CONFIG = {
   // URL do Google Apps Script (planilha). Cole depois de implantar.
   // Enquanto estiver vazia (""), a integração com a planilha fica desligada
   // e o resto continua funcionando normalmente.
-  SHEET_ENDPOINT: "",
+  SHEET_ENDPOINT: "https://script.google.com/macros/s/AKfycbzCqQzGv_DTUR5WsYN6F0Su6P9dBPTqIaKc0gChbiHntuPshW24AVMg94dXaQwJdVGp/exec",
 
   // Vídeo da VSL. Cole a URL (qualquer formato funciona):
   //   YouTube:  "https://youtu.be/SEU_ID"  ou  "https://www.youtube.com/watch?v=SEU_ID"
