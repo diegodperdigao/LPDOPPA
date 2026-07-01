@@ -289,6 +289,7 @@ const modal = $("#form-modal");
 const formEl = $("#lead-form");
 const successEl = $("#form-success");
 const waitEl = $("#form-wait");
+const modalHead = $("#modal-head");
 let lastFocused = null;
 
 const openModal = () => {
@@ -297,6 +298,7 @@ const openModal = () => {
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
   // garante estado limpo
+  modalHead.hidden = false;
   formEl.hidden = false;
   successEl.hidden = true;
   waitEl.hidden = true;
@@ -422,12 +424,14 @@ formEl.addEventListener("submit", async e => {
 
   if (!maiorDeIdade) {
     // ainda registramos o lead, mas não redirecionamos
+    modalHead.hidden = true;
     formEl.hidden = true;
     waitEl.hidden = false;
     return;
   }
 
   // sucesso → confetes → redireciona
+  modalHead.hidden = true;
   formEl.hidden = true;
   successEl.hidden = false;
   $("#discord-link").href = CONFIG.DISCORD_INVITE;
