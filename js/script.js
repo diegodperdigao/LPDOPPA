@@ -15,6 +15,11 @@ const CONFIG = {
   // e o resto continua funcionando normalmente.
   SHEET_ENDPOINT: "https://script.google.com/macros/s/AKfycbzCqQzGv_DTUR5WsYN6F0Su6P9dBPTqIaKc0gChbiHntuPshW24AVMg94dXaQwJdVGp/exec",
 
+  // Supabase (banco de dados). A chave publishable é pública por design e a
+  // tabela `leads` só aceita INSERT via RLS. Deixe vazio pra desligar.
+  SUPABASE_URL: "https://ajwfpdprgdcvrkermcwx.supabase.co",
+  SUPABASE_KEY: "sb_publishable_7AIcd333tOtfC6hzaoNf2A_leFGCu82",
+
   // Vídeo da VSL. Cole a URL (qualquer formato funciona):
   //   YouTube:  "https://youtu.be/SEU_ID"  ou  "https://www.youtube.com/watch?v=SEU_ID"
   //   Vimeo:    "https://vimeo.com/SEU_ID"
@@ -430,6 +435,28 @@ const sendToSheet = data => {
   }).catch(err => console.warn("Planilha falhou:", err));
 };
 
+const sendToSupabase = data => {
+  if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) return Promise.resolve(); // desligado
+  return fetch(`${CONFIG.SUPABASE_URL}/rest/v1/leads`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: CONFIG.SUPABASE_KEY,
+      Authorization: `Bearer ${CONFIG.SUPABASE_KEY}`,
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify({
+      nome: data.nome,
+      email: data.email,
+      telefone: data.telefone,
+      experiencia: data.experiencia,
+      maioridade: data.maioridade,
+      origem: "landing-page",
+    }),
+    keepalive: true,
+  }).catch(err => console.warn("Supabase falhou:", err));
+};
+
 /* ============================================================
    Submit handler
    ============================================================ */
@@ -450,6 +477,7 @@ formEl.addEventListener("submit", async e => {
   // travamos a UX esperando a rede: o sucesso aparece na hora.
   sendToDiscord(data);
   sendToSheet(data);
+  sendToSupabase(data);
 
   const maiorDeIdade = data.maioridade === "De acordo, sou maior de idade";
 
