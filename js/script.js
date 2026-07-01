@@ -15,12 +15,16 @@ const CONFIG = {
   // e o resto continua funcionando normalmente.
   SHEET_ENDPOINT: "",
 
-  // Vídeo da VSL. Cole a URL de EMBED:
-  //   YouTube:  "https://www.youtube.com/embed/SEU_ID"
-  //   Vimeo:    "https://player.vimeo.com/video/SEU_ID"
+  // Vídeo da VSL. Cole a URL (qualquer formato funciona):
+  //   YouTube:  "https://youtu.be/SEU_ID"  ou  "https://www.youtube.com/watch?v=SEU_ID"
+  //   Vimeo:    "https://vimeo.com/SEU_ID"
   //   ou um MP4 direto: "https://.../video.mp4"
   // Enquanto vazio (""), mostra só o player com o botão de play.
   VIDEO_URL: "",
+
+  // true = esconde a barra de controles do YouTube (evita pular o vídeo).
+  // false = mantém os controles (o usuário pode pausar/ajustar volume).
+  VIDEO_HIDE_CONTROLS: false,
 
   // Tempo (ms) até redirecionar pro Discord depois do sucesso.
   REDIRECT_DELAY: 2600,
@@ -171,12 +175,53 @@ $("#year").textContent = new Date().getFullYear();
   const playBtn = $("#vsl-play");
   if (!player || !playBtn) return;
 
-  const isFile = url => /\.(mp4|webm|ogg)(\?|$)/i.test(url);
+  const url = CONFIG.VIDEO_URL || "";
+  const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([\w-]{6,})/);
+  const ytId = ytMatch ? ytMatch[1] : null;
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  const vimeoId = vimeoMatch ? vimeoMatch[1] : null;
+  const isFile = /\.(mp4|webm|ogg)(\?|$)/i.test(url);
+
+  const buildIframe = src => {
+    const f = document.createElement("iframe");
+    f.src = src;
+    f.title = "Vídeo Doppa";
+    f.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
+    f.allowFullscreen = true;
+    return f;
+  };
+
+  // tela final própria (evita a grade de sugestões do YouTube)
+  const showEnd = () => {
+    if (player.querySelector(".vsl__end")) return;
+    const end = document.createElement("div");
+    end.className = "vsl__end";
+    end.innerHTML =
+      '<button class="vsl__replay" type="button" aria-label="Assistir de novo"><svg class="ic"><use href="#i-play"></use></svg></button>' +
+      '<button class="btn btn--primary btn--lg" type="button">Quero minha vaga <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg></button>';
+    player.appendChild(end);
+    end.querySelector(".btn").addEventListener("click", openModal);
+    end.querySelector(".vsl__replay").addEventListener("click", () => {
+      end.remove();
+      if (window.__ytPlayer && window.__ytPlayer.seekTo) { window.__ytPlayer.seekTo(0); window.__ytPlayer.playVideo(); }
+      else { const v = player.querySelector("video"); if (v) { v.currentTime = 0; v.play(); } }
+    });
+  };
+
+  const loadYT = cb => {
+    if (window.YT && window.YT.Player) return cb();
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { if (typeof prev === "function") prev(); cb(); };
+    if (!document.getElementById("yt-api")) {
+      const s = document.createElement("script");
+      s.id = "yt-api";
+      s.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(s);
+    }
+  };
 
   const mount = () => {
-    const url = CONFIG.VIDEO_URL;
     if (!url) {
-      // sem vídeo configurado ainda — só dá um feedback visual
       playBtn.animate(
         [{ transform: "translate(-50%,-50%) scale(1)" }, { transform: "translate(-50%,-50%) scale(.9)" }, { transform: "translate(-50%,-50%) scale(1)" }],
         { duration: 260 }
@@ -184,27 +229,35 @@ $("#year").textContent = new Date().getFullYear();
       console.warn("Defina CONFIG.VIDEO_URL no script.js para ativar o vídeo da VSL.");
       return;
     }
-    let media;
-    if (isFile(url)) {
-      media = document.createElement("video");
-      media.src = url;
-      media.controls = true;
-      media.autoplay = true;
-      media.playsInline = true;
-    } else {
-      media = document.createElement("iframe");
-      media.src = url + (url.includes("?") ? "&" : "?") + "autoplay=1";
-      media.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
-      media.allowFullscreen = true;
-      media.setAttribute("title", "Vídeo Doppa");
-    }
     player.classList.add("vsl__player--playing");
-    player.appendChild(media);
+
+    if (ytId) {
+      loadYT(() => {
+        const holder = document.createElement("div");
+        player.appendChild(holder);
+        window.__ytPlayer = new YT.Player(holder, {
+          videoId: ytId,
+          playerVars: {
+            autoplay: 1, rel: 0, modestbranding: 1,
+            controls: CONFIG.VIDEO_HIDE_CONTROLS ? 0 : 1,
+            disablekb: 1, fs: 1, iv_load_policy: 3, playsinline: 1
+          },
+          events: { onStateChange: e => { if (e.data === 0) showEnd(); } } // 0 = ENDED
+        });
+      });
+    } else if (vimeoId) {
+      player.appendChild(buildIframe(`https://player.vimeo.com/video/${vimeoId}?autoplay=1`));
+    } else if (isFile) {
+      const v = document.createElement("video");
+      v.src = url; v.controls = true; v.autoplay = true; v.playsInline = true;
+      v.addEventListener("ended", showEnd);
+      player.appendChild(v);
+    } else {
+      player.appendChild(buildIframe(url + (url.includes("?") ? "&" : "?") + "autoplay=1"));
+    }
   };
 
   playBtn.addEventListener("click", mount);
-
-  // Se o vídeo já estiver configurado, deixa pronto pra tocar no clique.
 })();
 
 /* ============================================================
