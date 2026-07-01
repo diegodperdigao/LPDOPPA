@@ -32,7 +32,8 @@ const CONFIG = {
   VIDEO_POSTER: "",
 
   // Tempo (ms) até redirecionar pro Discord depois do sucesso.
-  REDIRECT_DELAY: 2600,
+  // (o usuário também pode clicar no botão "Entrar no Discord" na hora)
+  REDIRECT_DELAY: 1400,
 };
 
 /* ============================================================
@@ -372,6 +373,7 @@ const sendToDiscord = data => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+    keepalive: true,
   }).catch(err => console.warn("Discord webhook falhou:", err));
 };
 
@@ -391,6 +393,7 @@ const sendToSheet = data => {
     mode: "no-cors",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
+    keepalive: true,
   }).catch(err => console.warn("Planilha falhou:", err));
 };
 
@@ -406,17 +409,14 @@ formEl.addEventListener("submit", async e => {
   const data = getData();
   if (!validate(data)) return;
 
-  // estado de loading
+  // trava o botão pra evitar duplo envio (o form é escondido logo abaixo)
   submitBtn.disabled = true;
-  btnLabel.hidden = true;
-  btnLoader.hidden = false;
 
-  // dispara as duas integrações em paralelo (não bloqueia a UX)
-  await Promise.allSettled([sendToDiscord(data), sendToSheet(data)]);
-
-  submitBtn.disabled = false;
-  btnLabel.hidden = false;
-  btnLoader.hidden = true;
+  // dispara as integrações em background — o keepalive nos fetches garante
+  // que elas completam mesmo com o redirect logo em seguida, então NÃO
+  // travamos a UX esperando a rede: o sucesso aparece na hora.
+  sendToDiscord(data);
+  sendToSheet(data);
 
   const maiorDeIdade = data.maioridade === "De acordo, sou maior de idade";
 
