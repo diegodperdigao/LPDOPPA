@@ -31,6 +31,10 @@ const CONFIG = {
   // false = mantém os controles (o usuário pode pausar/ajustar volume).
   VIDEO_HIDE_CONTROLS: false,
 
+  // true = pré-carrega o player (usado na /vsl) pra o 1º toque já iniciar a
+  // reprodução no mobile, sem o "duplo play" do YouTube.
+  VIDEO_PRELOAD: false,
+
   // Capa/thumbnail do vídeo (aparece antes do play). Se vazio e for YouTube,
   // usa a thumb automática do próprio vídeo. Para uma capa personalizada,
   // cole a URL de uma imagem aqui (ex: "assets/capa-vsl.jpg").
@@ -255,6 +259,35 @@ $("#year").textContent = new Date().getFullYear();
     }
   };
 
+  let ytReady = false, wantsPlay = false;
+
+  const startYT = () => {
+    try { window.__ytPlayer.unMute(); window.__ytPlayer.setVolume(100); } catch (e) {}
+    window.__ytPlayer.playVideo();
+  };
+
+  const createYT = autoplay => {
+    const holder = document.createElement("div");
+    if (CONFIG.VIDEO_PRELOAD) holder.style.zIndex = "0"; // atrás da capa até o play
+    player.appendChild(holder);
+    window.__ytPlayer = new YT.Player(holder, {
+      videoId: ytId,
+      playerVars: {
+        autoplay: autoplay ? 1 : 0, rel: 0, modestbranding: 1,
+        controls: CONFIG.VIDEO_HIDE_CONTROLS ? 0 : 1,
+        disablekb: 1, fs: 1, iv_load_policy: 3, playsinline: 1
+      },
+      events: {
+        onReady: () => {
+          ytReady = true;
+          document.dispatchEvent(new Event("doppa:videoready"));
+          if (wantsPlay) startYT();
+        },
+        onStateChange: e => { if (e.data === 0) showEnd(); } // 0 = ENDED
+      }
+    });
+  };
+
   const mount = () => {
     if (!url) {
       playBtn.animate(
@@ -267,33 +300,30 @@ $("#year").textContent = new Date().getFullYear();
     player.classList.add("vsl__player--playing");
 
     if (ytId) {
-      loadYT(() => {
-        const holder = document.createElement("div");
-        player.appendChild(holder);
-        window.__ytPlayer = new YT.Player(holder, {
-          videoId: ytId,
-          playerVars: {
-            autoplay: 1, rel: 0, modestbranding: 1,
-            controls: CONFIG.VIDEO_HIDE_CONTROLS ? 0 : 1,
-            disablekb: 1, fs: 1, iv_load_policy: 3, playsinline: 1
-          },
-          events: {
-            onReady: () => document.dispatchEvent(new Event("doppa:videoready")),
-            onStateChange: e => { if (e.data === 0) showEnd(); } // 0 = ENDED
-          }
-        });
-      });
+      if (CONFIG.VIDEO_PRELOAD) {
+        // player já pré-carregado: toca DENTRO do gesto → sem duplo-play no mobile
+        ytReady ? startYT() : (wantsPlay = true);
+      } else {
+        loadYT(() => createYT(true));
+      }
     } else if (vimeoId) {
       player.appendChild(buildIframe(`https://player.vimeo.com/video/${vimeoId}?autoplay=1`));
     } else if (isFile) {
       const v = document.createElement("video");
-      v.src = url; v.controls = true; v.autoplay = true; v.playsInline = true;
+      v.src = url; v.controls = !CONFIG.VIDEO_HIDE_CONTROLS; v.autoplay = true; v.playsInline = true;
       v.addEventListener("ended", showEnd);
       player.appendChild(v);
     } else {
       player.appendChild(buildIframe(url + (url.includes("?") ? "&" : "?") + "autoplay=1"));
     }
   };
+
+  // pré-carrega o YouTube (cued) atrás da capa, pra o toque já iniciar a reprodução
+  if (ytId && CONFIG.VIDEO_PRELOAD) {
+    const poster = player.querySelector(".vsl__poster");
+    if (poster) poster.style.zIndex = "1";
+    loadYT(() => createYT(false));
+  }
 
   playBtn.addEventListener("click", mount);
 })();

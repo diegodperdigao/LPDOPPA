@@ -73,10 +73,11 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
    só os controles reais capturam o clique */
 .vsl-ctrl{
   position:absolute; left:0; right:0; bottom:0; z-index:4;
-  display:flex; align-items:center; gap:8px; padding:10px 14px;
+  display:none; align-items:center; gap:8px; padding:10px 14px;
   background:linear-gradient(to top, rgba(0,0,0,.5), rgba(0,0,0,0));
   pointer-events:none;
 }
+.vsl__player--playing .vsl-ctrl{ display:flex; }
 .vsl-ctrl > *{ pointer-events:auto; }
 .vsl-ctrl__btn{
   appearance:none; border:0; background:transparent; color:#fff; cursor:pointer;
