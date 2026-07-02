@@ -89,17 +89,18 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 .vsl-ctrl__btn:active{ transform:scale(.92); }
 .vsl-ctrl__btn svg{ width:100%; height:100%; }
 
-/* volume em barra VERTICAL (aparece acima do alto-falante) */
-.vsl-vol{ position:relative; }
-.vsl-vol__pop{
-  position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
-  width:42px; height:120px; border-radius:12px;
-  background:rgba(10,14,43,.94); border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 12px 30px rgba(0,0,0,.5);
-  display:none; align-items:center; justify-content:center;
+/* volume: alto-falante (mudo) + slider que aparece no hover (desktop) */
+.vsl-vol{ display:flex; align-items:center; }
+.vsl-vol__slider{
+  width:0; opacity:0; height:4px; accent-color:#1E3AFF; cursor:pointer;
+  transition:width .22s ease, opacity .2s, margin .22s;
 }
-.vsl-vol:hover .vsl-vol__pop, .vsl-vol.open .vsl-vol__pop{ display:flex; }
-.vsl-vol__slider{ width:96px; height:4px; accent-color:#1E3AFF; cursor:pointer; transform:rotate(-90deg); }
+.vsl-vol:hover .vsl-vol__slider, .vsl-vol:focus-within .vsl-vol__slider{
+  width:90px; opacity:1; margin:0 6px 0 4px;
+}
 @media (max-width:560px){
   .vsl-ctrl__btn{ width:42px; height:42px; padding:9px; }
+  /* no mobile o volume por software não funciona no iPhone e o slider cortava:
+     deixamos só o botão de mudo, que funciona em todo aparelho */
+  .vsl-vol:hover .vsl-vol__slider, .vsl-vol:focus-within .vsl-vol__slider{ width:0; opacity:0; margin:0; }
 }

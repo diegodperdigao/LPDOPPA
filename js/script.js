@@ -259,21 +259,24 @@ $("#year").textContent = new Date().getFullYear();
     }
   };
 
-  let ytReady = false, wantsPlay = false;
+  let ytReady = false, wantsPlay = false, started = false;
 
   const startYT = () => {
-    try { window.__ytPlayer.unMute(); window.__ytPlayer.setVolume(100); } catch (e) {}
+    started = true;
+    try { window.__ytPlayer.unMute(); window.__ytPlayer.setVolume(100); window.__ytPlayer.seekTo(0, true); } catch (e) {}
     window.__ytPlayer.playVideo();
   };
 
-  const createYT = autoplay => {
+  const createYT = () => {
+    const preload = CONFIG.VIDEO_PRELOAD;
     const holder = document.createElement("div");
-    if (CONFIG.VIDEO_PRELOAD) holder.style.zIndex = "0"; // atrás da capa até o play
+    if (preload) holder.style.zIndex = "0"; // atrás da capa até o play
     player.appendChild(holder);
     window.__ytPlayer = new YT.Player(holder, {
       videoId: ytId,
       playerVars: {
-        autoplay: autoplay ? 1 : 0, rel: 0, modestbranding: 1,
+        autoplay: 1, rel: 0, modestbranding: 1,
+        mute: preload ? 1 : 0, // no preload toca mudo pra já bufferizar → tap = som na hora
         controls: CONFIG.VIDEO_HIDE_CONTROLS ? 0 : 1,
         disablekb: 1, fs: 1, iv_load_policy: 3, playsinline: 1
       },
@@ -281,7 +284,13 @@ $("#year").textContent = new Date().getFullYear();
         onReady: () => {
           ytReady = true;
           document.dispatchEvent(new Event("doppa:videoready"));
-          if (wantsPlay) startYT();
+          if (wantsPlay) return startYT();
+          // buffieriza mudo por um instante e pausa (não deixa correr até o fim sozinho)
+          if (preload) setTimeout(() => {
+            if (!started && window.__ytPlayer) {
+              try { window.__ytPlayer.pauseVideo(); window.__ytPlayer.seekTo(0, true); } catch (e) {}
+            }
+          }, 1400);
         },
         onStateChange: e => { if (e.data === 0) showEnd(); } // 0 = ENDED
       }
@@ -304,7 +313,7 @@ $("#year").textContent = new Date().getFullYear();
         // player já pré-carregado: toca DENTRO do gesto → sem duplo-play no mobile
         ytReady ? startYT() : (wantsPlay = true);
       } else {
-        loadYT(() => createYT(true));
+        loadYT(() => createYT());
       }
     } else if (vimeoId) {
       player.appendChild(buildIframe(`https://player.vimeo.com/video/${vimeoId}?autoplay=1`));
@@ -322,7 +331,7 @@ $("#year").textContent = new Date().getFullYear();
   if (ytId && CONFIG.VIDEO_PRELOAD) {
     const poster = player.querySelector(".vsl__poster");
     if (poster) poster.style.zIndex = "1";
-    loadYT(() => createYT(false));
+    loadYT(() => createYT());
   }
 
   playBtn.addEventListener("click", mount);

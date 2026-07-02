@@ -17,6 +17,11 @@
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<rect x="4.5" y="10.5" width="15" height="10.5" rx="2.4"/>' +
     '<path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>';
+  // cadeado ABERTO (toast de "conteúdo desbloqueado")
+  const UNLOCK_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="4.5" y="10.5" width="15" height="10.5" rx="2.4"/>' +
+    '<path d="M8 10.5V7a4 4 0 0 1 7.4-1.3"/></svg>';
 
   const CTA_SEL = ".js-open-form";
   const INTERACTIVE = "a[href], button, summary, [role='button']";
@@ -38,6 +43,7 @@
   const showToast = (msg, ok) => {
     ensureToast();
     toast.classList.toggle("vsl-toast--ok", !!ok);
+    toast.querySelector(".vsl-toast__ico").innerHTML = ok ? UNLOCK_SVG : LOCK_SVG;
     toast.querySelector(".vsl-toast__msg").textContent = msg;
     // reinicia a animação
     toast.classList.remove("show");
@@ -114,20 +120,21 @@
     const wrap = document.createElement("div");
     wrap.className = "vsl-vol";
     const spk = document.createElement("button");
-    spk.type = "button"; spk.className = "vsl-ctrl__btn"; spk.setAttribute("aria-label", "Volume");
+    spk.type = "button"; spk.className = "vsl-ctrl__btn"; spk.setAttribute("aria-label", "Ativar/desativar som");
     spk.innerHTML = ICON.vol;
-    const pop = document.createElement("div");
-    pop.className = "vsl-vol__pop";
     const vol = document.createElement("input");
     vol.type = "range"; vol.min = "0"; vol.max = "100"; vol.value = "100";
     vol.className = "vsl-vol__slider"; vol.setAttribute("aria-label", "Volume");
-    pop.appendChild(vol);
-    wrap.append(spk, pop);
+    wrap.append(spk, vol);
     bar.appendChild(wrap);
     player.appendChild(bar);
 
-    // clique no alto-falante mostra/esconde a barra (bom no mobile); no desktop, hover também mostra
-    spk.addEventListener("click", () => wrap.classList.toggle("open"));
+    // clique no alto-falante = mudo/desmudo (funciona em todo aparelho, iPhone incluso)
+    spk.addEventListener("click", () => {
+      if (yt.isMuted && yt.isMuted()) { yt.unMute(); if (+vol.value === 0) { vol.value = "70"; yt.setVolume(70); } }
+      else { yt.mute(); }
+    });
+    // slider regula o volume (aparece no hover no desktop; escondido no mobile)
     vol.addEventListener("input", () => {
       const v = +vol.value;
       yt.setVolume(v);
