@@ -33,3 +33,19 @@
   .vsl-toast{ transition:opacity .3s; }
   .vsl-toast.show{ transform:translate(-50%,0); }
 }
+
+/* ---- enquanto travado: esconde TODO o conteúdo abaixo do vídeo ---- */
+body.is-locked .strip,
+body.is-locked .section,
+body.is-locked .cta,
+body.is-locked .footer,
+body.is-locked .mobile-cta{ display:none !important; }
+
+/* aviso que aparece logo abaixo do vídeo enquanto travado */
+.vsl-locked-hint{
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  max-width:540px; margin:6px auto 46px; padding:0 18px;
+  color:#AEB4D6; font-family:"Poppins",sans-serif; font-size:15px; line-height:1.5;
+}
+.vsl-locked-hint svg{ flex:none; width:18px; height:18px; color:#FFD300; }
+body.is-unlocked .vsl-locked-hint{ display:none; }

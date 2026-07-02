@@ -78,11 +78,24 @@
     removeBadges();
     document.body.classList.remove("is-locked");
     document.body.classList.add("is-unlocked");
+    // garante que todas as seções (que usam .reveal) fiquem visíveis
+    document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
     showToast("Tudo liberado! Garanta sua vaga. 🎉", true);
   };
   document.addEventListener("doppa:videoended", unlock);
 
+  /* ---------- aviso abaixo do vídeo ---------- */
+  const addHint = () => {
+    const hero = document.getElementById("hero");
+    if (!hero || document.querySelector(".vsl-locked-hint")) return;
+    const hint = document.createElement("p");
+    hint.className = "vsl-locked-hint";
+    hint.innerHTML = LOCK_SVG + "<span>Assista ao vídeo até o final para desbloquear o conteúdo e sua vaga.</span>";
+    hero.insertAdjacentElement("afterend", hint);
+  };
+
   /* ---------- init ---------- */
   document.body.classList.add("is-locked");
   addBadges();
+  addHint();
 })();
