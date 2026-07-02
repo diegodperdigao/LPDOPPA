@@ -34,18 +34,27 @@
   .vsl-toast.show{ transform:translate(-50%,0); }
 }
 
-/* ---- enquanto travado: esconde TODO o conteúdo abaixo do vídeo ---- */
+/* ---- enquanto travado: esconde o conteúdo abaixo do vídeo (mantém o rodapé) ---- */
 body.is-locked .strip,
 body.is-locked .section,
 body.is-locked .cta,
-body.is-locked .footer,
 body.is-locked .mobile-cta{ display:none !important; }
 
-/* aviso que aparece logo abaixo do vídeo enquanto travado */
-.vsl-locked-hint{
-  display:flex; align-items:center; justify-content:center; gap:9px;
-  max-width:540px; margin:6px auto 46px; padding:0 18px;
-  color:#AEB4D6; font-family:"Poppins",sans-serif; font-size:15px; line-height:1.5;
+/* CTAs travados ficam iguais: sem seta, com cadeado */
+body.is-locked .js-open-form .ic--arrow{ display:none !important; }
+
+/* rodapé continua visível travado, porém sem o botão de CTA */
+body.is-locked .footer .js-open-form{ display:none !important; }
+body.is-locked .footer__inner{ justify-content:center; text-align:center; }
+
+/* aviso (chip) logo abaixo do vídeo enquanto travado */
+.vsl-locked-hint{ display:flex; justify-content:center; margin:4px auto 40px; padding:0 18px; }
+.vsl-locked-hint__pill{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:11px 20px; border-radius:999px;
+  background:rgba(255,211,0,.08); border:1px solid rgba(255,211,0,.3);
+  color:#FFE1A0; font-family:"Poppins",sans-serif; font-weight:600;
+  font-size:14.5px; line-height:1.35; text-align:left;
 }
-.vsl-locked-hint svg{ flex:none; width:18px; height:18px; color:#FFD300; }
+.vsl-locked-hint__pill svg{ flex:none; width:18px; height:18px; color:#FFD300; }
 body.is-unlocked .vsl-locked-hint{ display:none; }

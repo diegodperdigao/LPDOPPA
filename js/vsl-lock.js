@@ -90,7 +90,9 @@
     if (!hero || document.querySelector(".vsl-locked-hint")) return;
     const hint = document.createElement("p");
     hint.className = "vsl-locked-hint";
-    hint.innerHTML = LOCK_SVG + "<span>Assista ao vídeo até o final para desbloquear o conteúdo e sua vaga.</span>";
+    hint.innerHTML =
+      '<span class="vsl-locked-hint__pill">' + LOCK_SVG +
+      "<span>Assista ao vídeo até o final para desbloquear o conteúdo e sua vaga.</span></span>";
     hero.insertAdjacentElement("afterend", hint);
   };
 
