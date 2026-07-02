@@ -43,12 +43,16 @@ body.is-locked .mobile-cta{ display:none !important; }
 /* CTAs travados ficam iguais: sem seta, com cadeado */
 body.is-locked .js-open-form .ic--arrow{ display:none !important; }
 
-/* rodapé continua visível travado, porém sem o botão de CTA */
+/* rodapé continua visível travado, porém sem o botão de CTA, tudo centralizado */
 body.is-locked .footer .js-open-form{ display:none !important; }
-body.is-locked .footer__inner{ justify-content:center; text-align:center; }
+body.is-locked .footer__inner{ flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+body.is-locked .footer__col{ align-items:center; text-align:center; }
+body.is-locked .footer__logo{ margin:0 auto; }
+body.is-locked .footer__tag{ max-width:none; white-space:nowrap; }
+@media (max-width:520px){ body.is-locked .footer__tag{ white-space:normal; } }
 
-/* aviso (chip) logo abaixo do vídeo enquanto travado */
-.vsl-locked-hint{ display:flex; justify-content:center; margin:4px auto 40px; padding:0 18px; }
+/* aviso (chip) logo abaixo do vídeo, dentro do hero (sem faixa separada) */
+.vsl-locked-hint{ display:flex; justify-content:center; margin:0; padding:0 18px; }
 .vsl-locked-hint__pill{
   display:inline-flex; align-items:center; gap:9px;
   padding:11px 20px; border-radius:999px;
