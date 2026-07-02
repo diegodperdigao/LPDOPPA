@@ -99,9 +99,10 @@
   /* ---------- controles próprios do vídeo (pausar/volume/tela cheia, SEM seek) ---------- */
   const ICON = {
     bigplay: '<svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" fill="rgba(10,14,43,.55)" stroke="#fff" stroke-width="2.5"/><polygon points="29 22 53 36 29 50" fill="#fff"/></svg>',
+    play:  '<svg viewBox="0 0 24 24"><polygon points="7 5 19 12 7 19" fill="currentColor"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="3.6" height="14" rx="1"/><rect x="13.9" y="5" width="3.6" height="14" rx="1"/></svg>',
     vol:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="4 9 8 9 13 5 13 19 8 15 4 15" fill="currentColor" stroke="none"/><path d="M16.5 8.5a4 4 0 0 1 0 7"/><path d="M18.6 6a7 7 0 0 1 0 12"/></svg>',
     mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="4 9 8 9 13 5 13 19 8 15 4 15" fill="currentColor" stroke="none"/><line x1="17" y1="9.5" x2="21" y2="14.5"/><line x1="21" y1="9.5" x2="17" y2="14.5"/></svg>',
-    full: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4"/></svg>',
   };
 
   const buildControls = () => {
@@ -109,15 +110,15 @@
     const yt = window.__ytPlayer;
     if (!player || !yt || player.querySelector(".vsl-ctrl")) return;
 
-    // camada única sobre o vídeo: toque = pausar/continuar (via API, funciona no
-    // mobile), e mostra UM play central quando pausado (cobrindo o do YouTube).
+    const toggle = () => (yt.getPlayerState && yt.getPlayerState() === 1) ? yt.pauseVideo() : yt.playVideo();
+
+    // camada sobre o vídeo: toque = pausar/continuar (via API, funciona no mobile)
+    // e cobre o play do YouTube quando pausado (com um play central único).
     const shield = document.createElement("div");
     shield.className = "vsl-shield";
     shield.innerHTML = '<span class="vsl-shield__play">' + ICON.bigplay + "</span>";
     player.appendChild(shield);
-    shield.addEventListener("click", () => {
-      (yt.getPlayerState && yt.getPlayerState() === 1) ? yt.pauseVideo() : yt.playVideo();
-    });
+    shield.addEventListener("click", toggle);
 
     const mkBtn = (html, label) => {
       const b = document.createElement("button");
@@ -127,16 +128,15 @@
     };
     const bar = document.createElement("div");
     bar.className = "vsl-ctrl";
+    const ppBtn = mkBtn(ICON.pause, "Pausar ou continuar");
     const muteBtn = mkBtn(ICON.vol, "Ativar/desativar som");
     const vol = document.createElement("input");
     vol.type = "range"; vol.min = "0"; vol.max = "100"; vol.value = "100";
     vol.className = "vsl-ctrl__vol"; vol.setAttribute("aria-label", "Volume");
-    const spacer = document.createElement("span");
-    spacer.className = "vsl-ctrl__spacer";
-    const fsBtn = mkBtn(ICON.full, "Tela cheia");
-    bar.append(muteBtn, vol, spacer, fsBtn);
+    bar.append(ppBtn, muteBtn, vol);
     player.appendChild(bar);
 
+    ppBtn.addEventListener("click", toggle);
     muteBtn.addEventListener("click", () => {
       if (yt.isMuted && yt.isMuted()) { yt.unMute(); if (+vol.value === 0) { yt.setVolume(100); vol.value = "100"; } }
       else { yt.mute(); }
@@ -147,17 +147,13 @@
       if (v === 0) yt.mute();
       else if (yt.isMuted && yt.isMuted()) yt.unMute();
     });
-    fsBtn.addEventListener("click", () => {
-      if (document.fullscreenElement) { document.exitFullscreen && document.exitFullscreen(); return; }
-      if (player.requestFullscreen) player.requestFullscreen();
-      else if (player.webkitRequestFullscreen) player.webkitRequestFullscreen();
-    });
 
-    // sincroniza o play central e o ícone de som com o estado real
+    // sincroniza play/pause (barra + centro) e o ícone de som com o estado real
     const sync = setInterval(() => {
       if (!document.body.contains(bar)) return clearInterval(sync);
-      const st = yt.getPlayerState && yt.getPlayerState();
-      shield.classList.toggle("is-paused", !(st === 1 || st === 3)); // 1=tocando, 3=carregando
+      const playing = yt.getPlayerState && (yt.getPlayerState() === 1 || yt.getPlayerState() === 3);
+      ppBtn.innerHTML = playing ? ICON.pause : ICON.play;
+      shield.classList.toggle("is-paused", !playing);
       muteBtn.innerHTML = (yt.isMuted && yt.isMuted()) ? ICON.mute : ICON.vol;
     }, 400);
 
