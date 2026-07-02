@@ -39,7 +39,14 @@ const CONFIG = {
   // Tempo (ms) até redirecionar pro Discord depois do sucesso.
   // (o usuário também pode clicar no botão "Entrar no Discord" na hora)
   REDIRECT_DELAY: 1400,
+
+  // Origem do lead (a página /vsl sobrescreve pra "vsl" via overrides abaixo).
+  ORIGEM: "landing-page",
 };
+
+// Permite que outras páginas (ex.: /vsl) ajustem o CONFIG antes de tudo rodar,
+// definindo window.DOPPA_CONFIG_OVERRIDES antes de carregar este script.
+if (window.DOPPA_CONFIG_OVERRIDES) Object.assign(CONFIG, window.DOPPA_CONFIG_OVERRIDES);
 
 /* ============================================================
    Helpers
@@ -221,6 +228,7 @@ $("#year").textContent = new Date().getFullYear();
   // tela final própria (evita a grade de sugestões do YouTube)
   const showEnd = () => {
     if (player.querySelector(".vsl__end")) return;
+    document.dispatchEvent(new Event("doppa:videoended"));
     const end = document.createElement("div");
     end.className = "vsl__end";
     end.innerHTML =
@@ -400,6 +408,7 @@ const sendToDiscord = data => {
           { name: "📱 Telefone", value: data.telefone || "—", inline: true },
           { name: "🎬 Experiência", value: data.experiencia || "—" },
           { name: "🔞 Maioridade", value: data.maioridade || "—" },
+          { name: "📍 Origem", value: CONFIG.ORIGEM || "landing-page" },
         ],
         footer: { text: "Doppa · More you do, more you Doppa." },
         timestamp: new Date().toISOString(),
@@ -423,7 +432,7 @@ const sendToSheet = data => {
     telefone: data.telefone,
     experiencia: data.experiencia,
     maioridade: data.maioridade,
-    origem: "landing-page",
+    origem: CONFIG.ORIGEM || "landing-page",
     data: new Date().toISOString(),
   });
   return fetch(CONFIG.SHEET_ENDPOINT, {
@@ -451,7 +460,7 @@ const sendToSupabase = data => {
       telefone: data.telefone,
       experiencia: data.experiencia,
       maioridade: data.maioridade,
-      origem: "landing-page",
+      origem: CONFIG.ORIGEM || "landing-page",
     }),
     keepalive: true,
   }).catch(err => console.warn("Supabase falhou:", err));
