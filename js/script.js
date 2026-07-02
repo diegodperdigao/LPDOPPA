@@ -277,7 +277,10 @@ $("#year").textContent = new Date().getFullYear();
             controls: CONFIG.VIDEO_HIDE_CONTROLS ? 0 : 1,
             disablekb: 1, fs: 1, iv_load_policy: 3, playsinline: 1
           },
-          events: { onStateChange: e => { if (e.data === 0) showEnd(); } } // 0 = ENDED
+          events: {
+            onReady: () => document.dispatchEvent(new Event("doppa:videoready")),
+            onStateChange: e => { if (e.data === 0) showEnd(); } // 0 = ENDED
+          }
         });
       });
     } else if (vimeoId) {

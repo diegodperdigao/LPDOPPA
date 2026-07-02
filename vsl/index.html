@@ -426,7 +426,15 @@
   <symbol id="i-money-3d" viewBox="0 0 24 24" fill="none" stroke="url(#grad-money)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2.5" x2="12" y2="21.5"/><path d="M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
 </svg>
 
-<script>window.DOPPA_CONFIG_OVERRIDES={VIDEO_HIDE_CONTROLS:true,ORIGEM:"vsl"};</script>
+<script>
+(function(){
+  var o={VIDEO_HIDE_CONTROLS:true,ORIGEM:"vsl"};
+  // Teste: abra /vsl?v=ID_DE_UM_VIDEO_CURTO pra trocar o vídeo temporariamente.
+  var v=new URLSearchParams(location.search).get("v");
+  if(v)o.VIDEO_URL="https://youtu.be/"+v;
+  window.DOPPA_CONFIG_OVERRIDES=o;
+})();
+</script>
 <script src="../js/script.js"></script>
 <script src="../js/vsl-lock.js"></script>
 </body>
