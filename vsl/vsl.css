@@ -79,42 +79,29 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
   .vsl-locked-hint__pill svg{ width:15px; height:15px; }
 }
 
-/* ---- controles do vídeo: aparecem ao tocar/mover o mouse, somem sozinhos ---- */
-/* camada que capta o toque e cobre o vídeo quando pausado */
-.vsl-shield{ display:none; position:absolute; inset:0; z-index:3; cursor:pointer; }
-.vsl__player--playing .vsl-shield{ display:block; }
-
-.vsl-ctrl{
-  position:absolute; left:0; right:0; bottom:0; z-index:5;
-  display:none; align-items:center; gap:8px; padding:10px 14px;
-  background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0));
-  opacity:0; transition:opacity .25s;
-  pointer-events:none; /* a barra não bloqueia o toque; o clique passa pro vídeo (pausar) */
+/* ---- único acréscimo ao player: controle de volume num canto (resto é nativo do YouTube) ---- */
+.vsl-vol{
+  display:none; position:absolute; right:12px; bottom:12px; z-index:5;
+  align-items:center; gap:2px;
+  background:rgba(6,9,24,.5); border-radius:999px; padding:3px;
 }
-.vsl__player--playing .vsl-ctrl{ display:flex; }
-.vsl-controls-on .vsl-ctrl{ opacity:1; }
-.vsl-ctrl > *{ pointer-events:none; }
-.vsl-controls-on .vsl-ctrl > *{ pointer-events:auto; } /* só os controles reais capturam, quando visíveis */
-.vsl-ctrl__btn{
+.vsl__player--playing .vsl-vol{ display:flex; }
+.vsl-vol__btn{
   appearance:none; border:0; background:transparent; color:#fff; cursor:pointer;
-  width:38px; height:38px; padding:7px; border-radius:9px; flex:none;
+  width:36px; height:36px; padding:7px; border-radius:50%; flex:none;
   display:inline-flex; align-items:center; justify-content:center;
-  transition:background .15s, transform .1s;
+  transition:background .15s;
 }
-.vsl-ctrl__btn:hover{ background:rgba(255,255,255,.16); }
-.vsl-ctrl__btn:active{ transform:scale(.92); }
-.vsl-ctrl__btn svg{ width:100%; height:100%; }
-
-/* volume: alto-falante (mudo) + slider que aparece no hover (desktop) */
-.vsl-vol{ display:flex; align-items:center; }
+.vsl-vol__btn:hover{ background:rgba(255,255,255,.16); }
+.vsl-vol__btn svg{ width:100%; height:100%; }
+/* slider aparece no hover (desktop); no mobile fica só o botão de mudo */
 .vsl-vol__slider{
   width:0; opacity:0; height:4px; accent-color:#1E3AFF; cursor:pointer;
   transition:width .22s ease, opacity .2s, margin .22s;
 }
 .vsl-vol:hover .vsl-vol__slider, .vsl-vol:focus-within .vsl-vol__slider{
-  width:90px; opacity:1; margin:0 6px 0 4px;
+  width:82px; opacity:1; margin:0 8px 0 2px;
 }
 @media (max-width:560px){
-  .vsl-ctrl__btn{ width:42px; height:42px; padding:9px; }
   .vsl-vol:hover .vsl-vol__slider, .vsl-vol:focus-within .vsl-vol__slider{ width:0; opacity:0; margin:0; }
 }
