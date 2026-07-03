@@ -85,6 +85,19 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 .vsl__player--playing .vsl-shield{ display:block; }
 .vsl-shield.is-paused{ background:rgba(6,9,24,.66); }
 
+/* botão central de play/pause (cobre o play nativo do YouTube quando pausado) */
+.vsl-center{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  z-index:4; width:74px; height:74px; padding:19px; border:0; border-radius:50%;
+  background:rgba(10,14,43,.78); color:#fff; cursor:pointer;
+  display:none; align-items:center; justify-content:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
+}
+.vsl__player--playing .vsl-center.vsl-center--on{ display:flex; }
+.vsl-center svg{ width:100%; height:100%; }
+.vsl-center:active{ transform:translate(-50%,-50%) scale(.94); }
+@media (max-width:560px){ .vsl-center{ width:66px; height:66px; padding:17px; } }
+
 .vsl-ctrl{
   position:absolute; left:0; right:0; bottom:0; z-index:5;
   display:none; align-items:center; gap:8px; padding:10px 14px;

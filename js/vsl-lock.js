@@ -122,22 +122,24 @@
     shield.className = "vsl-shield";
     player.appendChild(shield);
 
-    const mkBtn = (html, label) => {
-      const b = document.createElement("button");
-      b.type = "button"; b.className = "vsl-ctrl__btn";
-      b.setAttribute("aria-label", label); b.innerHTML = html;
-      return b;
-    };
+    // botão CENTRAL de play/pause — cobre o play nativo do YouTube quando pausado
+    const center = document.createElement("button");
+    center.type = "button"; center.className = "vsl-center";
+    center.setAttribute("aria-label", "Pausar ou continuar");
+    center.innerHTML = ICON.play;
+    player.appendChild(center);
+
     const bar = document.createElement("div");
     bar.className = "vsl-ctrl";
-    const ppBtn = mkBtn(ICON.pause, "Pausar ou continuar");
     const wrap = document.createElement("div"); wrap.className = "vsl-vol";
-    const spk = mkBtn(ICON.vol, "Ativar/desativar som");
+    const spk = document.createElement("button");
+    spk.type = "button"; spk.className = "vsl-ctrl__btn"; spk.setAttribute("aria-label", "Ativar/desativar som");
+    spk.innerHTML = ICON.vol;
     const vol = document.createElement("input");
     vol.type = "range"; vol.min = "0"; vol.max = "100"; vol.value = "100";
     vol.className = "vsl-vol__slider"; vol.setAttribute("aria-label", "Volume");
     wrap.append(spk, vol);
-    bar.append(ppBtn, wrap);
+    bar.append(wrap);
     player.appendChild(bar);
 
     // mostrar / auto-esconder os controles
@@ -148,11 +150,12 @@
       if (isPlaying()) hideTimer = setTimeout(() => player.classList.remove("vsl-controls-on"), 3000);
     };
     const hide = () => { clearTimeout(hideTimer); player.classList.remove("vsl-controls-on"); };
+    const toggle = () => { isPlaying() ? yt.pauseVideo() : yt.playVideo(); show(); };
 
     shield.addEventListener("click", () => player.classList.contains("vsl-controls-on") ? hide() : show());
+    center.addEventListener("click", e => { e.stopPropagation(); toggle(); });
     player.addEventListener("mousemove", show);
 
-    ppBtn.addEventListener("click", () => { isPlaying() ? yt.pauseVideo() : yt.playVideo(); show(); });
     spk.addEventListener("click", () => {
       if (yt.isMuted && yt.isMuted()) { yt.unMute(); if (+vol.value === 0) { vol.value = "70"; yt.setVolume(70); } }
       else { yt.mute(); }
@@ -165,19 +168,22 @@
       show();
     });
 
-    let prevPlaying = false;
+    let prevPlaying = false, lastPlaying = null, lastMuted = null;
     const sync = setInterval(() => {
       if (!document.body.contains(bar)) return clearInterval(sync);
       const playing = isPlaying();
       if (prevPlaying && !playing) show(); // acabou de pausar → mostra e mantém os controles
       prevPlaying = playing;
-      ppBtn.innerHTML = playing ? ICON.pause : ICON.play;
       shield.classList.toggle("is-paused", !playing);
-      spk.innerHTML = ((yt.isMuted && yt.isMuted()) || +vol.value === 0) ? ICON.mute : ICON.vol;
-    }, 400);
+      // centro visível: sempre quando pausado; tocando, só com os controles ligados
+      center.classList.toggle("vsl-center--on", !playing || player.classList.contains("vsl-controls-on"));
+      if (playing !== lastPlaying) { center.innerHTML = playing ? ICON.pause : ICON.play; lastPlaying = playing; }
+      const muted = (yt.isMuted && yt.isMuted()) || +vol.value === 0;
+      if (muted !== lastMuted) { spk.innerHTML = muted ? ICON.mute : ICON.vol; lastMuted = muted; }
+    }, 300);
 
     document.addEventListener("doppa:videoended", () => {
-      clearInterval(sync); bar.remove(); shield.remove();
+      clearInterval(sync); bar.remove(); shield.remove(); center.remove();
     }, { once: true });
   };
   document.addEventListener("doppa:videoready", buildControls);
