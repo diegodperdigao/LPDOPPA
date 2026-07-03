@@ -122,13 +122,6 @@
     shield.className = "vsl-shield";
     player.appendChild(shield);
 
-    // botão CENTRAL de play/pause — cobre o play nativo do YouTube quando pausado
-    const center = document.createElement("button");
-    center.type = "button"; center.className = "vsl-center";
-    center.setAttribute("aria-label", "Pausar ou continuar");
-    center.innerHTML = ICON.play;
-    player.appendChild(center);
-
     const bar = document.createElement("div");
     bar.className = "vsl-ctrl";
     const wrap = document.createElement("div"); wrap.className = "vsl-vol";
@@ -152,8 +145,8 @@
     const hide = () => { clearTimeout(hideTimer); player.classList.remove("vsl-controls-on"); };
     const toggle = () => { isPlaying() ? yt.pauseVideo() : yt.playVideo(); show(); };
 
-    shield.addEventListener("click", () => player.classList.contains("vsl-controls-on") ? hide() : show());
-    center.addEventListener("click", e => { e.stopPropagation(); toggle(); });
+    // toque no vídeo = play/pause (o YouTube mostra o play nativo dele) + revela os controles
+    shield.addEventListener("click", toggle);
     player.addEventListener("mousemove", show);
 
     spk.addEventListener("click", () => {
@@ -168,22 +161,18 @@
       show();
     });
 
-    let prevPlaying = false, lastPlaying = null, lastMuted = null;
+    let prevPlaying = false, lastMuted = null;
     const sync = setInterval(() => {
       if (!document.body.contains(bar)) return clearInterval(sync);
       const playing = isPlaying();
       if (prevPlaying && !playing) show(); // acabou de pausar → mostra e mantém os controles
       prevPlaying = playing;
-      shield.classList.toggle("is-paused", !playing);
-      // centro visível: sempre quando pausado; tocando, só com os controles ligados
-      center.classList.toggle("vsl-center--on", !playing || player.classList.contains("vsl-controls-on"));
-      if (playing !== lastPlaying) { center.innerHTML = playing ? ICON.pause : ICON.play; lastPlaying = playing; }
       const muted = (yt.isMuted && yt.isMuted()) || +vol.value === 0;
       if (muted !== lastMuted) { spk.innerHTML = muted ? ICON.mute : ICON.vol; lastMuted = muted; }
     }, 300);
 
     document.addEventListener("doppa:videoended", () => {
-      clearInterval(sync); bar.remove(); shield.remove(); center.remove();
+      clearInterval(sync); bar.remove(); shield.remove();
     }, { once: true });
   };
   document.addEventListener("doppa:videoready", buildControls);
