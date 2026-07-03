@@ -104,6 +104,8 @@
 
   /* ---------- controles próprios do vídeo (pausar/volume/tela cheia, SEM seek) ---------- */
   const ICON = {
+    play:  '<svg viewBox="0 0 24 24"><polygon points="7 5 19 12 7 19" fill="currentColor"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="3.6" height="14" rx="1"/><rect x="13.9" y="5" width="3.6" height="14" rx="1"/></svg>',
     vol:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="4 9 8 9 13 5 13 19 8 15 4 15" fill="currentColor" stroke="none"/><path d="M16.5 8.5a4 4 0 0 1 0 7"/><path d="M18.6 6a7 7 0 0 1 0 12"/></svg>',
     mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="4 9 8 9 13 5 13 19 8 15 4 15" fill="currentColor" stroke="none"/><line x1="17" y1="9.5" x2="21" y2="14.5"/><line x1="21" y1="9.5" x2="17" y2="14.5"/></svg>',
   };
@@ -113,43 +115,69 @@
     const yt = window.__ytPlayer;
     if (!player || !yt || player.querySelector(".vsl-ctrl")) return;
 
-    // Play/pause fica por conta do YouTube (nativo). Aqui só o volume (barra vertical).
+    const isPlaying = () => { const s = yt.getPlayerState ? yt.getPlayerState() : -1; return s === 1 || s === 3; };
+
+    // camada que capta o toque: mostra/esconde os controles (e cobre o vídeo quando pausado)
+    const shield = document.createElement("div");
+    shield.className = "vsl-shield";
+    player.appendChild(shield);
+
+    const mkBtn = (html, label) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "vsl-ctrl__btn";
+      b.setAttribute("aria-label", label); b.innerHTML = html;
+      return b;
+    };
     const bar = document.createElement("div");
     bar.className = "vsl-ctrl";
-
-    const wrap = document.createElement("div");
-    wrap.className = "vsl-vol";
-    const spk = document.createElement("button");
-    spk.type = "button"; spk.className = "vsl-ctrl__btn"; spk.setAttribute("aria-label", "Ativar/desativar som");
-    spk.innerHTML = ICON.vol;
+    const ppBtn = mkBtn(ICON.pause, "Pausar ou continuar");
+    const wrap = document.createElement("div"); wrap.className = "vsl-vol";
+    const spk = mkBtn(ICON.vol, "Ativar/desativar som");
     const vol = document.createElement("input");
     vol.type = "range"; vol.min = "0"; vol.max = "100"; vol.value = "100";
     vol.className = "vsl-vol__slider"; vol.setAttribute("aria-label", "Volume");
     wrap.append(spk, vol);
-    bar.appendChild(wrap);
+    bar.append(ppBtn, wrap);
     player.appendChild(bar);
 
-    // clique no alto-falante = mudo/desmudo (funciona em todo aparelho, iPhone incluso)
+    // mostrar / auto-esconder os controles
+    let hideTimer;
+    const show = () => {
+      player.classList.add("vsl-controls-on");
+      clearTimeout(hideTimer);
+      if (isPlaying()) hideTimer = setTimeout(() => player.classList.remove("vsl-controls-on"), 3000);
+    };
+    const hide = () => { clearTimeout(hideTimer); player.classList.remove("vsl-controls-on"); };
+
+    shield.addEventListener("click", () => player.classList.contains("vsl-controls-on") ? hide() : show());
+    player.addEventListener("mousemove", show);
+
+    ppBtn.addEventListener("click", () => { isPlaying() ? yt.pauseVideo() : yt.playVideo(); show(); });
     spk.addEventListener("click", () => {
       if (yt.isMuted && yt.isMuted()) { yt.unMute(); if (+vol.value === 0) { vol.value = "70"; yt.setVolume(70); } }
       else { yt.mute(); }
+      show();
     });
-    // slider regula o volume (aparece no hover no desktop; escondido no mobile)
     vol.addEventListener("input", () => {
-      const v = +vol.value;
-      yt.setVolume(v);
+      const v = +vol.value; yt.setVolume(v);
       if (v === 0) yt.mute();
       else if (yt.isMuted && yt.isMuted()) yt.unMute();
+      show();
     });
 
+    let prevPlaying = false;
     const sync = setInterval(() => {
       if (!document.body.contains(bar)) return clearInterval(sync);
-      const muted = (yt.isMuted && yt.isMuted()) || +vol.value === 0;
-      spk.innerHTML = muted ? ICON.mute : ICON.vol;
+      const playing = isPlaying();
+      if (prevPlaying && !playing) show(); // acabou de pausar → mostra e mantém os controles
+      prevPlaying = playing;
+      ppBtn.innerHTML = playing ? ICON.pause : ICON.play;
+      shield.classList.toggle("is-paused", !playing);
+      spk.innerHTML = ((yt.isMuted && yt.isMuted()) || +vol.value === 0) ? ICON.mute : ICON.vol;
     }, 400);
 
     document.addEventListener("doppa:videoended", () => {
-      clearInterval(sync); bar.remove();
+      clearInterval(sync); bar.remove(); shield.remove();
     }, { once: true });
   };
   document.addEventListener("doppa:videoready", buildControls);
