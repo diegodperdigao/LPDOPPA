@@ -62,7 +62,8 @@ body.is-locked .footer__tag{ max-width:none; white-space:nowrap; }
 @media (max-width:520px){ body.is-locked .footer__tag{ white-space:normal; } }
 
 /* aviso (chip) logo abaixo do vídeo, dentro do hero (sem faixa separada) */
-.vsl-locked-hint{ display:flex; justify-content:center; margin:0; padding:0 18px; }
+/* margem extra no topo pra dar respiro entre o botão "Quero minha vaga" e a tag */
+.vsl-locked-hint{ display:flex; justify-content:center; margin:clamp(10px,3vw,22px) auto 0; padding:0 18px; }
 .vsl-locked-hint__pill{
   display:inline-flex; align-items:center; gap:9px;
   padding:11px 20px; border-radius:999px;
