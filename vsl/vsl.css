@@ -38,10 +38,11 @@
    quando a página travada é mais curta que a tela (some no mobile) */
 html{ background: var(--bg-800); }
 
-/* modo travado: a página ocupa a tela inteira e o rodapé fica ancorado no fim
-   (o espaço que sobra vai pra cima do rodapé, no mesmo fundo do vídeo) */
+/* modo travado: a página ocupa a tela inteira, o vídeo/hero fica centralizado
+   verticalmente no espaço disponível e o rodapé fica ancorado no fim.
+   Assim o espaço que sobra vira respiro igual em cima e embaixo do vídeo. */
 body.is-locked{ display:flex; flex-direction:column; min-height:100vh; min-height:100svh; }
-body.is-locked .footer{ margin-top:auto; }
+body.is-locked .hero{ flex:1 0 auto; display:flex; flex-direction:column; justify-content:center; }
 
 /* ---- enquanto travado: esconde o conteúdo abaixo do vídeo (mantém o rodapé) ---- */
 body.is-locked .strip,
