@@ -34,6 +34,10 @@
   .vsl-toast.show{ transform:translate(-50%,0); }
 }
 
+/* fundo do canvas igual ao do rodapé: evita a "faixa escura" abaixo do rodapé
+   quando a página travada é mais curta que a tela (some no mobile) */
+html{ background: var(--bg-800); }
+
 /* ---- enquanto travado: esconde o conteúdo abaixo do vídeo (mantém o rodapé) ---- */
 body.is-locked .strip,
 body.is-locked .section,
