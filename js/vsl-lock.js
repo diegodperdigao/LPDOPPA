@@ -102,49 +102,7 @@
     host.appendChild(hint);
   };
 
-  /* ---------- único acréscimo ao player: o botão de volume (o resto é nativo do YouTube) ---------- */
-  const ICON = {
-    vol:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="4 9 8 9 13 5 13 19 8 15 4 15" fill="currentColor" stroke="none"/><path d="M16.5 8.5a4 4 0 0 1 0 7"/><path d="M18.6 6a7 7 0 0 1 0 12"/></svg>',
-    mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="4 9 8 9 13 5 13 19 8 15 4 15" fill="currentColor" stroke="none"/><line x1="17" y1="9.5" x2="21" y2="14.5"/><line x1="21" y1="9.5" x2="17" y2="14.5"/></svg>',
-  };
-
-  const buildControls = () => {
-    const player = document.getElementById("vsl-player");
-    const yt = window.__ytPlayer;
-    if (!player || !yt || player.querySelector(".vsl-vol")) return;
-
-    // SÓ o controle de volume, num cantinho. Play/pause e tudo mais é nativo do YouTube.
-    const wrap = document.createElement("div");
-    wrap.className = "vsl-vol";
-    const spk = document.createElement("button");
-    spk.type = "button"; spk.className = "vsl-vol__btn"; spk.setAttribute("aria-label", "Ativar/desativar som");
-    spk.innerHTML = ICON.vol;
-    const vol = document.createElement("input");
-    vol.type = "range"; vol.min = "0"; vol.max = "100"; vol.value = "100";
-    vol.className = "vsl-vol__slider"; vol.setAttribute("aria-label", "Volume");
-    wrap.append(spk, vol);
-    player.appendChild(wrap);
-
-    spk.addEventListener("click", () => {
-      if (yt.isMuted && yt.isMuted()) { yt.unMute(); if (+vol.value === 0) { vol.value = "70"; yt.setVolume(70); } }
-      else { yt.mute(); }
-    });
-    vol.addEventListener("input", () => {
-      const v = +vol.value; yt.setVolume(v);
-      if (v === 0) yt.mute();
-      else if (yt.isMuted && yt.isMuted()) yt.unMute();
-    });
-
-    let lastMuted = null;
-    const sync = setInterval(() => {
-      if (!document.body.contains(wrap)) return clearInterval(sync);
-      const muted = (yt.isMuted && yt.isMuted()) || +vol.value === 0;
-      if (muted !== lastMuted) { spk.innerHTML = muted ? ICON.mute : ICON.vol; lastMuted = muted; }
-    }, 400);
-
-    document.addEventListener("doppa:videoended", () => { clearInterval(sync); wrap.remove(); }, { once: true });
-  };
-  document.addEventListener("doppa:videoready", buildControls);
+  // Sem controles custom no player — tudo fica por conta do YouTube nativo.
 
   /* ---------- init ---------- */
   document.body.classList.add("is-locked");
