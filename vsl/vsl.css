@@ -89,11 +89,12 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
   display:none; align-items:center; gap:8px; padding:10px 14px;
   background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0));
   opacity:0; transition:opacity .25s;
+  pointer-events:none; /* a barra não bloqueia o toque; o clique passa pro vídeo (pausar) */
 }
 .vsl__player--playing .vsl-ctrl{ display:flex; }
 .vsl-controls-on .vsl-ctrl{ opacity:1; }
 .vsl-ctrl > *{ pointer-events:none; }
-.vsl-controls-on .vsl-ctrl > *{ pointer-events:auto; }
+.vsl-controls-on .vsl-ctrl > *{ pointer-events:auto; } /* só os controles reais capturam, quando visíveis */
 .vsl-ctrl__btn{
   appearance:none; border:0; background:transparent; color:#fff; cursor:pointer;
   width:38px; height:38px; padding:7px; border-radius:9px; flex:none;
