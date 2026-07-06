@@ -24,6 +24,7 @@ if (new URLSearchParams(location.search).has("view")) {
   const fc = $("#form-card"); if (fc) fc.hidden = true;
   const hp = document.querySelector(".head p"); if (hp) hp.textContent = "Documento do Termo de Adesão da Doppa.";
 }
+const yEl = $("#year"); if (yEl) yEl.textContent = new Date().getFullYear();
 
 /* ---------- máscaras ---------- */
 const maskCPF = v => onlyDigits(v).slice(0, 11)
