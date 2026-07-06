@@ -8,8 +8,8 @@ const CONFIG = {
   SUPABASE_URL: "https://ajwfpdprgdcvrkermcwx.supabase.co",
   SUPABASE_KEY: "sb_publishable_7AIcd333tOtfC6hzaoNf2A_leFGCu82",
 
-  // EmailJS (preencha depois de criar o template). Vazio = e-mail desligado.
-  EMAILJS: { PUBLIC_KEY: "", SERVICE_ID: "", TEMPLATE_ID: "" },
+  // EmailJS — envia a confirmação do aceite pro e-mail da pessoa.
+  EMAILJS: { PUBLIC_KEY: "b-kiheaD9OKxbv6-i", SERVICE_ID: "service_rhlh8lu", TEMPLATE_ID: "template_2aeorj1" },
 
   VERSAO_TERMO: "v0.1 (provisório)",
 };
@@ -184,12 +184,53 @@ if (CONFIG.EMAILJS.PUBLIC_KEY) {
   document.head.appendChild(s);
 }
 
+/* ---------- PDF do termo (gerado no navegador, sob demanda) ---------- */
+const loadJsPDF = () => new Promise((resolve, reject) => {
+  if (window.jspdf && window.jspdf.jsPDF) return resolve();
+  const s = document.createElement("script");
+  s.src = "https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js";
+  s.onload = resolve; s.onerror = reject;
+  document.head.appendChild(s);
+});
+const gerarPDF = async data => {
+  await loadJsPDF();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const m = 48, W = doc.internal.pageSize.getWidth() - m * 2, H = doc.internal.pageSize.getHeight();
+  let y = m;
+  const line = (txt, size, bold, gap) => {
+    doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setFontSize(size);
+    doc.splitTextToSize(txt, W).forEach(l => {
+      if (y > H - m) { doc.addPage(); y = m; }
+      doc.text(l, m, y); y += (gap || size * 1.25);
+    });
+  };
+  line("Termo de Adesão — Doppa", 16, true, 22); y += 4;
+  line("Comprovante de aceite", 11, false, 16); y += 6;
+  const perfis = (data.instagram || []).join(", ");
+  [
+    ["Nome", data.nome], ["CPF", data.cpf], ["CNPJ/MEI", data.cnpj || "Não informado"],
+    ["E-mail", data.email], ["Telefone", data.telefone], ["Discord", data.discord],
+    ["Instagram", perfis], ["Aceito em", new Date().toLocaleString("pt-BR") + " · " + CONFIG.VERSAO_TERMO],
+  ].forEach(([k, v]) => line(k + ": " + v, 10, false, 15));
+  y += 10; line("— — —", 10, false, 16); y += 4;
+  const termo = ($("#terms-box") ? $("#terms-box").innerText : "").replace(/\n{2,}/g, "\n\n");
+  line(termo, 9, false, 12);
+  doc.save("Termo-de-Adesao-Doppa.pdf");
+};
+
 /* ---------- submit ---------- */
 const form = $("#termo-form"), submitBtn = $("#submit-btn");
+let ultimoAceite = null;
+$("#dl-pdf").addEventListener("click", () => {
+  if (ultimoAceite) gerarPDF(ultimoAceite).catch(err => console.warn("PDF:", err));
+});
+
 form.addEventListener("submit", async e => {
   e.preventDefault();
   const data = getData();
   if (!validate(data)) return;
+  ultimoAceite = data;
   submitBtn.disabled = true;
   submitBtn.textContent = "Registrando…";
 
@@ -200,7 +241,7 @@ form.addEventListener("submit", async e => {
 
   $("#termo-form").hidden = true;
   const ok = $("#ok");
-  if (CONFIG.EMAILJS.PUBLIC_KEY) $("#ok-msg").textContent = "Recebemos o seu aceite. Enviamos a confirmação e o termo para o seu e-mail. Guarde como comprovante.";
+  if (CONFIG.EMAILJS.PUBLIC_KEY) $("#ok-msg").textContent = "Recebemos o seu aceite. Enviamos a confirmação para o seu e-mail, com o link do termo. Você também pode baixar sua cópia em PDF abaixo.";
   ok.hidden = false;
   ok.scrollIntoView({ behavior: "smooth", block: "center" });
 });
