@@ -1,42 +1,43 @@
 /**
- * DOPPA — Recebedor de leads para Google Sheets
+ * DOPPA — Recebedor de leads + aceites de termo para Google Sheets
  * ------------------------------------------------------------
- * Cole este código em Extensões → Apps Script da sua planilha,
- * depois Implantar → Novo implantação → App da Web.
+ * Cole em Extensões → Apps Script da sua planilha, depois
+ * Implantar → Gerenciar implantações → editar → Nova versão.
  *
- * PASSO A PASSO:
- *  1. Crie uma planilha nova no Google Sheets.
- *  2. Menu  Extensões  →  Apps Script.
- *  3. Apague o que estiver lá e cole TODO este arquivo.
- *  4. Clique em  Implantar  →  Novo implantação.
- *  5. Engrenagem ⚙ → tipo "App da Web".
- *     - Executar como:  Eu (sua conta)
- *     - Quem tem acesso: Qualquer pessoa
- *  6. Implantar → autorize o acesso → copie a "URL do app da web".
- *  7. Cole essa URL em js/script.js  →  CONFIG.SHEET_ENDPOINT.
+ *  - Leads da LP  → aba padrão (a primeira).
+ *  - Aceites do termo (tipo=termo) → aba "Termos" (criada sozinha).
  *
- * A primeira linha (cabeçalho) é criada automaticamente.
+ * Os cabeçalhos são criados automaticamente.
  */
 
 function doPost(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-
-    // Cria cabeçalho na primeira vez
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["Data/Hora", "Nome", "Email", "Telefone", "Experiência", "Maioridade", "Origem"]);
-    }
-
     var p = e.parameter || {};
-    sheet.appendRow([
-      new Date(),
-      p.nome || "",
-      p.email || "",
-      p.telefone || "",
-      p.experiencia || "",
-      p.maioridade || "",
-      p.origem || "landing-page"
-    ]);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    if (p.tipo === "termo") {
+      // ----- aceite do Termo de Adesão → aba "Termos" -----
+      var t = ss.getSheetByName("Termos") || ss.insertSheet("Termos");
+      if (t.getLastRow() === 0) {
+        t.appendRow(["Data/Hora", "Nome", "CPF", "CNPJ/MEI", "Email", "Telefone",
+                     "Discord", "Instagram", "Versão", "Aceite", "User-Agent"]);
+      }
+      t.appendRow([
+        new Date(), p.nome || "", p.cpf || "", p.cnpj || "", p.email || "",
+        p.telefone || "", p.discord || "", p.instagram || "", p.versao || "",
+        p.aceite || "", p.user_agent || ""
+      ]);
+    } else {
+      // ----- lead da LP → aba padrão -----
+      var sheet = ss.getActiveSheet();
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(["Data/Hora", "Nome", "Email", "Telefone", "Experiência", "Maioridade", "Origem"]);
+      }
+      sheet.appendRow([
+        new Date(), p.nome || "", p.email || "", p.telefone || "",
+        p.experiencia || "", p.maioridade || "", p.origem || "landing-page"
+      ]);
+    }
 
     return ContentService
       .createTextOutput(JSON.stringify({ ok: true }))
@@ -50,5 +51,5 @@ function doPost(e) {
 
 // Teste rápido pelo editor (opcional)
 function doGet() {
-  return ContentService.createTextOutput("Doppa lead endpoint OK");
+  return ContentService.createTextOutput("Doppa endpoint OK");
 }

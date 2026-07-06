@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0A0E2B" />
+<link rel="icon" type="image/png" href="../assets/doppa-eye.png" />
+<link rel="apple-touch-icon" href="../assets/doppa-eye.png" />
+<title>DOPPA · Termo de Adesão</title>
+<meta name="description" content="Termo de Adesão da Doppa — leia, preencha seus dados e dê o aceite." />
+<meta name="robots" content="noindex" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --navy:#0A0E2B; --navy2:#0E1230; --card:#11163D;
+    --blue:#1E3AFF; --purple:#6B3DFF; --cyan:#00D1FF; --green:#22D46E; --yellow:#FFD300;
+    --txt:#EDEFFA; --muted:#AEB4D6; --dim:#7C82A6; --line:rgba(255,255,255,.09);
+    --font:'Poppins',system-ui,Arial,sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:var(--font); background:var(--navy); color:var(--txt); line-height:1.6; min-height:100vh; position:relative; overflow-x:hidden; }
+  .bg{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .orb{ position:absolute; border-radius:50%; filter:blur(80px); opacity:.4; }
+  .orb--a{ width:480px; height:480px; background:var(--blue); top:-160px; left:-120px; }
+  .orb--b{ width:420px; height:420px; background:var(--purple); bottom:-160px; right:-120px; }
+  .wrap{ position:relative; z-index:1; max-width:680px; margin:0 auto; padding:40px 20px 72px; }
+
+  .brand{ text-align:center; margin-bottom:26px; }
+  .brand img{ height:64px; width:auto; filter:drop-shadow(0 6px 18px rgba(107,61,255,.45)); }
+
+  .head{ text-align:center; margin-bottom:26px; }
+  .eyebrow{ display:inline-block; font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--cyan); background:rgba(0,209,255,.1); border:1px solid rgba(0,209,255,.3); padding:6px 14px; border-radius:999px; margin-bottom:14px; }
+  .head h1{ font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; font-size:clamp(30px,6vw,46px); line-height:1.05; }
+  .head h1 .hl{ background:linear-gradient(90deg,var(--cyan),var(--blue)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .head p{ color:var(--muted); font-size:15px; max-width:46ch; margin:12px auto 0; }
+
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:20px; padding:clamp(20px,4vw,32px); margin-bottom:22px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+
+  .terms{ background:var(--navy2); border:1px solid var(--line); border-radius:14px; padding:22px; max-height:420px; overflow-y:auto; }
+  .terms .tag{ display:inline-block; font-size:11px; color:var(--yellow); background:rgba(255,211,0,.1); border:1px solid rgba(255,211,0,.3); padding:3px 10px; border-radius:999px; margin-bottom:14px; }
+  .terms h2{ font-size:16px; color:#fff; margin:6px 0 10px; }
+  .terms h3{ font-size:13.5px; color:#fff; margin:18px 0 6px; letter-spacing:.02em; }
+  .terms p{ font-size:13px; color:var(--muted); margin-bottom:9px; }
+  .terms p.strong{ color:var(--txt); }
+  .terms::-webkit-scrollbar{ width:8px; } .terms::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:8px; }
+  .terms__hint{ text-align:center; font-size:12px; color:var(--dim); margin-top:10px; }
+
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:13px; color:var(--muted); margin-bottom:7px; font-weight:500; }
+  .field label .req{ color:var(--cyan); }
+  .field label .opt{ color:var(--dim); font-weight:400; }
+  .inp{ width:100%; background:var(--navy2); border:1px solid var(--line); border-radius:11px; padding:13px 15px; color:var(--txt); font-family:inherit; font-size:15px; transition:border-color .2s, box-shadow .2s; }
+  .inp::placeholder{ color:#5b6086; }
+  .inp:focus{ outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(30,58,255,.25); }
+  .inp.invalid{ border-color:#ff6b6b; }
+  .err{ display:block; color:#ff8a8a; font-size:12px; margin-top:5px; min-height:1px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:520px){ .row2{ grid-template-columns:1fr; } }
+
+  .ig-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .ig-row .inp{ flex:1; }
+  .ig-del{ flex:none; width:46px; border-radius:11px; border:1px solid var(--line); background:var(--navy2); color:var(--dim); cursor:pointer; font-size:18px; }
+  .ig-del:hover{ color:#ff6b6b; border-color:rgba(255,107,107,.4); }
+  .ig-add{ background:transparent; border:1px dashed rgba(255,255,255,.2); color:var(--cyan); border-radius:11px; padding:10px; width:100%; cursor:pointer; font-family:inherit; font-size:14px; font-weight:500; }
+  .ig-add:hover{ background:rgba(0,209,255,.06); border-color:rgba(0,209,255,.4); }
+
+  .accept{ display:flex; gap:12px; align-items:flex-start; background:var(--navy2); border:1px solid var(--line); border-radius:12px; padding:16px; margin:20px 0 6px; cursor:pointer; }
+  .accept input{ width:20px; height:20px; margin-top:1px; accent-color:var(--blue); flex:none; cursor:pointer; }
+  .accept span{ font-size:13.5px; color:var(--muted); line-height:1.5; }
+
+  .btn{ width:100%; border:0; border-radius:13px; padding:16px; font-family:inherit; font-size:16px; font-weight:700; color:#fff; cursor:pointer; background:linear-gradient(90deg,var(--blue),var(--purple)); box-shadow:0 10px 30px -8px rgba(30,58,255,.6); transition:transform .12s, box-shadow .2s; margin-top:16px; }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 14px 36px -8px rgba(107,61,255,.7); }
+  .btn[disabled]{ opacity:.6; cursor:default; transform:none; }
+  .btn--ghost{ background:transparent; border:1px solid var(--line); box-shadow:none; color:var(--txt); }
+  .legal{ text-align:center; color:var(--dim); font-size:12px; margin-top:14px; line-height:1.5; }
+
+  .ok{ text-align:center; padding:20px 6px; }
+  .ok__badge{ width:76px; height:76px; margin:0 auto 18px; border-radius:50%; background:rgba(34,212,110,.14); border:1px solid rgba(34,212,110,.5); display:flex; align-items:center; justify-content:center; }
+  .ok__badge svg{ width:38px; height:38px; stroke:var(--green); }
+  .ok h2{ font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; font-size:30px; }
+  .ok p{ color:var(--muted); font-size:15px; margin:12px auto 0; max-width:40ch; }
+  [hidden]{ display:none !important; }
+</style>
+</head>
+<body>
+<div class="bg"><span class="orb orb--a"></span><span class="orb orb--b"></span></div>
+
+<div class="wrap">
+  <div class="brand"><img src="../assets/doppa-logo.png" alt="Doppa" /></div>
+
+  <div class="head">
+    <span class="eyebrow">Membros ativos</span>
+    <h1>Termo de <span class="hl">Adesão</span></h1>
+    <p>Leia o termo, preencha seus dados e dê o aceite. Você recebe uma cópia por e-mail.</p>
+  </div>
+
+  <!-- TERMO -->
+  <div class="card">
+    <div class="terms" id="terms-box">
+      <span class="tag">Versão provisória · v0.1</span>
+      <h2>Contrato de Prestação de Serviços de Criação de Conteúdo Digital</h2>
+      <p class="strong">Modalidade UGC (User Generated Content) · Sem vínculo empregatício</p>
+
+      <h3>Das Partes</h3>
+      <p><strong>CONTRATANTE:</strong> 3C GAMING LTDA, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº [•], com sede em [endereço], neste ato representada na forma de seus atos constitutivos, doravante denominada CONTRATANTE.</p>
+      <p><strong>CONTRATADO(A):</strong> a pessoa identificada no formulário de aceite abaixo, doravante denominada CONTRATADO(A) ou CRIADOR(A).</p>
+      <p>As partes, de comum acordo, celebram o presente Contrato de Prestação de Serviços, de natureza estritamente civil e comercial, que se regerá pelas cláusulas a seguir.</p>
+
+      <h3>Dos Considerandos</h3>
+      <p>CONSIDERANDO que a CONTRATANTE opera o projeto de criação de conteúdo denominado DOPPA, por meio do qual conecta criadores de conteúdo a marcas anunciantes; que o(a) CRIADOR(A) pode conectar-se voluntariamente a oportunidades vinculadas a Marcas; que declara possuir aptidão técnica, criativa e autonomia, atuando por conta e risco próprios; e que as partes desejam estabelecer relação autônoma, sem subordinação ou vínculo empregatício — RESOLVEM celebrar o presente instrumento.</p>
+
+      <h3>Cláusula Primeira – Das Definições</h3>
+      <p>1.1. <strong>Projeto:</strong> oportunidade vinculada a uma Marca anunciante. <strong>Conteúdo:</strong> todo material produzido (vídeos, imagens, textos, áudios). <strong>Perfil:</strong> conta em redes sociais de titularidade da CONTRATANTE onde o Conteúdo é publicado. <strong>Meta:</strong> quantidade de entregas acordada por Projeto (Anexo I). <strong>Entrega:</strong> Conteúdo produzido, publicado e aceito. <strong>DOPPA:</strong> projeto e plataforma operados pela CONTRATANTE.</p>
+
+      <h3>Cláusula Segunda – Do Objeto</h3>
+      <p>2.1. O objeto é a prestação, pelo(a) CRIADOR(A), de serviços autônomos de criação, produção e publicação de Conteúdo digital (UGC), em favor de Projetos de Marcas intermediados pela CONTRATANTE.</p>
+      <p>2.2. A execução dar-se-á mediante conexão voluntária a um ou mais Projetos, observadas as condições do Anexo I. 2.3. A conexão a qualquer Projeto é facultativa.</p>
+
+      <h3>Cláusula Terceira – Da Ausência de Vínculo Empregatício</h3>
+      <p>3.1. A relação é estritamente civil e comercial, regida pelo Código Civil, não configurando vínculo empregatício, societário ou de qualquer outra natureza. 3.2. O(A) CRIADOR(A) atua com plena autonomia, organizando livremente tempo, método, local e meios, inexistindo subordinação, controle de jornada, pessoalidade ou habitualidade. 3.3. As Metas são objetivos de resultado, não jornada. 3.4. O(A) CRIADOR(A) é responsável pelo recolhimento de tributos sobre os valores recebidos. 3.5. Não há exclusividade.</p>
+
+      <h3>Cláusula Quarta – Da Conexão aos Projetos</h3>
+      <p>4.1. A CONTRATANTE disponibilizará oportunidades de Projetos. 4.2. Cada Projeto terá condições no Anexo I (Marca, escopo, Meta, período, valor, data de pagamento, Perfis). 4.3. O(A) CRIADOR(A) poderá conectar-se a mais de um Projeto simultaneamente.</p>
+
+      <h3>Cláusula Quinta – Das Metas e Entregas</h3>
+      <p>5.1. O(A) CRIADOR(A) observará a Meta e as diretrizes de cada Projeto. 5.2. Somente serão válidas as Entregas que atenderem às diretrizes e padrões mínimos de qualidade. 5.3. A CONTRATANTE poderá solicitar ajustes ou recusar Conteúdo inadequado.</p>
+
+      <h3>Cláusula Sexta – Da Remuneração</h3>
+      <p>6.1. O(A) CRIADOR(A) fará jus a compensação mensal por Projeto, no valor e data do Anexo I, que remunera integralmente todas as obrigações, inclusive as cessões das Cláusulas Oitava e Nona. 6.2. Não cumprida a Meta, a compensação é proporcional: <em>Valor devido = Valor mensal × (Entregas válidas ÷ Meta total)</em>. 6.3. Pagamentos por transferência ou PIX. 6.4. O(A) CRIADOR(A) é responsável pelos tributos; sendo PJ, emitirá nota fiscal como condição do pagamento; sendo PF, aplicam-se as retenções legais. 6.5. A remuneração não inclui reembolso de custos de produção, salvo previsão no Anexo I.</p>
+
+      <h3>Cláusula Sétima – Dos Perfis e Contas Digitais</h3>
+      <p>7.1. Os Perfis criados pela CONTRATANTE são de <strong>titularidade exclusiva da CONTRATANTE</strong>, independentemente de desempenho, audiência ou monetização. 7.2. Durante a vigência, concede-se ao(à) CRIADOR(A) acesso operacional dos Perfis apenas para execução. 7.3. É vedado alterar credenciais de modo a impedir o acesso da CONTRATANTE, vincular o Perfil a contas pessoais ou ceder/comercializar o Perfil. 7.4. Propostas comerciais recebidas no Perfil serão geridas exclusivamente pela CONTRATANTE. 7.5. Encerrado o Contrato, devolvem-se imediatamente todas as credenciais.</p>
+
+      <h3>Cláusula Oitava – Da Propriedade Intelectual e Cessão de Direitos</h3>
+      <p>8.1. O(A) CRIADOR(A) cede à CONTRATANTE, de forma total, definitiva, irrevogável e universal, todos os direitos patrimoniais de autor sobre o Conteúdo (Lei nº 9.610/1998). 8.2. A cessão abrange uso, reprodução, publicação, distribuição, edição, adaptação e inclusão em quaisquer mídias, por prazo indeterminado e âmbito mundial. 8.3. A cessão é remunerada pela Cláusula Sexta, sem valor adicional. 8.4. Resguardados os direitos morais, autoriza-se a edição/adaptação e veiculação sem identificação nominal quando pertinente. 8.5. O Conteúdo entregue permanece da CONTRATANTE após a rescisão.</p>
+
+      <h3>Cláusula Nona – Do Uso de Imagem e Voz</h3>
+      <p>9.1. Durante a vigência, autoriza-se a CONTRATANTE e as Marcas a utilizarem imagem, voz, nome e características de personalidade na produção e divulgação. 9.2. Abrange mídias digitais nacionais e internacionais, sem remuneração adicional. 9.3. A autorização relativa aos Conteúdos entregues permanece válida após a rescisão, quanto a esses Conteúdos. 9.4. Após a rescisão, não haverá novas captações, preservado o uso do material já produzido.</p>
+
+      <h3>Cláusula Décima – Obrigações do(a) Criador(a)</h3>
+      <p>10.1. Cumprir Metas e diretrizes; produzir Conteúdo original e lícito, sem violar direitos de terceiros; não produzir Conteúdo ofensivo, discriminatório ou ilegal; observar os termos das plataformas; identificar o caráter publicitário (Cláusula 12); zelar pelas credenciais e manter sigilo (Cláusula 13); repassar propostas comerciais (Cláusula 7.4).</p>
+
+      <h3>Cláusula Décima Primeira – Obrigações da Contratante</h3>
+      <p>11.1. Disponibilizar acesso a Projetos e Perfis; efetuar os pagamentos nas condições acordadas; fornecer diretrizes e materiais; gerir a relação com as Marcas.</p>
+
+      <h3>Cláusula Décima Segunda – Conformidade Publicitária e Legal</h3>
+      <p>12.1. Observância da legislação (CDC, CONAR, órgãos reguladores). 12.2. Conteúdo publicitário identificado de forma clara (ex.: “publicidade”, “#publi”, “parceria paga”). 12.3. Em setores regulados, observar as restrições comunicadas pela CONTRATANTE.</p>
+
+      <h3>Cláusula Décima Terceira – Confidencialidade</h3>
+      <p>13.1. Sigilo sobre informações confidenciais da CONTRATANTE e das Marcas (estratégias, briefings, valores, credenciais). 13.2. A obrigação subsiste durante a vigência e por [•] após o término.</p>
+
+      <h3>Cláusula Décima Quarta – Proteção de Dados (LGPD)</h3>
+      <p>14.1. Tratamento de dados conforme a Lei nº 13.709/2018, limitado às finalidades do Contrato. 14.2. O(A) CRIADOR(A) autoriza o tratamento de seus dados pela CONTRATANTE (controladora) para gestão contratual, pagamento e obrigações legais. 14.3. Adoção de medidas de proteção adequadas.</p>
+
+      <h3>Cláusula Décima Quinta – Da Não Exclusividade</h3>
+      <p>15.1. Não há exclusividade, ressalvada a vedação de prestar serviços a concorrente direto da Marca no âmbito de um Projeto específico, quando previsto no Anexo I.</p>
+
+      <h3>Cláusula Décima Sexta – Da Vigência</h3>
+      <p>16.1. Prazo indeterminado, a contar da data da assinatura/aceite.</p>
+
+      <h3>Cláusula Décima Sétima – Da Rescisão</h3>
+      <p>17.1. Qualquer parte poderá resilir imotivadamente, com aviso prévio por escrito de [•] dias, sem multa. 17.2. Rescisão imediata por justa causa em caso de descumprimento não sanado ou dano à reputação. 17.3. Efeitos: os Perfis permanecem da CONTRATANTE; o Conteúdo entregue permanece da CONTRATANTE; é devido o pagamento proporcional das Entregas válidas.</p>
+
+      <h3>Cláusula Décima Oitava – Responsabilidades</h3>
+      <p>18.1. O(A) CRIADOR(A) responde por danos causados por Conteúdo ilícito, violação de direitos, descumprimento de diretrizes ou quebra de sigilo. 18.2. Quebra de confidencialidade ou uso indevido dos Perfis sujeitam à reparação integral, sem prejuízo de multa a definir.</p>
+
+      <h3>Cláusula Décima Nona – Disposições Gerais</h3>
+      <p>19.1. A tolerância não implica renúncia. 19.2. Alterações somente por aditivo escrito. 19.3. Nulidade de cláusula não invalida as demais. 19.4. A CONTRATANTE poderá ceder o Contrato a empresas do grupo. 19.5. Comunicações por escrito, admitido e-mail. 19.6. Os Anexos integram o Contrato.</p>
+
+      <h3>Cláusula Vigésima – Do Foro</h3>
+      <p>20.1. Fica eleito o foro da Comarca de [•] para dirimir controvérsias.</p>
+
+      <p class="strong">Ao assinalar o aceite abaixo, o(a) CRIADOR(A) declara ter lido, compreendido e concordado integralmente com este Termo de Adesão e com os termos de uso e serviço da DOPPA.</p>
+    </div>
+    <p class="terms__hint">Role o termo até o fim para habilitar o aceite.</p>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="card" id="form-card">
+    <form id="termo-form" novalidate>
+      <div class="field">
+        <label for="f-nome">Nome completo <span class="req">*</span></label>
+        <input class="inp" type="text" id="f-nome" name="nome" placeholder="Seu nome completo" autocomplete="name" />
+        <span class="err" data-for="nome"></span>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-cpf">CPF <span class="req">*</span></label>
+          <input class="inp" type="tel" id="f-cpf" name="cpf" placeholder="000.000.000-00" inputmode="numeric" maxlength="14" />
+          <span class="err" data-for="cpf"></span>
+        </div>
+        <div class="field">
+          <label for="f-cnpj">CNPJ / MEI <span class="opt">(opcional)</span></label>
+          <input class="inp" type="tel" id="f-cnpj" name="cnpj" placeholder="Se já tiver" inputmode="numeric" maxlength="18" />
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-email">E-mail <span class="req">*</span></label>
+          <input class="inp" type="email" id="f-email" name="email" placeholder="seu@email.com" autocomplete="email" />
+          <span class="err" data-for="email"></span>
+        </div>
+        <div class="field">
+          <label for="f-tel">Telefone (WhatsApp) <span class="req">*</span></label>
+          <input class="inp" type="tel" id="f-tel" name="telefone" placeholder="(11) 99999-9999" inputmode="numeric" maxlength="16" />
+          <span class="err" data-for="telefone"></span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-discord">Usuário do Discord <span class="req">*</span></label>
+        <input class="inp" type="text" id="f-discord" name="discord" placeholder="seu_usuario" />
+        <span class="err" data-for="discord"></span>
+      </div>
+
+      <div class="field">
+        <label>Perfis do Instagram onde você posta <span class="req">*</span></label>
+        <div id="ig-list">
+          <div class="ig-row"><input class="inp ig-inp" placeholder="@seu_perfil" /></div>
+        </div>
+        <button type="button" class="ig-add" id="ig-add">+ adicionar outro perfil</button>
+        <span class="err" data-for="instagram"></span>
+      </div>
+
+      <label class="accept">
+        <input type="checkbox" id="f-aceite" />
+        <span>Li e <strong style="color:var(--txt)">aceito o Termo de Adesão</strong> da Doppa, bem como os termos de uso e serviço. Declaro que as informações são verdadeiras.</span>
+      </label>
+      <span class="err" data-for="aceite"></span>
+
+      <button type="submit" class="btn" id="submit-btn">Aceitar e assinar →</button>
+      <p class="legal">Seu aceite é registrado com data, hora e comprovante. Uma cópia é enviada ao seu e-mail.</p>
+    </form>
+
+    <!-- SUCESSO -->
+    <div class="ok" id="ok" hidden>
+      <div class="ok__badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <h2>Aceite <span class="hl" style="background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent">registrado!</span></h2>
+      <p id="ok-msg">Recebemos o seu aceite ao Termo de Adesão da Doppa. Guarde este comprovante.</p>
+    </div>
+  </div>
+</div>
+
+<script src="../js/termo.js"></script>
+</body>
+</html>
