@@ -18,6 +18,13 @@ const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const onlyDigits = v => (v || "").replace(/\D/g, "");
 
+// Modo "só leitura" (/termo?view=1): esconde o formulário, mostra só o contrato.
+// Usado no link do e-mail de confirmação.
+if (new URLSearchParams(location.search).has("view")) {
+  const fc = $("#form-card"); if (fc) fc.hidden = true;
+  const hp = document.querySelector(".head p"); if (hp) hp.textContent = "Documento do Termo de Adesão da Doppa.";
+}
+
 /* ---------- máscaras ---------- */
 const maskCPF = v => onlyDigits(v).slice(0, 11)
   .replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
