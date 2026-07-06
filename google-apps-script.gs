@@ -28,8 +28,8 @@ function doPost(e) {
         p.aceite || "", p.user_agent || ""
       ]);
     } else {
-      // ----- lead da LP → SEMPRE a primeira aba (evita ambiguidade com a aba Termos) -----
-      var sheet = ss.getSheets()[0];
+      // ----- lead da LP → a aba de sempre (getActiveSheet, como funcionava) -----
+      var sheet = ss.getActiveSheet();
       if (sheet.getLastRow() === 0) {
         sheet.appendRow(["Data/Hora", "Nome", "Email", "Telefone", "Experiência", "Maioridade", "Origem"]);
       }
