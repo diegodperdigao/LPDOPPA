@@ -428,7 +428,7 @@
 
 <script>
 (function(){
-  var o={VIDEO_HIDE_CONTROLS:true,VIDEO_PRELOAD:true,ORIGEM:"vsl"};
+  var o={VIDEO_URL:"https://youtu.be/E0p_uxaBDpg",VIDEO_HIDE_CONTROLS:true,VIDEO_PRELOAD:true,ORIGEM:"vsl"};
   // Teste: abra /vsl?v=ID  (ou cole a URL inteira do YouTube) pra trocar o vídeo.
   var v=new URLSearchParams(location.search).get("v");
   if(v)o.VIDEO_URL=(/^https?:\/\//i.test(v)||v.indexOf("/")>-1)?v:("https://youtu.be/"+v);
