@@ -25,7 +25,7 @@ const CONFIG = {
   //   Vimeo:    "https://vimeo.com/SEU_ID"
   //   ou um MP4 direto: "https://.../video.mp4"
   // Enquanto vazio (""), mostra só o player com o botão de play.
-  VIDEO_URL: "https://youtu.be/E0p_uxaBDpg",
+  VIDEO_URL: "https://youtu.be/_MFrFElWmdA",
 
   // true = esconde a barra de controles do YouTube (evita pular o vídeo).
   // false = mantém os controles (o usuário pode pausar/ajustar volume).
