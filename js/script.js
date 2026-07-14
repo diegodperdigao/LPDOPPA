@@ -46,6 +46,16 @@ const CONFIG = {
 
   // Origem do lead (a página /vsl sobrescreve pra "vsl" via overrides abaixo).
   ORIGEM: "landing-page",
+
+  // EmailJS — e-mail de boas-vindas pra quem preenche o formulário.
+  // Use o MESMO service/public key do /termo; crie um TEMPLATE NOVO só de
+  // boas-vindas e cole o ID abaixo. Enquanto TEMPLATE_ID estiver vazio (""),
+  // o e-mail fica desligado e nada é carregado. Grátis = 200 e-mails/mês.
+  EMAILJS: {
+    PUBLIC_KEY: "b-kiheaD9OKxbv6-i",
+    SERVICE_ID: "service_rhlh8lu",
+    TEMPLATE_ID: "", // <-- cole aqui o ID do template de boas-vindas
+  },
 };
 
 // Permite que outras páginas (ex.: /vsl) ajustem o CONFIG antes de tudo rodar,
@@ -513,6 +523,26 @@ const sendToSupabase = data => {
   }).catch(err => console.warn("Supabase falhou:", err));
 };
 
+// EmailJS: e-mail de boas-vindas (SDK sob demanda; só dispara se configurado).
+const sendWelcomeEmail = data => {
+  const E = CONFIG.EMAILJS || {};
+  if (!E.PUBLIC_KEY || !E.SERVICE_ID || !E.TEMPLATE_ID || !window.emailjs) return Promise.resolve();
+  const params = {
+    email: data.email,
+    nome: (data.nome || "").split(" ")[0] || data.nome, // primeiro nome, mais pessoal
+    discord_invite: CONFIG.DISCORD_INVITE,
+    origem: CONFIG.ORIGEM || "landing-page",
+  };
+  return window.emailjs.send(E.SERVICE_ID, E.TEMPLATE_ID, params).catch(e => console.warn("EmailJS:", e));
+};
+// Carrega o SDK do EmailJS só quando há template configurado.
+if (CONFIG.EMAILJS && CONFIG.EMAILJS.PUBLIC_KEY && CONFIG.EMAILJS.TEMPLATE_ID) {
+  const s = document.createElement("script");
+  s.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+  s.onload = () => window.emailjs && window.emailjs.init({ publicKey: CONFIG.EMAILJS.PUBLIC_KEY });
+  document.head.appendChild(s);
+}
+
 /* ============================================================
    Submit handler
    ============================================================ */
@@ -534,6 +564,7 @@ formEl.addEventListener("submit", async e => {
   sendToDiscord(data);
   sendToSheet(data);
   sendToSupabase(data);
+  const emailSent = sendWelcomeEmail(data); // e-mail de boas-vindas (fire-and-forget)
 
   const maiorDeIdade = data.maioridade === "De acordo, sou maior de idade";
 
@@ -552,9 +583,14 @@ formEl.addEventListener("submit", async e => {
   $("#discord-link").href = CONFIG.DISCORD_INVITE;
   fireConfetti();
 
-  setTimeout(() => {
+  // Redireciona respeitando o tempo da animação (REDIRECT_DELAY) e, se o
+  // e-mail ainda estiver saindo, segura mais um pouco (cap de 3s) pra a
+  // navegação não cancelar o envio do EmailJS.
+  const minWait = new Promise(r => setTimeout(r, CONFIG.REDIRECT_DELAY));
+  const cap = new Promise(r => setTimeout(r, 3000));
+  Promise.all([minWait, Promise.race([emailSent, cap])]).then(() => {
     window.location.href = CONFIG.DISCORD_INVITE;
-  }, CONFIG.REDIRECT_DELAY);
+  });
 });
 
 /* ============================================================
