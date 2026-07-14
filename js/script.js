@@ -383,10 +383,14 @@ const clearErrors = () => $$(".field__error").forEach(s => (s.textContent = ""))
 
 const validateEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
-// Telefone BR: DDD (11–99) + 8 dígitos (fixo) ou 9 dígitos começando em 9 (celular).
+// Telefone: BR (DDD 11–99 + 8/9 dígitos) OU internacional (começa com "+", 8–15 dígitos).
 const onlyDigits = v => (v || "").replace(/\D/g, "");
+const isIntlPhone = v => /^\s*\+/.test(v || "");   // começou com + = número internacional
 const validatePhone = v => {
   const d = onlyDigits(v);
+  if (isIntlPhone(v)) {
+    return d.length >= 8 && d.length <= 15;           // E.164: código do país + assinante
+  }
   if (d.length !== 10 && d.length !== 11) return false;
   const ddd = +d.slice(0, 2);
   if (ddd < 11 || ddd > 99) return false;              // DDD válido
@@ -394,8 +398,9 @@ const validatePhone = v => {
   return true;
 };
 
-// Máscara enquanto digita: (11) 99999-9999  /  (11) 9999-9999
+// Máscara enquanto digita: BR → (11) 99999-9999 ; internacional → +<dígitos> sem forçar formato.
 const maskPhone = v => {
+  if (isIntlPhone(v)) return ("+" + onlyDigits(v)).slice(0, 16);
   const d = onlyDigits(v).slice(0, 11);
   if (d.length <= 2) return d.replace(/(\d{0,2})/, "($1");
   if (d.length <= 6) return d.replace(/(\d{2})(\d{0,4})/, "($1) $2");
@@ -426,7 +431,7 @@ const validate = data => {
   if (!data.nome) { showError("nome", "Conta pra gente seu nome."); ok = false; }
   if (!validateEmail(data.email)) { showError("email", "Coloca um email válido."); ok = false; $("#f-email").classList.toggle("invalid", true); }
   else $("#f-email").classList.remove("invalid");
-  if (!validatePhone(data.telefone)) { showError("telefone", "Coloca um telefone válido com DDD."); ok = false; $("#f-telefone").classList.toggle("invalid", true); }
+  if (!validatePhone(data.telefone)) { showError("telefone", "Coloca um telefone válido (com DDD, ou + código do país)."); ok = false; $("#f-telefone").classList.toggle("invalid", true); }
   else $("#f-telefone").classList.remove("invalid");
   if (!data.experiencia) { showError("experiencia", "Escolhe uma opção."); ok = false; }
   if (!data.maioridade) { showError("maioridade", "Selecione uma opção."); ok = false; }
