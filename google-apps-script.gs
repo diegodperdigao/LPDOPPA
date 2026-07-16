@@ -31,11 +31,11 @@ function doPost(e) {
       // ----- lead da LP → a aba de sempre (getActiveSheet, como funcionava) -----
       var sheet = ss.getActiveSheet();
       if (sheet.getLastRow() === 0) {
-        sheet.appendRow(["Data/Hora", "Nome", "Email", "Telefone", "Experiência", "Maioridade", "Origem"]);
+        sheet.appendRow(["Data/Hora", "Nome", "Email", "Telefone", "Experiência", "Maioridade", "Origem", "Afiliado (btag)"]);
       }
       sheet.appendRow([
         new Date(), p.nome || "", p.email || "", p.telefone || "",
-        p.experiencia || "", p.maioridade || "", p.origem || "landing-page"
+        p.experiencia || "", p.maioridade || "", p.origem || "landing-page", p.btag || ""
       ]);
     }
 

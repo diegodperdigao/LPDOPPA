@@ -63,6 +63,30 @@ const CONFIG = {
 if (window.DOPPA_CONFIG_OVERRIDES) Object.assign(CONFIG, window.DOPPA_CONFIG_OVERRIDES);
 
 /* ============================================================
+   Rastreio de afiliado (btag)
+   ------------------------------------------------------------
+   Link do afiliado:  https://doppa.com.br/?btag=CODIGO
+                      https://doppa.com.br/vsl?btag=CODIGO
+   Aceita também ?ref= / ?af= / ?aff= como apelidos.
+   A btag é guardada no navegador e persiste enquanto a pessoa
+   navega/volta. Última divulgação vence (last-touch): só troca
+   quando chega uma btag nova na URL. Vai junto no lead enviado.
+   ============================================================ */
+const BTAG_KEY = "doppa_btag";
+(function captureBtag() {
+  try {
+    const p = new URLSearchParams(location.search);
+    const raw = p.get("btag") || p.get("ref") || p.get("af") || p.get("aff") || "";
+    // sanitiza: só letras/números/._- e no máx. 64 chars
+    const btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64);
+    if (btag) localStorage.setItem(BTAG_KEY, btag);
+  } catch (e) { /* localStorage bloqueado — ignora */ }
+})();
+const getBtag = () => {
+  try { return localStorage.getItem(BTAG_KEY) || ""; } catch (e) { return ""; }
+};
+
+/* ============================================================
    Helpers
    ============================================================ */
 const $  = (s, c = document) => c.querySelector(s);
@@ -432,6 +456,7 @@ const getData = () => {
     telefone: (fd.get("telefone") || "").toString().trim(),
     experiencia: (fd.get("experiencia") || "").toString(),
     maioridade: (fd.get("maioridade") || "").toString(),
+    btag: getBtag(),
   };
 };
 
@@ -465,7 +490,8 @@ const sendToDiscord = data => {
           { name: "📱 Telefone", value: data.telefone || "—", inline: true },
           { name: "🎬 Experiência", value: data.experiencia || "—" },
           { name: "🔞 Maioridade", value: data.maioridade || "—" },
-          { name: "📍 Origem", value: CONFIG.ORIGEM || "landing-page" },
+          { name: "📍 Origem", value: CONFIG.ORIGEM || "landing-page", inline: true },
+          { name: "🔗 Afiliado (btag)", value: data.btag || "—", inline: true },
         ],
         footer: { text: "Doppa · More you do, more you Doppa." },
         timestamp: new Date().toISOString(),
@@ -490,6 +516,7 @@ const sendToSheet = data => {
     experiencia: data.experiencia,
     maioridade: data.maioridade,
     origem: CONFIG.ORIGEM || "landing-page",
+    btag: data.btag || "",
     data: new Date().toISOString(),
   });
   return fetch(CONFIG.SHEET_ENDPOINT, {
@@ -518,6 +545,7 @@ const sendToSupabase = data => {
       experiencia: data.experiencia,
       maioridade: data.maioridade,
       origem: CONFIG.ORIGEM || "landing-page",
+      btag: data.btag || null,
     }),
     keepalive: true,
   }).catch(err => console.warn("Supabase falhou:", err));
