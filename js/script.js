@@ -54,7 +54,7 @@ const CONFIG = {
   EMAILJS: {
     PUBLIC_KEY: "b-kiheaD9OKxbv6-i",
     SERVICE_ID: "service_rhlh8lu",
-    TEMPLATE_ID: "", // <-- cole aqui o ID do template de boas-vindas
+    TEMPLATE_ID: "template_clxqi8f", // template de boas-vindas da LP
   },
 };
 
