@@ -11,7 +11,7 @@ const CONFIG = {
   // EmailJS — envia a confirmação do aceite pro e-mail da pessoa.
   EMAILJS: { PUBLIC_KEY: "b-kiheaD9OKxbv6-i", SERVICE_ID: "service_rhlh8lu", TEMPLATE_ID: "template_2aeorj1" },
 
-  VERSAO_TERMO: "v0.1 (provisório)",
+  VERSAO_TERMO: "1.0",
 };
 
 const $ = (s, c = document) => c.querySelector(s);
