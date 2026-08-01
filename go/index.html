@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Doppa</title>
+  <style>
+    html,body{height:100%;margin:0;background:#0c0520;color:#c3c8e6;
+      font-family:'Segoe UI',Arial,sans-serif;display:flex;align-items:center;justify-content:center}
+  </style>
+  <script>
+    /* Redirecionador de afiliado — guarda a btag e limpa a URL.
+       Uso:  /go?b=CODIGO           -> vai pra home limpa
+             /go?b=CODIGO&to=vsl    -> vai pra VSL limpa
+       Aceita ?b= ou ?btag=. A btag some da barra de endereço no destino. */
+    (function () {
+      try {
+        var p = new URLSearchParams(location.search);
+        var raw = p.get("b") || p.get("btag") || "";
+        var btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64);
+        if (btag) localStorage.setItem("doppa_btag", btag);
+        var to = (p.get("to") || "").toLowerCase();
+        var dest = to === "vsl" ? "/vsl" : "/";
+        location.replace(dest);
+      } catch (e) {
+        location.replace("/");
+      }
+    })();
+  </script>
+</head>
+<body>Redirecionando…</body>
+</html>
