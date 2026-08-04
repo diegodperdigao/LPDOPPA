@@ -281,6 +281,22 @@ $("#year").textContent = new Date().getFullYear();
     });
   };
 
+  // Fallback robusto de fim de vídeo: o evento ENDED do YouTube nem sempre
+  // dispara (buffer no último segundo, player fica "pausado" no frame final,
+  // etc.). Além do ENDED, monitoramos o tempo e liberamos ao chegar no fim.
+  let endWatch;
+  const startEndWatch = () => {
+    if (endWatch) return;
+    endWatch = setInterval(() => {
+      try {
+        const p = window.__ytPlayer;
+        if (!p || !p.getDuration) return;
+        const d = p.getDuration(), t = p.getCurrentTime();
+        if (d > 0 && t >= d - 1.2) { clearInterval(endWatch); endWatch = null; showEnd(); }
+      } catch (e) {}
+    }, 1000);
+  };
+
   const loadYT = cb => {
     if (window.YT && window.YT.Player) return cb();
     const prev = window.onYouTubeIframeAPIReady;
@@ -326,7 +342,10 @@ $("#year").textContent = new Date().getFullYear();
             }
           }, 1400);
         },
-        onStateChange: e => { if (e.data === 0) showEnd(); } // 0 = ENDED
+        onStateChange: e => {
+          if (e.data === 0) showEnd();           // 0 = ENDED
+          else if (e.data === 1) startEndWatch(); // 1 = PLAYING → arma o fallback por tempo
+        }
       }
     });
   };
