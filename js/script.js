@@ -231,6 +231,20 @@ $("#year").textContent = new Date().getFullYear();
   const playBtn = $("#vsl-play");
   if (!player || !playBtn) return;
 
+  // Rastreio de engajamento (GTM/dataLayer) — dispara mesmo sem conversão.
+  // Eventos: doppa_video_play (clicou pra assistir) e doppa_video_complete (assistiu até o fim).
+  const track = (event, extra) => {
+    try {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push(Object.assign({
+        event: event,
+        video_page: (CONFIG.ORIGEM || "landing-page"),
+        btag: (typeof getBtag === "function" ? getBtag() : "") || "(direto)"
+      }, extra || {}));
+    } catch (e) {}
+  };
+  let playTracked = false;
+
   const url = CONFIG.VIDEO_URL || "";
   const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([\w-]{6,})/);
   const ytId = ytMatch ? ytMatch[1] : null;
@@ -267,6 +281,7 @@ $("#year").textContent = new Date().getFullYear();
   const showEnd = () => {
     if (player.querySelector(".vsl__end")) return;
     document.dispatchEvent(new Event("doppa:videoended"));
+    track("doppa_video_complete");
     const end = document.createElement("div");
     end.className = "vsl__end";
     end.innerHTML =
@@ -351,6 +366,7 @@ $("#year").textContent = new Date().getFullYear();
   };
 
   const mount = () => {
+    if (url && !playTracked) { playTracked = true; track("doppa_video_play"); }
     if (!url) {
       playBtn.animate(
         [{ transform: "translate(-50%,-50%) scale(1)" }, { transform: "translate(-50%,-50%) scale(.9)" }, { transform: "translate(-50%,-50%) scale(1)" }],
