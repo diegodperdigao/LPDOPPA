@@ -234,6 +234,7 @@ $("#year").textContent = new Date().getFullYear();
   // Rastreio de engajamento (GTM/dataLayer) — dispara mesmo sem conversão.
   // Eventos: doppa_video_play (clicou pra assistir) e doppa_video_complete (assistiu até o fim).
   const track = (event, extra) => {
+    // 1) dataLayer (GTM → GA4/anúncios, quando conectado)
     try {
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push(Object.assign({
@@ -241,6 +242,27 @@ $("#year").textContent = new Date().getFullYear();
         video_page: (CONFIG.ORIGEM || "landing-page"),
         btag: (typeof getBtag === "function" ? getBtag() : "") || "(direto)"
       }, extra || {}));
+    } catch (e) {}
+    // 2) Supabase (números próprios, sem depender de Google) — tabela video_plays
+    try {
+      if (CONFIG.SUPABASE_URL && CONFIG.SUPABASE_KEY) {
+        const evt = event === "doppa_video_complete" ? "complete" : "play";
+        fetch(`${CONFIG.SUPABASE_URL}/rest/v1/video_plays`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: CONFIG.SUPABASE_KEY,
+            Authorization: `Bearer ${CONFIG.SUPABASE_KEY}`,
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({
+            evento: evt,
+            origem: CONFIG.ORIGEM || "landing-page",
+            btag: (typeof getBtag === "function" ? getBtag() : "") || null,
+          }),
+          keepalive: true,
+        }).catch(() => {});
+      }
     } catch (e) {}
   };
   let playTracked = false;
