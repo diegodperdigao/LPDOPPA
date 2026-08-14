@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Wallet do Criador · Doppa</title>
+<link rel="icon" href="/assets/doppa-eye.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg-900:#0A0E2B;--bg-800:#0E1335;--bg-700:#141a44;
+ --line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.14);
+ --surface:rgba(255,255,255,.035);--surface-2:rgba(255,255,255,.06);
+ --blue:#1E3AFF;--purple:#6B3DFF;--cyan:#00D1FF;--green:#22D46E;--yellow:#FFD300;--pink:#E040FB;
+ --text:#EAEDFB;--muted:#9AA2CC;--dim:#6B739E;
+ --g-primary:linear-gradient(135deg,#2A52FF,#7B4DFF);
+ --g-green:linear-gradient(135deg,#22D46E,#0FB6C6);
+ --g-accent:linear-gradient(135deg,#7B4DFF,#E040FB);
+ --g-gold:linear-gradient(135deg,#FFD300,#FF8A00);
+ --font-display:'Anton',Impact,sans-serif;--font:'Poppins',system-ui,sans-serif;
+ --radius:16px;--radius-lg:24px;--ease:cubic-bezier(.22,1,.36,1);
+ --shadow-1:0 10px 30px -12px rgba(0,0,0,.5);--shadow-glow:0 24px 60px -24px rgba(107,61,255,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font);color:var(--text);background:var(--bg-900);min-height:100vh;-webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+ radial-gradient(110% 80% at 82% -12%,#1d2a86 0%,transparent 52%),
+ radial-gradient(100% 90% at -8% 108%,#163a6e 0%,transparent 48%),
+ linear-gradient(170deg,#0E1335,#0A0E2B 72%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background-image:radial-gradient(rgba(0,209,255,.14) 1.3px,transparent 1.3px);background-size:26px 26px;
+ -webkit-mask-image:radial-gradient(130% 70% at 72% 12%,#000,transparent 70%);
+ mask-image:radial-gradient(130% 70% at 72% 12%,#000,transparent 70%)}
+.shell{max-width:1140px;margin:0 auto;padding:22px clamp(16px,4vw,28px) 72px}
+a{color:inherit}
+.money{font-variant-numeric:tabular-nums}
+
+/* ---- estados ---- */
+.state{min-height:70vh;display:grid;place-content:center;justify-items:center;gap:16px;text-align:center;color:var(--muted)}
+.state img{width:104px;opacity:.9;filter:drop-shadow(0 12px 28px rgba(107,61,255,.5))}
+.spin{width:30px;height:30px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---- topbar ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:30px;width:auto;display:block}
+.brand .tag{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:600;border-left:1px solid var(--line-2);padding-left:12px}
+.cycnav{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px}
+.cycnav button{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;display:grid;place-content:center;transition:.18s var(--ease)}
+.cycnav button:hover:not(:disabled){background:var(--purple);border-color:var(--purple)}
+.cycnav button:disabled{opacity:.32;cursor:default}
+.cycsel{position:relative}
+.cyccur{display:flex;flex-direction:column;align-items:center;line-height:1.1;padding:2px 10px;cursor:pointer;min-width:130px}
+.cyccur b{font-family:var(--font-display);font-weight:400;font-size:15px;letter-spacing:.5px}
+.cyccur span{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);font-weight:600}
+.cyccur span.past{color:var(--dim)}
+.cycmenu{position:absolute;top:calc(100% + 8px);right:0;background:var(--bg-700);border:1px solid var(--line-2);border-radius:14px;padding:6px;min-width:190px;box-shadow:var(--shadow-1);z-index:20;display:none}
+.cycmenu.open{display:block}
+.cycmenu button{width:100%;text-align:left;background:none;border:0;color:var(--text);padding:9px 12px;border-radius:9px;font:inherit;font-size:13.5px;cursor:pointer;display:flex;justify-content:space-between;gap:10px}
+.cycmenu button:hover{background:var(--surface-2)}
+.cycmenu button .now{font-size:10px;color:var(--cyan);align-self:center}
+.cycmenu button.sel{background:rgba(107,61,255,.18)}
+
+/* ---- hero ---- */
+.hero{position:relative;background:linear-gradient(135deg,rgba(43,82,255,.14),rgba(123,77,255,.1) 55%,rgba(224,64,251,.08));border:1px solid var(--line);border-radius:var(--radius-lg);padding:26px 28px;overflow:hidden;margin-bottom:16px}
+.hero__ring{position:absolute;right:-70px;top:50%;transform:translateY(-50%);width:340px;height:340px;border-radius:50%;background:conic-gradient(from 0deg,#1E3AFF,#6B3DFF,#00D1FF,#22D46E,#FFD300,#E040FB,#1E3AFF);filter:blur(2px);opacity:.5;-webkit-mask:radial-gradient(closest-side,transparent 58%,#000 60%,#000 72%,transparent 74%);mask:radial-gradient(closest-side,transparent 58%,#000 60%,#000 72%,transparent 74%);animation:spin 26s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
+.hero__masc{position:absolute;right:18px;bottom:-10px;width:182px;filter:drop-shadow(0 18px 40px rgba(107,61,255,.55));pointer-events:none;z-index:1}
+.hero__in{position:relative;z-index:2;max-width:62%}
+.hero .eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hero h1{font-family:var(--font-display);font-weight:400;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.02;letter-spacing:.5px;margin:6px 0 2px;text-transform:uppercase;overflow-wrap:anywhere}
+.hero .at{color:var(--cyan);font-size:13px;font-weight:500}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:999px;margin-top:14px}
+.pill.ok{background:rgba(34,212,110,.16);color:#8ef0b6;border:1px solid rgba(34,212,110,.4)}
+.pill.wait{background:rgba(255,211,0,.13);color:var(--yellow);border:1px solid rgba(255,211,0,.34)}
+.pill.paid{background:rgba(34,212,110,.18);color:#8ef0b6;border:1px solid rgba(34,212,110,.5);margin-bottom:2px}
+.hero__earn{margin-top:16px}
+.hero__earn .lab{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hero__earn .val{font-family:var(--font-display);font-weight:400;font-size:clamp(2.1rem,6vw,3rem);line-height:1;letter-spacing:.5px;background:var(--g-green);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-top:2px}
+.hero__earn .val.wait{background:var(--g-gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.confetti{position:absolute;z-index:1;pointer-events:none}
+
+/* ---- kpis ---- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;overflow:hidden}
+.kpi::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--bar)}
+.kpi .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.kpi .v{font-family:var(--font-display);font-weight:400;font-size:2.1rem;line-height:1;margin-top:8px}
+.kpi .m{font-size:11px;color:var(--dim);margin-top:4px}
+
+/* ---- main grid ---- */
+.main{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;align-items:start}
+.col{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px}
+.card h2{font-family:var(--font-display);font-weight:400;font-size:1.05rem;letter-spacing:.5px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.card h2 .ico{width:30px;height:30px;border-radius:9px;display:grid;place-content:center;flex:none}
+
+/* controle de videos */
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.prog .bar{flex:1;height:9px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.prog .bar i{display:block;height:100%;border-radius:999px;background:var(--g-green)}
+.prog .txt{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.prog .txt b{color:var(--text);font-family:var(--font-display);font-weight:400;font-size:15px}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:9px}
+.day{position:relative;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:13px;padding:10px 6px 9px;text-align:center;transition:.16s var(--ease)}
+.day.ok{background:linear-gradient(180deg,rgba(34,212,110,.2),rgba(34,212,110,.05));border-color:rgba(34,212,110,.5)}
+.day.part{border-color:rgba(255,211,0,.4);background:linear-gradient(180deg,rgba(255,211,0,.09),transparent)}
+.day .dd{font-size:10px;color:var(--muted);font-weight:500}
+.day .dv{font-family:var(--font-display);font-weight:400;font-size:1.35rem;line-height:1.1;margin-top:3px}
+.day.zero .dv{color:#39406e}
+.day .lbl{font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.day .dk{position:absolute;top:6px;right:6px}
+
+/* previsao */
+.frow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}
+.frow:first-of-type{padding-top:0}.frow:last-child{border-bottom:0;padding-bottom:0}
+.frow .lbl{color:var(--muted)}
+.frow .val{font-weight:600;text-align:right}
+.frow.big{margin-top:4px}
+.frow.big .val{font-family:var(--font-display);font-weight:400;font-size:1.5rem;letter-spacing:.5px}
+.note{font-size:11.5px;color:var(--dim);margin-top:12px;line-height:1.5}
+
+/* sorteio */
+.tickbig{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(107,61,255,.2),rgba(224,64,251,.12));border:1px solid rgba(123,77,255,.4);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.tickbig .n{font-family:var(--font-display);font-weight:400;font-size:2.3rem;line-height:1;background:var(--g-accent);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.tickbig .d{font-size:12px;color:var(--muted)}
+.tickbig .d b{color:var(--text)}
+
+/* mgm */
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 4px;font-size:13px;border-bottom:1px solid var(--line)}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+td.r,th.r{text-align:right}
+.mgmhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:6px}
+.mgmhead .big{font-family:var(--font-display);font-weight:400;font-size:1.7rem;background:var(--g-green);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.muted{color:var(--muted)}.dim{color:var(--dim)}
+
+/* jokenpo */
+.teams{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.team{position:relative;background:rgba(255,255,255,.03);border:1px solid var(--line);border-top:3px solid var(--tc);border-radius:15px;padding:16px;text-align:center}
+.team .tpos{font-size:11px;color:var(--dim);font-weight:600}
+.team .tname{font-family:var(--font-display);font-weight:400;font-size:1rem;text-transform:uppercase;margin:5px 0;color:var(--tc);letter-spacing:.5px}
+.team .tpts{font-family:var(--font-display);font-weight:400;font-size:1.7rem}
+.team .tpts span{font-size:11px;color:var(--muted);margin-left:3px}
+.ats{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.atc{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--line);padding:3px 10px 3px 4px;border-radius:999px}
+.atc i{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:999px;color:#04102a}
+.atc.esp i{background:var(--cyan)}.atc.cas i{background:var(--pink)}
+.mrh{font-family:var(--font-display);font-weight:400;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin:18px 0 10px}
+.mrank{display:flex;flex-direction:column;gap:6px}
+.mrow{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:11px;font-size:13.5px}
+.mrow.me{background:linear-gradient(135deg,rgba(43,82,255,.22),rgba(123,77,255,.14));border-color:rgba(123,77,255,.5)}
+.mrow .mp{font-family:var(--font-display);font-weight:400;color:var(--muted);min-width:26px}
+.mrow .mn{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .mt{font-size:11.5px;color:var(--dim)}
+.mrow .mpt{font-family:var(--font-display);font-weight:400;color:var(--cyan)}
+.mrow.me .mpt{color:#8ef0b6}
+.jkme{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.jkbox{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:15px;padding:16px}
+.jkbox.tm{border-top:3px solid var(--tc)}
+.jkk{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.jkteam{font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase;color:var(--tc);margin:7px 0 6px;letter-spacing:.5px}
+.jkv{font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1}
+.jkbox:not(.tm) .jkv{margin-top:10px}
+.jkv.me{color:var(--cyan)}
+.jkv span{font-size:11px;color:var(--muted);margin-left:4px}
+@media(max-width:560px){.jkme{grid-template-columns:1fr}}
+
+.foot{text-align:center;color:var(--dim);font-size:11px;margin-top:26px;display:flex;align-items:center;justify-content:center;gap:8px}
+.foot img{height:16px;opacity:.6}
+
+/* ============ MOBILE ============ */
+@media(max-width:880px){
+ .main{grid-template-columns:1fr}
+ .hero__in{max-width:100%}
+ .hero{padding:22px 20px 20px}
+ .hero__masc{width:128px;right:-4px;bottom:-6px;opacity:.92}
+ .hero__ring{width:230px;right:-90px}
+ .hero h1{max-width:64%}
+ .hero__earn{max-width:70%}
+}
+@media(max-width:560px){
+ .kpis{grid-template-columns:repeat(2,1fr)}
+ .top{flex-wrap:wrap;gap:12px}
+ .brand{order:1}.cycnav{order:2;width:100%;justify-content:space-between}
+ .cyccur{min-width:auto;flex:1}
+ .hero__masc{width:118px;opacity:.55;bottom:0;right:-10px}
+ .hero__ring{opacity:.32}
+ .hero h1,.hero__earn{max-width:100%}
+ .teams{grid-template-columns:1fr}
+ .confetti{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell" id="app">
+  <div class="state"><div class="spin"></div><div>Carregando sua wallet…</div></div>
+</div>
+<script>
+const API="https://ajwfpdprgdcvrkermcwx.supabase.co/functions/v1/wl";
+const BRL=n=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(n||0);
+const NUM=n=>new Intl.NumberFormat("pt-BR").format(n||0);
+const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const dm=iso=>iso.slice(8,10)+"/"+iso.slice(5,7);
+const S=(p,st,w=18)=>'<svg width="'+w+'" height="'+w+'" viewBox="0 0 24 24" fill="none" stroke="'+st+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
+const I={
+ check:c=>S('<path d="M20 6L9 17l-5-5"/>',c,14),
+ film:'<path d="M7 4v16M17 4v16M3 10h18M3 15h18"/><rect x="3" y="4" width="18" height="16" rx="2"/>',
+ money:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5A2.5 2 0 0114 10M9.5 14a2.5 2 0 004.5.5"/>',
+ ticket:'<path d="M3 8a2 2 0 012-2h14a2 2 0 012 2 2 2 0 000 4 2 2 0 000 4 2 2 0 01-2 2H5a2 2 0 01-2-2 2 2 0 000-4 2 2 0 000-4z"/><path d="M15 6v12" stroke-dasharray="2 2"/>',
+ people:'<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M16 6a3 3 0 010 6M21 20a6 6 0 00-5-5.9"/>',
+ trophy:'<path d="M8 4h8v5a4 4 0 01-8 0zM8 6H5v1a3 3 0 003 3M16 6h3v1a3 3 0 01-3 3M9 17h6M10 17l-.5 3M14 17l.5 3M8 21h8"/>',
+ chevL:'<path d="M15 6l-6 6 6 6"/>',chevR:'<path d="M9 6l6 6-6 6"/>'
+};
+const iconBox=(p,grad)=>'<span class="ico" style="background:'+grad+'">'+S(p,"#fff",16)+'</span>';
+const CONF=[['52%','12%','#22D46E',0],['62%','40%','#FFD300',18],['70%','8%','#00D1FF',-12],['88%','54%','#E040FB',8],['46%','66%','#1E3AFF',24]]
+ .map(c=>'<span class="confetti" style="left:'+c[0]+';top:'+c[1]+';transform:rotate('+c[3]+'deg)"><svg width="12" height="12" viewBox="0 0 24 24" fill="'+c[2]+'"><path d="M12 2l3 7 7 .5-5.5 4.5 2 7-6.5-4-6.5 4 2-7L2 9.5 9 9z"/></svg></span>').join("");
+
+let STATE={id:null,cycles:[],idx:0};
+
+function render(m){
+ const my=m.my,p=m.params,cy=m.cycle;
+ STATE.cycles=m.cycles; STATE.idx=m.cycles.findIndex(c=>c.start===cy.start);
+ // cycle nav
+ const atCur=STATE.idx>=STATE.cycles.length-1;
+ const atFirst=STATE.idx<=0;
+ const menu=STATE.cycles.slice().reverse().map(c=>{
+   const sel=c.start===cy.start?' sel':'';
+   return '<button class="'+sel.trim()+'" data-cs="'+c.start+'">'+c.label+(c.current?'<span class="now">ATUAL</span>':'')+'</button>';
+ }).join("");
+ const nav='<div class="cycnav">'
+   +'<button id="cprev" '+(atFirst?'disabled':'')+' aria-label="Ciclo anterior">'+S(I.chevL,"#EAEDFB",18)+'</button>'
+   +'<div class="cycsel"><div class="cyccur" id="cyctog"><b>'+cy.label+'</b><span class="'+(cy.isCurrent?'':'past')+'">'+(cy.isCurrent?'CICLO ATUAL':'CICLO ENCERRADO')+'</span></div>'
+   +'<div class="cycmenu" id="cycmenu">'+menu+'</div></div>'
+   +'<button id="cnext" '+(atCur?'disabled':'')+' aria-label="Próximo ciclo">'+S(I.chevR,"#EAEDFB",18)+'</button></div>';
+
+ const grid=my.days.map(d=>{var sub=d.videos>0?((d.esp||0)+'e · '+(d.cas||0)+'c'):'vídeos';return '<div class="day '+(d.ok?"ok":d.videos>0?"part":"zero")+'"><div class="dd">'+dm(d.date)+'</div><div class="dv">'+d.videos+'</div><div class="lbl">'+sub+'</div></div>';}).join("");
+ const mgm=m.mgmItens.length?m.mgmItens.map(i=>'<tr><td>'+esc(i.nome)+'</td><td class="r">'+i.videos+'</td><td class="r money">'+BRL(i.valor)+'</td></tr>').join("")
+   :'<tr><td colspan="3" class="dim">Você ainda não indicou ninguém ativo.</td></tr>';
+
+ const jk=m.jokenpo||{}; let jkHtml='<p class="dim">O torneio ainda não foi publicado.</p>';
+ const meName=(m.criador.nome||'').trim().toLowerCase();
+ const meMb=(Array.isArray(jk.membros)?jk.membros:[]).find(x=>(x.nome||'').trim().toLowerCase()===meName);
+ if(meMb){
+   const mt=(Array.isArray(jk.teams)?jk.teams:[]).find(t=>(t.nome||'')===(meMb.time||''))||{nome:meMb.time||'—',cor:'#6B3DFF',total:0};
+   jkHtml='<div class="jkme">'
+     +'<div class="jkbox tm" style="--tc:'+(mt.cor||"#6B3DFF")+'"><div class="jkk">Seu time</div><div class="jkteam">'+esc(mt.nome||"—")+'</div><div class="jkv">'+NUM(mt.total||0)+'<span>pts</span></div></div>'
+     +'<div class="jkbox"><div class="jkk">Seus pontos</div><div class="jkv me">'+NUM(meMb.pontos||0)+'<span>pts</span></div></div>'
+     +'</div>';
+ } else if(Array.isArray(jk.teams)&&jk.teams.length){
+   jkHtml='<p class="dim">Você ainda não está no torneio.</p>';
+ }
+
+ document.getElementById("app").innerHTML=
+  '<div class="top"><div class="brand"><img src="/assets/doppa-logo.png" alt="Doppa"><span class="tag">Wallet do criador</span></div>'+nav+'</div>'
+ +'<div class="hero"><img class="hero__masc" src="/assets/mascote.png" alt="">'
+   +'<div class="hero__in"><div class="eyebrow">Seu ciclo · '+cy.label+'</div>'
+   +'<h1>'+esc(m.criador.nome)+'</h1>'+ats(m.criador)
+   +(function(){var pago=m.pagamento&&m.pagamento.pago,inc=m.incentivo||{diasRestantes:0,potencial:0};
+     if(pago)return '<div><span class="pill paid">'+I.check("#8ef0b6")+' Pago'+(m.pagamento.pago_em?' em '+dm(m.pagamento.pago_em):'')+'</span></div><div class="hero__earn"><div class="lab">Pago neste ciclo</div><div class="val">'+BRL(m.pagamento.valor)+'</div></div>';
+     if(cy.isCurrent)return inc.diasRestantes>0
+       ?'<div class="hero__earn"><div class="lab">Complete os '+inc.diasRestantes+' dias que faltam e receba</div><div class="val">+'+BRL(inc.potencial)+'</div></div>'
+       :'<div class="hero__earn"><div class="lab">Reta final do ciclo</div><div class="val">bora fechar!</div></div>';
+     return '<div class="hero__earn"><div class="lab">Ciclo encerrado</div><div class="val" style="background:none;-webkit-text-fill-color:var(--muted);font-size:1.3rem">aguardando pagamento</div></div>';})()
+   +'</div></div>'
+ +'<div class="kpis">'
+   +kpi("Vídeos",NUM(my.total),(my.totalEsp||0)+" esp · "+(my.totalCas||0)+" cas","var(--blue)")
+   +kpi("Dias perfeitos",my.perfect,"≥ "+p.meta+"/dia","var(--green)")
+   +kpi("Sequência",my.streak,"maior seguida","var(--cyan)")
+   +kpi("Tickets",NUM(my.tickets),"no sorteio em dobro","var(--purple)")
+ +'</div>'
+ +'<div class="main"><div class="col">'
+   +'<div class="card"><h2>'+iconBox(I.film,"var(--g-primary)")+'Controle de vídeos — dia a dia</h2>'
+     +'<div class="days">'+(grid||'<p class="dim">Sem lançamentos neste ciclo.</p>')+'</div></div>'
+   +'<div class="card"><h2>'+iconBox(I.trophy,"var(--g-gold)")+'Torneio Jo-Ken-Po</h2>'+jkHtml+'</div>'
+ +'</div><div class="col">'
+   +'<div class="card"><h2>'+iconBox(I.ticket,"var(--g-accent)")+'Sorteio · Pagamento em Dobro</h2>'
+     +'<div class="tickbig"><div class="n">'+NUM(my.tickets)+'</div><div class="d">tickets no pote<br><b>'+my.perfect+' dias perfeitos × '+my.streak+' de sequência</b></div></div>'
+     +'<p class="note">Quanto mais dias perfeitos seguidos, mais tickets — e mais perto de ter sua monetização do ciclo dobrada.</p></div>'
+   +'<div class="card"><h2>'+iconBox(I.people,"var(--g-accent)")+'MGM · Indicações</h2>'
+     +'<div class="mgmhead"><span class="muted" style="font-size:12.5px">A receber (5% do 1º mês)</span><span class="big money">'+BRL(m.mgmTotal)+'</span></div>'
+     +'<table><thead><tr><th>Indicado</th><th class="r">Vídeos 1º mês</th><th class="r">Você ganha</th></tr></thead><tbody>'+mgm+'</tbody></table></div>'
+ +'</div></div>'
+ +'<div class="foot"><img src="/assets/doppa-logo.png" alt="Doppa"> Atualizado automaticamente</div>';
+
+ wire();
+}
+function kpi(k,v,m,bar){return '<div class="kpi" style="--bar:'+bar+'"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="m">'+m+'</div></div>';}
+function frow(l,v){return '<div class="frow"><span class="lbl">'+l+'</span><span class="val money">'+v+'</span></div>';}
+function igHandle(u){if(!u)return"";const m=u.match(/instagram\.com\/([^\/?#]+)/i);return m?"@"+decodeURIComponent(m[1]):(u[0]==="@"?u:"@"+u);}
+function ats(c){var o=[];if(c.instagram_esp)o.push('<span class="atc esp"><i>ESP</i>'+esc(igHandle(c.instagram_esp))+'</span>');if(c.instagram_cas)o.push('<span class="atc cas"><i>CAS</i>'+esc(igHandle(c.instagram_cas))+'</span>');if(!o.length&&c.instagram)o.push('<span class="atc">'+esc(igHandle(c.instagram))+'</span>');return o.length?'<div class="ats">'+o.join('')+'</div>':'';}
+
+function wire(){
+ const tog=document.getElementById("cyctog"),menu=document.getElementById("cycmenu");
+ tog.onclick=e=>{e.stopPropagation();menu.classList.toggle("open");};
+ document.onclick=()=>menu&&menu.classList.remove("open");
+ menu.querySelectorAll("button").forEach(b=>b.onclick=()=>load(b.dataset.cs));
+ const prev=document.getElementById("cprev"),next=document.getElementById("cnext");
+ // cycles em ordem crescente; anterior = idx-1, proximo = idx+1
+ prev.onclick=()=>{if(STATE.idx>0)load(STATE.cycles[STATE.idx-1].start);};
+ next.onclick=()=>{if(STATE.idx<STATE.cycles.length-1)load(STATE.cycles[STATE.idx+1].start);};
+}
+
+async function load(cycleStart){
+ try{
+   const u=API+"/data?id="+encodeURIComponent(STATE.id)+(cycleStart?"&cycle="+cycleStart:"");
+   const r=await fetch(u);
+   if(r.status===404){shell('<img src="/assets/doppa-eye.png" alt=""><div>Criador não encontrado.<br>Confira se o link está completo.</div>');return;}
+   if(!r.ok)throw new Error("HTTP "+r.status);
+   render(await r.json());
+ }catch(e){shell('<img src="/assets/doppa-eye.png" alt=""><div>Não consegui carregar agora.<br>Tente de novo em instantes.</div>');}
+}
+function shell(html){document.getElementById("app").innerHTML='<div class="state">'+html+'</div>';}
+
+(function(){
+ STATE.id=new URLSearchParams(location.search).get("id");
+ if(!STATE.id){shell('<img src="/assets/doppa-eye.png" alt=""><div>Link inválido — falta o identificador do criador.</div>');return;}
+ load(null);
+})();
+</script>
+</body>
+</html>
