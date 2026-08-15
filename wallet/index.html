@@ -244,6 +244,15 @@ function render(m){
  const mgm=m.mgmItens.length?m.mgmItens.map(i=>'<tr><td>'+esc(i.nome)+'</td><td class="r">'+i.videos+'</td><td class="r money">'+BRL(i.valor)+'</td></tr>').join("")
    :'<tr><td colspan="3" class="dim">Você ainda não indicou ninguém ativo.</td></tr>';
 
+ const prem=Array.isArray(m.premios)?m.premios:[];
+ const premRows=prem.map(pr=>{var d=pr.data?'<span class="dim"> · '+dm(pr.data)+'</span>':'';var ds=pr.descricao?'<br><span class="dim">'+esc(pr.descricao)+'</span>':'';return '<tr><td><b>'+esc(pr.origem||'Piñata')+'</b>'+d+ds+'</td><td class="r money">+'+BRL(pr.valor)+'</td></tr>';}).join("");
+ const premCard='<div class="card"><h2>'+iconBox(I.ticket,"var(--g-gold)")+'Prêmios & Piñata</h2>'
+   +(prem.length
+     ?'<div class="mgmhead"><span class="muted" style="font-size:12.5px">Total em prêmios</span><span class="big money">'+BRL(m.premiosTotal||0)+'</span></div>'
+       +'<table><thead><tr><th>Prêmio</th><th class="r">Valor</th></tr></thead><tbody>'+premRows+'</tbody></table>'
+     :'<p class="dim">Nenhum prêmio ainda. Fique de olho na Piñata!</p>')
+   +'</div>';
+
  const jk=m.jokenpo||{}; let jkHtml='<p class="dim">O torneio ainda não foi publicado.</p>';
  const meName=(m.criador.nome||'').trim().toLowerCase();
  const meMb=(Array.isArray(jk.membros)?jk.membros:[]).find(x=>(x.nome||'').trim().toLowerCase()===meName);
@@ -286,6 +295,7 @@ function render(m){
    +'<div class="card"><h2>'+iconBox(I.people,"var(--g-accent)")+'MGM · Indicações</h2>'
      +'<div class="mgmhead"><span class="muted" style="font-size:12.5px">A receber (5% do 1º mês)</span><span class="big money">'+BRL(m.mgmTotal)+'</span></div>'
      +'<table><thead><tr><th>Indicado</th><th class="r">Vídeos 1º mês</th><th class="r">Você ganha</th></tr></thead><tbody>'+mgm+'</tbody></table></div>'
+   +premCard
  +'</div></div>'
  +'<div class="foot"><img src="/assets/doppa-logo.png" alt="Doppa"> Atualizado automaticamente</div>';
 
