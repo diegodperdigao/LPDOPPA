@@ -10,6 +10,14 @@ const CONFIG = {
   // Link de convite do servidor (pra onde o usuário é levado após enviar).
   DISCORD_INVITE: "https://discord.gg/JYGM6zuHhG",
 
+  // Convites do Discord por btag (agências/parceiros).
+  // Quem chegar com uma dessas btags recebe um convite dedicado — que já
+  // entrega o cargo correspondente no Discord (mais fácil reconhecer a origem).
+  // É só adicionar a linha "codigo: 'https://discord.gg/XXXX'".
+  DISCORD_INVITE_BY_BTAG: {
+    // fmg: "https://discord.gg/CODIGO_FMG",   // <- convite da FMG (cargo FMG)
+  },
+
   // URL do Google Apps Script (planilha). Cole depois de implantar.
   // Enquanto estiver vazia (""), a integração com a planilha fica desligada
   // e o resto continua funcionando normalmente.
@@ -84,6 +92,15 @@ const BTAG_KEY = "doppa_btag";
 })();
 const getBtag = () => {
   try { return localStorage.getItem(BTAG_KEY) || ""; } catch (e) { return ""; }
+};
+// Convite do Discord conforme a btag: se houver um convite dedicado pra essa
+// btag (agência/parceiro), usa ele; senão, o convite padrão da página.
+const getDiscordInvite = () => {
+  try {
+    const map = CONFIG.DISCORD_INVITE_BY_BTAG || {};
+    const b = getBtag();
+    return (b && map[b]) ? map[b] : CONFIG.DISCORD_INVITE;
+  } catch (e) { return CONFIG.DISCORD_INVITE; }
 };
 
 /* ============================================================
@@ -615,7 +632,7 @@ const sendWelcomeEmail = data => {
   const params = {
     email: data.email,
     nome: (data.nome || "").split(" ")[0] || data.nome, // primeiro nome, mais pessoal
-    discord_invite: CONFIG.DISCORD_INVITE,
+    discord_invite: getDiscordInvite(),
     origem: CONFIG.ORIGEM || "landing-page",
   };
   return window.emailjs.send(E.SERVICE_ID, E.TEMPLATE_ID, params).catch(e => console.warn("EmailJS:", e));
@@ -665,7 +682,7 @@ formEl.addEventListener("submit", async e => {
   modalHead.hidden = true;
   formEl.hidden = true;
   successEl.hidden = false;
-  $("#discord-link").href = CONFIG.DISCORD_INVITE;
+  $("#discord-link").href = getDiscordInvite();
   fireConfetti();
 
   // Redireciona respeitando o tempo da animação (REDIRECT_DELAY) e, se o
@@ -674,7 +691,7 @@ formEl.addEventListener("submit", async e => {
   const minWait = new Promise(r => setTimeout(r, CONFIG.REDIRECT_DELAY));
   const cap = new Promise(r => setTimeout(r, 3000));
   Promise.all([minWait, Promise.race([emailSent, cap])]).then(() => {
-    window.location.href = CONFIG.DISCORD_INVITE;
+    window.location.href = getDiscordInvite();
   });
 });
 
