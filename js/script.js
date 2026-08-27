@@ -15,7 +15,7 @@ const CONFIG = {
   // entrega o cargo correspondente no Discord (mais fácil reconhecer a origem).
   // É só adicionar a linha "codigo: 'https://discord.gg/XXXX'".
   DISCORD_INVITE_BY_BTAG: {
-    // fmg: "https://discord.gg/CODIGO_FMG",   // <- convite da FMG (cargo FMG)
+    fmg: "https://discord.gg/8wvQM32YQk",   // agência FMG → cargo FMG no Discord
   },
 
   // URL do Google Apps Script (planilha). Cole depois de implantar.
