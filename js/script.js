@@ -769,12 +769,10 @@ function fireConfetti() {
   const dismissed = () => { try { return sessionStorage.getItem(DISMISS_KEY) === "1"; } catch (e) { return false; } };
 
   // botão flutuante (sempre visível)
-  const fab = document.createElement("a");
+  const fab = document.createElement("button");
+  fab.type = "button";
   fab.className = "wpp-fab js-wpp";
-  fab.href = WPP_URL;
-  fab.target = "_blank";
-  fab.rel = "noopener";
-  fab.setAttribute("aria-label", "Falar no WhatsApp");
+  fab.setAttribute("aria-label", "Abrir ajuda pelo WhatsApp");
   fab.innerHTML = ICON;
   document.body.appendChild(fab);
 
@@ -795,6 +793,9 @@ function fireConfetti() {
     try { sessionStorage.setItem(DISMISS_KEY, "1"); } catch (e) {}
   });
 
+  // clicar no botão flutuante abre/fecha o balão (não vai direto pro WhatsApp)
+  fab.addEventListener("click", () => { pop.classList.toggle("show"); });
+
   // aparece após 6s, se não tiver sido fechado
   if (!dismissed()) setTimeout(() => { if (!dismissed()) pop.classList.add("show"); }, 6000);
 
@@ -802,7 +803,7 @@ function fireConfetti() {
   const css = document.createElement("style");
   css.textContent = `
     .wpp-fab{position:fixed;right:18px;bottom:18px;z-index:9998;width:58px;height:58px;border-radius:50%;
-      background:#25D366;color:#fff;display:grid;place-items:center;text-decoration:none;
+      background:#25D366;color:#fff;display:grid;place-items:center;text-decoration:none;border:0;padding:0;cursor:pointer;
       box-shadow:0 10px 26px -6px rgba(37,211,102,.7),0 4px 12px rgba(0,0,0,.35);
       transition:transform .2s ease}
     .wpp-fab:hover{transform:scale(1.08)}
