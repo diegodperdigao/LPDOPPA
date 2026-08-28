@@ -18,6 +18,7 @@ const CONFIG = {
     fmg: "https://discord.gg/8wvQM32YQk",   // agência FMG → cargo FMG no Discord
     cmdwpp: "https://discord.gg/yx5bd339dQ", // cmdwpp → convite/cargo dedicado
     pilhado: "https://discord.gg/8vkFwFNF7m", // pilhado → convite dedicado
+    jon: "https://discord.gg/km8YSkk6bf", // jon → convite dedicado
   },
 
   // URL do Google Apps Script (planilha). Cole depois de implantar.
