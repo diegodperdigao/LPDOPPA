@@ -796,9 +796,6 @@ function fireConfetti() {
   // clicar no botão flutuante abre/fecha o balão (não vai direto pro WhatsApp)
   fab.addEventListener("click", () => { pop.classList.toggle("show"); });
 
-  // aparece após 6s, se não tiver sido fechado
-  if (!dismissed()) setTimeout(() => { if (!dismissed()) pop.classList.add("show"); }, 6000);
-
   // estilos (injetados, funcionam em qualquer página)
   const css = document.createElement("style");
   css.textContent = `
