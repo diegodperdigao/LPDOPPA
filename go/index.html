@@ -18,7 +18,7 @@
       try {
         var p = new URLSearchParams(location.search);
         var raw = p.get("b") || p.get("btag") || "";
-        var btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64);
+        var btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64).toLowerCase();
         if (btag) localStorage.setItem("doppa_btag", btag);
         var to = (p.get("to") || "").toLowerCase();
         var dest = to === "vsl" ? "/vsl" : "/";

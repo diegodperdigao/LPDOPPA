@@ -88,7 +88,7 @@ const BTAG_KEY = "doppa_btag";
     const p = new URLSearchParams(location.search);
     const raw = p.get("btag") || p.get("ref") || p.get("af") || p.get("aff") || "";
     // sanitiza: só letras/números/._- e no máx. 64 chars
-    const btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64);
+    const btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64).toLowerCase();
     if (btag) localStorage.setItem(BTAG_KEY, btag);
   } catch (e) { /* localStorage bloqueado — ignora */ }
 })();
@@ -100,7 +100,7 @@ const getBtag = () => {
 const getDiscordInvite = () => {
   try {
     const map = CONFIG.DISCORD_INVITE_BY_BTAG || {};
-    const b = getBtag();
+    const b = (getBtag() || "").toLowerCase();
     return (b && map[b]) ? map[b] : CONFIG.DISCORD_INVITE;
   } catch (e) { return CONFIG.DISCORD_INVITE; }
 };
