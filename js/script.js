@@ -751,3 +751,81 @@ function fireConfetti() {
   };
   tick();
 }
+
+/* ============================================================
+   Pop-up / botão flutuante do WhatsApp (ajuda)
+   ------------------------------------------------------------
+   Botão fixo no canto + balão com a mensagem. Aparece após um
+   tempo; fechar guarda a preferência (não reaparece na sessão).
+   A classe .js-wpp é isenta da trava da VSL (é canal de suporte).
+   ============================================================ */
+(() => {
+  const WPP_URL = "https://wa.me/message/IG3DKHN5RD4CD1";
+  const DISMISS_KEY = "doppa_wpp_dismiss";
+  const ICON =
+    '<svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor" aria-hidden="true">' +
+    '<path d="M16.03 4C9.94 4 5 8.94 5 15.03c0 2.13.6 4.12 1.64 5.82L5 28l7.35-1.6a11 11 0 0 0 3.68.64h.01C22.12 27.04 27 22.1 27 16.01 27 9.94 22.1 4 16.03 4Zm6.44 15.57c-.27.76-1.56 1.46-2.17 1.52-.58.06-1.31.08-2.12-.13-.49-.13-1.11-.34-1.92-.68-3.38-1.46-5.58-4.86-5.75-5.09-.17-.23-1.38-1.83-1.38-3.5 0-1.66.87-2.48 1.18-2.82.31-.34.68-.42.9-.42.23 0 .45 0 .65.01.21.01.49-.08.76.58.27.66.93 2.29 1.01 2.46.08.17.14.36.03.59-.11.23-.17.36-.34.56-.17.2-.36.44-.51.59-.17.17-.35.35-.15.69.2.34.9 1.48 1.93 2.4 1.33 1.18 2.45 1.55 2.79 1.72.34.17.54.14.74-.08.2-.23.85-.99 1.08-1.33.23-.34.45-.28.76-.17.31.11 1.96.92 2.3 1.09.34.17.57.25.65.4.08.14.08.82-.19 1.58Z"/></svg>';
+
+  const dismissed = () => { try { return sessionStorage.getItem(DISMISS_KEY) === "1"; } catch (e) { return false; } };
+
+  // botão flutuante (sempre visível)
+  const fab = document.createElement("a");
+  fab.className = "wpp-fab js-wpp";
+  fab.href = WPP_URL;
+  fab.target = "_blank";
+  fab.rel = "noopener";
+  fab.setAttribute("aria-label", "Falar no WhatsApp");
+  fab.innerHTML = ICON;
+  document.body.appendChild(fab);
+
+  // balão com a mensagem
+  const pop = document.createElement("div");
+  pop.className = "wpp-pop js-wpp";
+  pop.setAttribute("role", "dialog");
+  pop.setAttribute("aria-label", "Ajuda pelo WhatsApp");
+  pop.innerHTML =
+    '<button class="wpp-pop__x" type="button" aria-label="Fechar">&times;</button>' +
+    '<p class="wpp-pop__t">Ficou com dúvida? Se perdeu no caminho?</p>' +
+    '<p class="wpp-pop__d">Fala agora com a gente pelo WhatsApp!</p>' +
+    '<a class="wpp-pop__btn js-wpp" href="' + WPP_URL + '" target="_blank" rel="noopener">' + ICON + '<span>Falar no WhatsApp</span></a>';
+  document.body.appendChild(pop);
+
+  pop.querySelector(".wpp-pop__x").addEventListener("click", () => {
+    pop.classList.remove("show");
+    try { sessionStorage.setItem(DISMISS_KEY, "1"); } catch (e) {}
+  });
+
+  // aparece após 6s, se não tiver sido fechado
+  if (!dismissed()) setTimeout(() => { if (!dismissed()) pop.classList.add("show"); }, 6000);
+
+  // estilos (injetados, funcionam em qualquer página)
+  const css = document.createElement("style");
+  css.textContent = `
+    .wpp-fab{position:fixed;right:18px;bottom:18px;z-index:9998;width:58px;height:58px;border-radius:50%;
+      background:#25D366;color:#fff;display:grid;place-items:center;text-decoration:none;
+      box-shadow:0 10px 26px -6px rgba(37,211,102,.7),0 4px 12px rgba(0,0,0,.35);
+      transition:transform .2s ease}
+    .wpp-fab:hover{transform:scale(1.08)}
+    .wpp-fab::after{content:"";position:absolute;inset:0;border-radius:50%;
+      box-shadow:0 0 0 0 rgba(37,211,102,.55);animation:wppPulse 2.4s infinite}
+    @keyframes wppPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+    .wpp-pop{position:fixed;right:18px;bottom:86px;z-index:9999;width:min(290px,calc(100vw - 36px));
+      background:#0E1335;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px 16px 14px;
+      box-shadow:0 20px 48px -12px rgba(0,0,0,.6);opacity:0;transform:translateY(12px) scale(.96);
+      pointer-events:none;transition:opacity .28s ease,transform .28s cubic-bezier(.22,1,.36,1);
+      font-family:'Poppins',system-ui,Segoe UI,Arial,sans-serif}
+    .wpp-pop.show{opacity:1;transform:none;pointer-events:auto}
+    .wpp-pop__x{position:absolute;top:8px;right:10px;background:transparent;border:0;color:#8A90B4;
+      font-size:22px;line-height:1;cursor:pointer;padding:2px 6px}
+    .wpp-pop__x:hover{color:#fff}
+    .wpp-pop__t{margin:2px 24px 4px 0;color:#fff;font-weight:700;font-size:14.5px;line-height:1.35}
+    .wpp-pop__d{margin:0 0 12px;color:#B9BFE3;font-size:13px;line-height:1.4}
+    .wpp-pop__btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;
+      text-decoration:none;font-weight:700;font-size:14px;padding:11px 14px;border-radius:11px}
+    .wpp-pop__btn:hover{background:#20bd5a}
+    .wpp-pop__btn svg{width:20px;height:20px}
+    @media(max-width:480px){.wpp-fab{width:52px;height:52px;right:14px;bottom:14px}.wpp-pop{right:14px;bottom:76px}}
+    @media(prefers-reduced-motion:reduce){.wpp-fab::after{animation:none}}
+  `;
+  document.head.appendChild(css);
+})();
