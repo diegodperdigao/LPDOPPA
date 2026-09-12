@@ -88,7 +88,7 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 
 /* botão "Quero minha vaga" (com cadeado) sempre visível no header da VSL,
    inclusive no mobile — sinaliza que a vaga existe, mas é preciso esperar */
-.nav__cta{ display:inline-flex !important; }
+.nav__cta{ display:inline-flex !important; margin-left:auto !important; }
 
 /* não força altura de tela cheia (evita o espaço vazio embaixo do vídeo) */
 body.is-locked, body.is-unlocked{ min-height:auto !important; display:block !important; }
