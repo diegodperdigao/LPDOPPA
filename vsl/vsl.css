@@ -86,14 +86,16 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 .hero__cta,
 .strip, .section, section.cta, .footer{ display:none !important; }
 
-/* botão "Quero minha vaga" (com cadeado) sempre visível no header da VSL,
-   inclusive no mobile — sinaliza que a vaga existe, mas é preciso esperar */
-.nav__cta{ display:inline-flex !important; margin-left:auto !important; }
-
-/* header alinhado: usa a logo da barra (sempre visível) alinhada com o botão,
-   e esconde a logo grande do hero (que ficava solta em relação ao botão) */
-.nav__brand{ opacity:1 !important; visibility:visible !important; transform:none !important; }
-.hero__brand{ display:none !important; }
+/* botão "Quero minha vaga" (com cadeado) sempre visível no header da VSL.
+   Mantém a LOGO GRANDE do hero e alinha o botão verticalmente com o centro
+   dela (mesmo topo + metade da altura da logo), com margem simétrica. */
+.nav__cta{
+  display:inline-flex !important;
+  position:fixed !important; left:auto !important; margin:0 !important; z-index:61 !important;
+  right:clamp(16px,3.2vw,46px) !important;
+  top:calc(clamp(14px,2.4vw,22px) + clamp(70px,8.01vw,106px) / 2) !important;
+  transform:translateY(-50%) !important;
+}
 
 /* não força altura de tela cheia (evita o espaço vazio embaixo do vídeo) */
 body.is-locked, body.is-unlocked{ min-height:auto !important; display:block !important; }
