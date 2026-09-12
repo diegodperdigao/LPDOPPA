@@ -287,6 +287,46 @@ $("#year").textContent = new Date().getFullYear();
   };
   let playTracked = false;
 
+  /* ---- Medição de RETENÇÃO (estilo VTurb): visitante único, marcos %, saída ---- */
+  const VISITOR_KEY = "doppa_visitor";
+  const getVisitor = () => {
+    try {
+      let v = localStorage.getItem(VISITOR_KEY);
+      if (!v) { v = Date.now().toString(36) + Math.random().toString(36).slice(2, 10); localStorage.setItem(VISITOR_KEY, v); }
+      return v;
+    } catch (e) { return "anon"; }
+  };
+  const MILESTONES = [10, 25, 50, 75, 90];
+  let viewId = "", vidDur = 0, maxSec = 0, milestonesSent = {}, exitSent = false;
+
+  const progressBody = (evento, pct, seconds) => JSON.stringify({
+    visitor: getVisitor(), sid: viewId,
+    evento: evento, pct: Math.round(pct || 0), segundos: Math.round(seconds || 0), duracao: Math.round(vidDur || 0),
+    origem: CONFIG.ORIGEM || "landing-page",
+    btag: (typeof getBtag === "function" ? getBtag() : "") || null,
+  });
+  const logProgress = (evento, pct, seconds) => {
+    try {
+      if (!viewId || !CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) return;
+      fetch(`${CONFIG.SUPABASE_URL}/rest/v1/video_progress`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: CONFIG.SUPABASE_KEY, Authorization: `Bearer ${CONFIG.SUPABASE_KEY}`, Prefer: "return=minimal" },
+        body: progressBody(evento, pct, seconds),
+        keepalive: true,
+      }).catch(() => {});
+    } catch (e) {}
+  };
+  // registra o ponto de saída quando a pessoa deixa a página antes de terminar
+  const logExit = () => {
+    if (exitSent || !viewId) return;
+    const pct = vidDur ? (maxSec / vidDur * 100) : 0;
+    if (pct >= 98) { exitSent = true; return; } // terminou; não é abandono
+    exitSent = true;
+    logProgress("exit", pct, maxSec);
+  };
+  window.addEventListener("pagehide", logExit);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") logExit(); });
+
   const url = CONFIG.VIDEO_URL || "";
   const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([\w-]{6,})/);
   const ytId = ytMatch ? ytMatch[1] : null;
@@ -324,6 +364,8 @@ $("#year").textContent = new Date().getFullYear();
     if (player.querySelector(".vsl__end")) return;
     document.dispatchEvent(new Event("doppa:videoended"));
     track("doppa_video_complete");
+    logProgress("complete", 100, vidDur);
+    exitSent = true; // terminou: não registra saída
     const end = document.createElement("div");
     end.className = "vsl__end";
     end.innerHTML =
@@ -349,7 +391,13 @@ $("#year").textContent = new Date().getFullYear();
         const p = window.__ytPlayer;
         if (!p || !p.getDuration) return;
         const d = p.getDuration(), t = p.getCurrentTime();
-        if (d > 0 && t >= d - 1.2) { clearInterval(endWatch); endWatch = null; showEnd(); }
+        if (d > 0) {
+          vidDur = d;
+          if (t > maxSec) maxSec = t;
+          const pct = t / d * 100;
+          MILESTONES.forEach(m => { if (pct >= m && !milestonesSent[m]) { milestonesSent[m] = 1; logProgress("milestone", m, t); } });
+          if (t >= d - 1.2) { clearInterval(endWatch); endWatch = null; showEnd(); }
+        }
       } catch (e) {}
     }, 1000);
   };
@@ -408,7 +456,14 @@ $("#year").textContent = new Date().getFullYear();
   };
 
   const mount = () => {
-    if (url && !playTracked) { playTracked = true; track("doppa_video_play"); }
+    if (url && !playTracked) {
+      playTracked = true;
+      track("doppa_video_play");
+      // inicia a visualização para a medição de retenção
+      viewId = Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+      milestonesSent = {}; maxSec = 0; exitSent = false;
+      logProgress("play", 0, 0);
+    }
     if (!url) {
       playBtn.animate(
         [{ transform: "translate(-50%,-50%) scale(1)" }, { transform: "translate(-50%,-50%) scale(.9)" }, { transform: "translate(-50%,-50%) scale(1)" }],
