@@ -90,6 +90,11 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
    inclusive no mobile — sinaliza que a vaga existe, mas é preciso esperar */
 .nav__cta{ display:inline-flex !important; margin-left:auto !important; }
 
+/* header alinhado: usa a logo da barra (sempre visível) alinhada com o botão,
+   e esconde a logo grande do hero (que ficava solta em relação ao botão) */
+.nav__brand{ opacity:1 !important; visibility:visible !important; transform:none !important; }
+.hero__brand{ display:none !important; }
+
 /* não força altura de tela cheia (evita o espaço vazio embaixo do vídeo) */
 body.is-locked, body.is-unlocked{ min-height:auto !important; display:block !important; }
 
