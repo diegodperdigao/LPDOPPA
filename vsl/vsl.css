@@ -101,6 +101,8 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 body.is-locked, body.is-unlocked{ display:flex !important; flex-direction:column !important; min-height:100svh !important; }
 .hero--video{ flex:1 1 auto !important; display:flex; flex-direction:column; justify-content:center; }
 .footer{ flex:0 0 auto; margin-top:0 !important; padding:14px 0 !important; }
+/* rodapé compacto: sem a faixa/linha vazia acima do texto (não há mais conteúdo ali) */
+.footer__base{ margin-top:0 !important; padding-top:0 !important; border-top:0 !important; }
 
 /* logo não abre popup nem mostra flash de toque */
 .hero__brand, .nav__brand{ -webkit-tap-highlight-color:transparent; }
