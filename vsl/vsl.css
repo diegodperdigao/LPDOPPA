@@ -82,16 +82,34 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 /* (sem controles custom no player — tudo é nativo do YouTube) */
 
 /* ===== Destaque forte do CTA quando libera (pitch delay / 8:48) ===== */
-@keyframes vslCtaPop{ 0%{transform:scale(.92)} 55%{transform:scale(1.12)} 100%{transform:scale(1)} }
+@keyframes vslCtaIn{ 0%{transform:scale(.85)} 55%{transform:scale(1.16)} 100%{transform:scale(1.06)} }
+@keyframes vslCtaBreath{ 0%,100%{transform:scale(1.06)} 50%{transform:scale(1.12)} }
 @keyframes vslCtaRing{
-  0%{ box-shadow:0 0 0 0 rgba(34,212,110,.65), 0 14px 34px -6px rgba(34,212,110,.6); }
-  70%{ box-shadow:0 0 0 18px rgba(34,212,110,0), 0 14px 34px -6px rgba(34,212,110,.6); }
-  100%{ box-shadow:0 0 0 0 rgba(34,212,110,0), 0 14px 34px -6px rgba(34,212,110,.6); }
+  0%{ box-shadow:0 0 0 0 rgba(34,212,110,.7), 0 20px 48px -6px rgba(34,212,110,.7); }
+  70%{ box-shadow:0 0 0 26px rgba(34,212,110,0), 0 20px 48px -6px rgba(34,212,110,.7); }
+  100%{ box-shadow:0 0 0 0 rgba(34,212,110,0), 0 20px 48px -6px rgba(34,212,110,.7); }
 }
+@keyframes vslCtaShine{ 0%{ background-position:-140% 0 } 60%,100%{ background-position:240% 0 } }
+
 .vsl-cta-hot{
-  animation:vslCtaPop .6s cubic-bezier(.22,1,.36,1) both, vslCtaRing 1.7s ease-out .6s infinite;
-  position:relative; z-index:2;
+  font-size:clamp(18px,2.8vw,24px) !important;
+  padding:1.15em 2.2em !important;
+  font-weight:800 !important;
+  text-transform:uppercase; letter-spacing:.02em;
+  background:linear-gradient(120deg,#22D46E 0%,#12B6C6 55%,#00D1FF 100%) !important;
+  animation:vslCtaIn .6s cubic-bezier(.22,1,.36,1) both,
+            vslCtaBreath 1.8s ease-in-out .6s infinite,
+            vslCtaRing 1.6s ease-out .6s infinite;
+  position:relative; z-index:3; overflow:hidden;
+}
+/* brilho passando por cima */
+.vsl-cta-hot::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.55) 50%,transparent 80%);
+  background-size:60% 100%; background-repeat:no-repeat;
+  animation:vslCtaShine 2.6s ease-in-out .8s infinite;
 }
 @media (prefers-reduced-motion:reduce){
-  .vsl-cta-hot{ animation:none; box-shadow:0 0 0 3px rgba(34,212,110,.6), 0 14px 34px -6px rgba(34,212,110,.6); }
+  .vsl-cta-hot{ animation:none; transform:scale(1.06); box-shadow:0 0 0 3px rgba(34,212,110,.6), 0 20px 48px -6px rgba(34,212,110,.6); }
+  .vsl-cta-hot::after{ animation:none; display:none; }
 }
