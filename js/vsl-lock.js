@@ -86,7 +86,7 @@
     document.body.classList.add("is-unlocked");
     // garante que todas as seções (que usam .reveal) fiquem visíveis
     document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
-    showToast("Tudo liberado! Garanta sua vaga. 🎉", true);
+    // (sem toast aqui — o botão flutuante já é o sinal visual da liberação)
   };
   document.addEventListener("doppa:videoended", unlock);
 
