@@ -544,6 +544,26 @@ const closeModal = () => {
 
 $$(".js-open-form").forEach(btn => btn.addEventListener("click", openModal));
 $$(".js-close-form").forEach(btn => btn.addEventListener("click", closeModal));
+
+/* ============================================================
+   CTA flutuante da VSL — aparece no "pitch" (evento doppa:videoended,
+   disparado aos 8:48). Fica FIXO e sempre visível, mesmo com o vídeo
+   no topo da página. Só é criado na /vsl (onde existe o player).
+   ============================================================ */
+(() => {
+  if (!$("#vsl-player")) return; // só na VSL
+  const cta = document.createElement("button");
+  cta.type = "button";
+  cta.className = "vsl-float-cta";
+  cta.textContent = "Quero minha vaga →";
+  cta.addEventListener("click", openModal);
+  document.body.appendChild(cta);
+  let shown = false;
+  document.addEventListener("doppa:videoended", () => {
+    if (shown) return; shown = true;
+    cta.classList.add("show");
+  });
+})();
 document.addEventListener("keydown", e => {
   if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
 });
