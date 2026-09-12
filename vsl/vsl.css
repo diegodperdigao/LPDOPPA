@@ -81,25 +81,28 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 
 /* (sem controles custom no player — tudo é nativo do YouTube) */
 
-/* ===== VSL enxuta: foco total no vídeo — header em barra única ===== */
+/* ===== VSL enxuta: TUDO em uma tela — logo grande, sem rolagem/gap ===== */
 .nav__links, .nav__burger, .nav__cta-mobile,
-.hero__cta, .hero__brand,
+.hero__cta,
 .strip, .section, section.cta,
 .footer__inner{ display:none !important; }   /* mantém só o rodapé enxuto (footer__base) */
 
-/* header alinhado: logo (sempre visível) + botão juntos na barra — rolam alinhados */
-.nav__brand{ opacity:1 !important; visibility:visible !important; transform:none !important; }
-.nav__brand .brand-logo{ height:clamp(44px,6vw,58px) !important; }
-.nav__cta{ display:inline-flex !important; margin-left:auto !important; }
+/* botão do header alinhado ao centro da LOGO GRANDE do hero (margem simétrica) */
+.nav__cta{
+  display:inline-flex !important;
+  position:fixed !important; left:auto !important; margin:0 !important; z-index:61 !important;
+  right:clamp(16px,3.2vw,46px) !important;
+  top:calc(clamp(14px,2.4vw,22px) + clamp(70px,8.01vw,106px) / 2) !important;
+  transform:translateY(-50%) !important;
+}
 
-/* hero preenche a tela com o conteúdo centralizado — acaba com os gaps */
-.hero--video{ min-height:100svh; display:flex; flex-direction:column; justify-content:center; }
+/* tudo cabe em uma tela: hero preenche o meio (vídeo centralizado), rodapé
+   colado embaixo — sem rolagem e sem espaço vazio */
+body.is-locked, body.is-unlocked{ display:flex !important; flex-direction:column !important; min-height:100svh !important; }
+.hero--video{ flex:1 1 auto !important; display:flex; flex-direction:column; justify-content:center; }
+.footer{ flex:0 0 auto; margin-top:0 !important; padding:14px 0 !important; }
 
-/* rodapé enxuto em fluxo normal, logo abaixo do hero (sem forçar altura) */
-body.is-locked, body.is-unlocked{ min-height:auto !important; display:block !important; }
-.footer{ padding:16px 0 !important; }
-
-/* logo não é botão: sem flash de toque */
+/* logo não abre popup nem mostra flash de toque */
 .hero__brand, .nav__brand{ -webkit-tap-highlight-color:transparent; }
 
 /* ===== Botão flutuante que aparece no pitch (8:48) — fixo, sempre visível ===== */
