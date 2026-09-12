@@ -86,6 +86,9 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 .hero__cta,
 .strip, .section, section.cta, .footer{ display:none !important; }
 
+/* não força altura de tela cheia (evita o espaço vazio embaixo do vídeo) */
+body.is-locked, body.is-unlocked{ min-height:auto !important; display:block !important; }
+
 /* ===== Botão flutuante que aparece no pitch (8:48) — fixo, sempre visível ===== */
 .vsl-float-cta{
   position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(28px);
