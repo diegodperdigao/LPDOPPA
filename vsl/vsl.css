@@ -81,10 +81,14 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 
 /* (sem controles custom no player — tudo é nativo do YouTube) */
 
-/* ===== VSL enxuta: foco total no vídeo — header só com a logo ===== */
-.nav__links, .nav__burger, .nav__cta-mobile, .nav__cta,
+/* ===== VSL enxuta: foco total no vídeo — header só com a logo + botão ===== */
+.nav__links, .nav__burger, .nav__cta-mobile,
 .hero__cta,
 .strip, .section, section.cta, .footer{ display:none !important; }
+
+/* botão "Quero minha vaga" (com cadeado) sempre visível no header da VSL,
+   inclusive no mobile — sinaliza que a vaga existe, mas é preciso esperar */
+.nav__cta{ display:inline-flex !important; }
 
 /* não força altura de tela cheia (evita o espaço vazio embaixo do vídeo) */
 body.is-locked, body.is-unlocked{ min-height:auto !important; display:block !important; }
