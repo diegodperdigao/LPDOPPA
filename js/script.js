@@ -51,6 +51,11 @@ const CONFIG = {
   // cole a URL de uma imagem aqui (ex: "assets/capa-vsl.jpg").
   VIDEO_POSTER: "",
 
+  // "Pitch delay": segundos do vídeo em que o CTA/conteúdo é liberado (o botão
+  // "Quero minha vaga" aparece), mesmo com o vídeo ainda tocando. 0 = só no fim.
+  // Ex: 528 = 8min48s. A /vsl sobrescreve abaixo.
+  CTA_AT_SECONDS: 0,
+
   // Tempo (ms) até redirecionar pro Discord depois do sucesso.
   // (o usuário também pode clicar no botão "Entrar no Discord" na hora)
   REDIRECT_DELAY: 1400,
@@ -297,7 +302,7 @@ $("#year").textContent = new Date().getFullYear();
     } catch (e) { return "anon"; }
   };
   const MILESTONES = [10, 25, 50, 75, 90];
-  let viewId = "", vidDur = 0, maxSec = 0, milestonesSent = {}, exitSent = false;
+  let viewId = "", vidDur = 0, maxSec = 0, milestonesSent = {}, exitSent = false, ctaShown = false;
 
   const progressBody = (evento, pct, seconds) => JSON.stringify({
     visitor: getVisitor(), sid: viewId,
@@ -396,6 +401,11 @@ $("#year").textContent = new Date().getFullYear();
           if (t > maxSec) maxSec = t;
           const pct = t / d * 100;
           MILESTONES.forEach(m => { if (pct >= m && !milestonesSent[m]) { milestonesSent[m] = 1; logProgress("milestone", m, t); } });
+          // pitch delay: libera o CTA no tempo configurado (vídeo continua tocando)
+          if (!ctaShown && CONFIG.CTA_AT_SECONDS > 0 && t >= CONFIG.CTA_AT_SECONDS) {
+            ctaShown = true;
+            document.dispatchEvent(new Event("doppa:videoended"));
+          }
           if (t >= d - 1.2) { clearInterval(endWatch); endWatch = null; showEnd(); }
         }
       } catch (e) {}
