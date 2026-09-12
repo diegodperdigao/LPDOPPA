@@ -7,18 +7,16 @@ const CONFIG = {
   // URL do Webhook do seu canal no Discord (recebe cada lead).
   DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1521169421106675914/dnGEmdh9uO2Eq580qG5k6A74V2cqz4vjlRFHsLiv3aII6PRpq7LrMPbXI5zwlpUqub4k",
 
-  // Link de convite do servidor (pra onde o usuário é levado após enviar).
-  DISCORD_INVITE: "https://discord.gg/JYGM6zuHhG",
+  // Destino após o cadastro: agora é a COMUNIDADE NO WHATSAPP (antes era o Discord).
+  // Vale para todas as páginas e origens.
+  DISCORD_INVITE: "https://whatsapp.com/channel/0029Vb8QH7j2P59rJDonLM31",
 
-  // Convites do Discord por btag (agências/parceiros).
-  // Quem chegar com uma dessas btags recebe um convite dedicado — que já
-  // entrega o cargo correspondente no Discord (mais fácil reconhecer a origem).
-  // É só adicionar a linha "codigo: 'https://discord.gg/XXXX'".
+  // (Desativado) Destinos dedicados por btag. Hoje TODOS vão pra mesma comunidade
+  // no WhatsApp (DISCORD_INVITE acima). A btag continua sendo registrada no lead
+  // (Discord/planilha/Supabase); só o destino é único. Pra voltar a ter destinos
+  // por origem, é só preencher aqui de novo ("codigo: 'https://...'").
   DISCORD_INVITE_BY_BTAG: {
-    fmg: "https://discord.gg/8wvQM32YQk",   // agência FMG → cargo FMG no Discord
-    cmdwpp: "https://discord.gg/yx5bd339dQ", // cmdwpp → convite/cargo dedicado
-    pilhado: "https://discord.gg/8vkFwFNF7m", // pilhado → convite dedicado
-    jon: "https://discord.gg/km8YSkk6bf", // jon → convite dedicado
+    // fmg: "...", cmdwpp: "...", pilhado: "...", jon: "...",
   },
 
   // URL do Google Apps Script (planilha). Cole depois de implantar.
