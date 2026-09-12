@@ -86,8 +86,6 @@
     document.body.classList.add("is-unlocked");
     // garante que todas as seções (que usam .reveal) fiquem visíveis
     document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
-    // destaque no CTA (glow — sem mudar tamanho, não quebra o menu)
-    document.querySelectorAll(CTA_SEL).forEach(b => b.classList.add("vsl-cta-hot"));
     showToast("Tudo liberado! Garanta sua vaga. 🎉", true);
   };
   document.addEventListener("doppa:videoended", unlock);
