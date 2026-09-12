@@ -490,6 +490,8 @@ img,svg{display:block;max-width:100%}
 .footer__nav a:hover{color:#fff}
 .footer__base{display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:center;color:var(--dim);font-size:.8rem;
   margin-top:24px;padding-top:22px;border-top:1px solid var(--line);text-align:center}
+.footer__base a{color:var(--cyan);text-decoration:none;font-weight:600}
+.footer__base a:hover{text-decoration:underline}
 @media(min-width:820px){
   .footer__inner{flex-direction:row;justify-content:space-between;align-items:center;text-align:left}
   .footer__col{align-items:flex-start;text-align:left}
