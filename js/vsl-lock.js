@@ -71,7 +71,7 @@
   document.addEventListener("click", e => {
     if (!locked) return;
     const el = e.target.closest(INTERACTIVE);
-    if (!el || isVideo(el) || el.closest(".js-wpp")) return; // WhatsApp: suporte sempre liberado
+    if (!el || isVideo(el) || el.closest(".js-wpp, .nav__brand, .hero__brand")) return; // WhatsApp e logo: sempre liberados
     e.preventDefault();
     e.stopImmediatePropagation();
     showToast(el.closest(CTA_SEL) ? CTA_MSG : INFO_MSG);

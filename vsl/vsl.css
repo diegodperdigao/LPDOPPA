@@ -84,7 +84,8 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 /* ===== VSL enxuta: foco total no vídeo — header só com a logo + botão ===== */
 .nav__links, .nav__burger, .nav__cta-mobile,
 .hero__cta,
-.strip, .section, section.cta, .footer{ display:none !important; }
+.strip, .section, section.cta,
+.footer__inner{ display:none !important; }   /* mantém só o rodapé enxuto (footer__base) */
 
 /* botão "Quero minha vaga" (com cadeado) sempre visível no header da VSL.
    Mantém a LOGO GRANDE do hero e alinha o botão verticalmente com o centro
@@ -97,8 +98,12 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
   transform:translateY(-50%) !important;
 }
 
-/* não força altura de tela cheia (evita o espaço vazio embaixo do vídeo) */
-body.is-locked, body.is-unlocked{ min-height:auto !important; display:block !important; }
+/* rodapé enxuto colado embaixo (sticky footer) — sem vazio solto no fim */
+body.is-locked, body.is-unlocked{ display:flex !important; flex-direction:column !important; min-height:100svh !important; }
+.footer{ margin-top:auto !important; padding:16px 0 !important; }
+
+/* logo não é botão: sem "marca"/flash de toque */
+.hero__brand, .nav__brand{ -webkit-tap-highlight-color:transparent; }
 
 /* ===== Botão flutuante que aparece no pitch (8:48) — fixo, sempre visível ===== */
 .vsl-float-cta{
