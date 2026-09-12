@@ -444,6 +444,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // Teste: abra /vsl?v=ID  (ou cole a URL inteira do YouTube) pra trocar o vídeo.
   var v=new URLSearchParams(location.search).get("v");
   if(v)o.VIDEO_URL=(/^https?:\/\//i.test(v)||v.indexOf("/")>-1)?v:("https://youtu.be/"+v);
+  // Teste: /vsl?cta=15 libera o botão aos 15s (só pra validar o destaque; não afeta o valor real).
+  var cta=new URLSearchParams(location.search).get("cta");
+  if(cta!==null&&!isNaN(+cta))o.CTA_AT_SECONDS=+cta;
   window.DOPPA_CONFIG_OVERRIDES=o;
 })();
 </script>
