@@ -79,7 +79,7 @@
   }
 
   // ---------- canvas fixo (viewport inteira) ----------
-  let canvas = null, playing = false;
+  let canvas = null, playing = false, stopReq = false;
   function getCanvas() {
     if (canvas) return canvas;
     canvas = document.createElement("canvas");
@@ -104,7 +104,7 @@
   }
 
   function run(fromEl, done) {
-    playing = true;
+    playing = true; stopReq = false;
     const c = getCanvas(), ctx = c.getContext("2d"); const dpr = Math.min(devicePixelRatio || 1, 2);
     const W = innerWidth, H = innerHeight; c.width = W*dpr; c.height = H*dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); c.style.display = "block";
     const br = fromEl && fromEl.getBoundingClientRect ? fromEl.getBoundingClientRect() : { left: W/2, top: H/2, width: 0, height: 0 };
@@ -172,8 +172,30 @@
     }
 
     const rays = makeRays(tx, ty, 30); const t0 = performance.now(); let last = t0;
+    let idle = false, lastIdleDraw = 0;
     function frame(now) {
+      if (stopReq) { playing = false; return; }
       const elapsed = Math.min(50, now - last); last = now; const dt = elapsed/16.7; const el = now - t0;
+
+      // modo B (vivo): sem física; olhos piscam e "olham em volta" (throttle ~30fps pra não pesar)
+      if (idle) {
+        if (now - lastIdleDraw >= 32) {
+          lastIdleDraw = now;
+          ctx.clearRect(0, 0, W, H);
+          eyes.forEach(e => {
+            e.gt = (e.gt || 0) - elapsed;
+            if (e.gt <= 0) { e.tgx = Math.random()*1.6 - .8; e.tgy = Math.random()*1.6 - .8; e.gt = 900 + Math.random()*1800; }
+            e.gx = (e.gx || 0) + (((e.tgx || 0) - (e.gx || 0)) * .05);
+            e.gy = (e.gy || 0) + (((e.tgy || 0) - (e.gy || 0)) * .05);
+            e.blink -= elapsed;
+            if (e.blink < 0) { e.lid = Math.min(1, e.lid + .5); if (e.lid >= 1) e.blink = 2800 + Math.random()*4200; }
+            else if (e.lid > 0) e.lid = Math.max(0, e.lid - .5);
+            drawEye(ctx, e.x, e.y, e.r, e.rot, e.gx, e.gy, e.lid);
+          });
+        }
+        requestAnimationFrame(frame); return;
+      }
+
       physAcc += elapsed; let steps = 0; while (physAcc >= 16.7 && steps < 3) { step(el); physAcc -= 16.7; steps++; }
       const filled = eyes.length >= target || pileTop < TOP + R1*2.5;
       if (phase === 0 && filled) { if (!settledSince) settledSince = el; if (el - settledSince > CFG.SETTLE_MS) { phase = 2; tFull = el; } }
@@ -188,7 +210,7 @@
         drawEye(ctx, e.x, e.y, e.r, e.rot, dx/d, dy/d, e.lid);
       });
       if (phase >= 2) {
-        if (FREEZE) { finishFreeze(); return; }  // modo B: congela os olhos como fundo
+        if (FREEZE) { finishFreeze(); requestAnimationFrame(frame); return; }  // modo B: entra em idle, loop segue vivo
         const k = Math.min(1, (el - tFull)/CFG.GIANT_MS); drawGiant(ctx, S, easeIO(k), rays, dt);
         if (k >= 1) { finish(); return; }
       }
@@ -199,8 +221,10 @@
       done();
       setTimeout(() => { c.style.display = "none"; ctx.clearRect(0, 0, W, H); playing = false; }, CFG.SWALLOW_HOLD_MS);
     }
-    // modo B: para a física, mantém o campo de olhos desenhado como fundo e abre o modal por cima
+    // modo B: mantém os olhos VIVOS de fundo (idle) e abre o modal por cima
     function finishFreeze() {
+      if (idle) return;
+      idle = true;
       document.body.classList.add("is-eyefield");
       done();
       // o canvas fica visível como fundo; é limpo no closeModal via DoppaEyes.clear()
@@ -210,6 +234,7 @@
 
   // tira o canvas de olhos usado como fundo (modo B) — chamado no closeModal
   function clear() {
+    stopReq = true; // encerra o loop idle do modo B
     if (canvas) { canvas.style.display = "none"; try { canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height); } catch (e) {} }
     document.body.classList.remove("is-eyefield");
     playing = false;
