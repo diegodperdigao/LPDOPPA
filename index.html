@@ -97,6 +97,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <button class="vsl__play" id="vsl-play" aria-label="Assistir ao vídeo">
             <svg class="ic"><use href="#i-play"></use></svg>
           </button>
+          <!-- máscaras cobrindo a marca do YouTube (título/canal em cima, logo no canto) — só enquanto tocando -->
+          <span class="vsl__mask-top" aria-hidden="true"></span>
+          <span class="vsl__mask-br" aria-hidden="true"></span>
         </div>
 
         <!-- olho vivo acompanhando quem assiste -->
@@ -213,7 +216,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ===================== COMUNIDADE ===================== -->
 <section class="section section--alt" id="comunidade">
   <div class="container container--narrow center">
-    <img src="assets/mascote.webp" class="comunidade__mascot reveal" alt="" aria-hidden="true" />
+    <img src="assets/mascote.webp" class="comunidade__mascot reveal" alt="" aria-hidden="true" width="400" height="425" loading="lazy" decoding="async" />
     <header class="head reveal">
       <span class="eyebrow">Você não cria sozinho</span>
       <h2 class="head__title">Uma <span class="hl">comunidade</span> que cresce junto</h2>
@@ -250,7 +253,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="container">
     <div class="cta__box cta__box--mascot reveal">
       <span class="cta__glow" aria-hidden="true"></span>
-      <img src="assets/mascote.webp" class="cta__mascot" alt="" aria-hidden="true" />
+      <img src="assets/mascote.webp" class="cta__mascot" alt="" aria-hidden="true" width="400" height="425" loading="lazy" decoding="async" />
       <h2 class="cta__title">As vagas são <span class="hl">Limitadas.</span></h2>
       <p class="cta__sub">Não tem ninguém no mercado oferecendo uma oportunidade assim pra quem está começando do zero. Garanta a sua antes que acabe.</p>
       <button class="btn btn--light btn--xl js-open-form" data-source="cta-band">
