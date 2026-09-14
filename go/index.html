@@ -11,9 +11,10 @@
   </style>
   <script>
     /* Redirecionador de afiliado — guarda a btag e limpa a URL.
-       Uso:  /go?b=CODIGO           -> vai pra home limpa
-             /go?b=CODIGO&to=vsl    -> vai pra VSL limpa
-       Aceita ?b= ou ?btag=. A btag some da barra de endereço no destino. */
+       A VSL agora é a HOME (/). A LP antiga vive em /lp.
+       Uso:  /go?b=CODIGO           -> vai pra home (VSL)
+             /go?b=CODIGO&to=lp     -> vai pra LP secundária
+       (to=vsl continua válido e cai na home). Aceita ?b= ou ?btag=. */
     (function () {
       try {
         var p = new URLSearchParams(location.search);
@@ -21,7 +22,7 @@
         var btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64).toLowerCase();
         if (btag) localStorage.setItem("doppa_btag", btag);
         var to = (p.get("to") || "").toLowerCase();
-        var dest = to === "vsl" ? "/vsl" : "/";
+        var dest = to === "lp" ? "/lp" : "/";
         location.replace(dest);
       } catch (e) {
         location.replace("/");

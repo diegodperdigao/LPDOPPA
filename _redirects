@@ -1,0 +1,4 @@
+# /vsl agora vive na raiz (VSL virou a home). Preserva links antigos.
+/vsl / 301
+/vsl/ / 301
+/vsl/index.html / 301
