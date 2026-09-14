@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0A0E2B" />
+<link rel="icon" type="image/png" href="../assets/doppa-eye.png" />
+<link rel="apple-touch-icon" href="../assets/doppa-eye.png" />
+<title>DOPPA · Política de Privacidade</title>
+<meta name="description" content="Política de Privacidade da Doppa — como coletamos, usamos, armazenamos e excluímos os dados do Instagram dos criadores." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap" /></noscript>
+
+<style>
+  :root{
+    --navy:#0A0E2B; --navy2:#0E1230; --card:#11163D;
+    --blue:#1E3AFF; --purple:#6B3DFF; --cyan:#00D1FF; --green:#22D46E; --yellow:#FFD300;
+    --txt:#EDEFFA; --muted:#AEB4D6; --dim:#7C82A6; --line:rgba(255,255,255,.09);
+    --font:'Poppins',system-ui,Arial,sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:var(--font); background:var(--navy); color:var(--txt); line-height:1.6; min-height:100vh; position:relative; overflow-x:hidden; }
+  .bg{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .orb{ position:absolute; border-radius:50%; filter:blur(80px); opacity:.4; }
+  .orb--a{ width:480px; height:480px; background:var(--blue); top:-160px; left:-120px; }
+  .orb--b{ width:420px; height:420px; background:var(--purple); bottom:-160px; right:-120px; }
+  .wrap{ position:relative; z-index:1; max-width:680px; margin:0 auto; padding:40px 20px 72px; }
+
+  .brand{ text-align:center; margin-bottom:26px; }
+  .brand img{ height:64px; width:auto; filter:drop-shadow(0 6px 18px rgba(107,61,255,.45)); }
+
+  .head{ text-align:center; margin-bottom:26px; }
+  .eyebrow{ display:inline-block; font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--cyan); background:rgba(0,209,255,.1); border:1px solid rgba(0,209,255,.3); padding:6px 14px; border-radius:999px; margin-bottom:14px; }
+  .head h1{ font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; font-size:clamp(30px,6vw,46px); line-height:1.05; }
+  .head h1 .hl{ background:linear-gradient(90deg,var(--cyan),var(--blue)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .head p{ color:var(--muted); font-size:15px; max-width:46ch; margin:12px auto 0; }
+
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:20px; padding:clamp(20px,4vw,32px); margin-bottom:22px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+
+  .terms{ background:var(--navy2); border:1px solid var(--line); border-radius:14px; padding:clamp(20px,4vw,28px); }
+  .terms .tag{ display:inline-block; font-size:11px; color:var(--yellow); background:rgba(255,211,0,.1); border:1px solid rgba(255,211,0,.3); padding:3px 10px; border-radius:999px; margin-bottom:14px; }
+  .terms h2{ font-size:16px; color:#fff; margin:22px 0 10px; }
+  .terms h2:first-of-type{ margin-top:6px; }
+  .terms h3{ font-size:13.5px; color:#fff; margin:18px 0 6px; letter-spacing:.02em; }
+  .terms p{ font-size:13px; color:var(--muted); margin-bottom:9px; }
+  .terms p.strong{ color:var(--txt); }
+  .terms ul{ margin:6px 0 12px; padding-left:0; list-style:none; }
+  .terms li{ font-size:13px; color:var(--muted); margin-bottom:8px; padding-left:20px; position:relative; }
+  .terms li::before{ content:""; position:absolute; left:4px; top:7px; width:6px; height:6px; border-radius:50%; background:linear-gradient(135deg,var(--cyan),var(--blue)); }
+  .terms li b, .terms p b{ color:var(--txt); font-weight:600; }
+  .terms a{ color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(0,209,255,.35); }
+  .terms a:hover{ border-bottom-color:var(--cyan); }
+
+  .note{ background:rgba(30,58,255,.06); border:1px solid var(--line); border-left:3px solid var(--cyan); border-radius:10px; padding:12px 14px; margin:12px 0; }
+  .note.warn{ border-left-color:var(--yellow); }
+  .note.good{ border-left-color:var(--green); }
+  .note p{ margin-bottom:0; color:var(--txt); }
+
+  .updated{ text-align:center; color:var(--dim); font-size:12px; margin-top:-8px; margin-bottom:22px; }
+  .contact-block{ margin-top:22px; padding-top:18px; border-top:1px solid var(--line); }
+  .contact-block .co{ color:var(--txt); font-weight:600; font-size:13.5px; }
+  .foot{ text-align:center; color:var(--dim); font-size:12px; margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="bg"><span class="orb orb--a"></span><span class="orb orb--b"></span></div>
+
+<div class="wrap">
+  <div class="brand"><img src="../assets/doppa-logo.png" alt="Doppa" /></div>
+
+  <div class="head">
+    <span class="eyebrow">Privacidade</span>
+    <h1>Política de <span class="hl">Privacidade</span></h1>
+    <p>Como coletamos, usamos, guardamos e excluímos os dados do Instagram dos criadores parceiros.</p>
+  </div>
+
+  <div class="updated">Última atualização: 14 de setembro de 2026</div>
+
+  <div class="card">
+    <div class="terms">
+      <span class="tag">Versão 1.0 · vigente</span>
+      <h2>POLÍTICA DE PRIVACIDADE — DOPPA</h2>
+      <p class="strong">Esta Política descreve como a <b>3C GAMING LTDA</b> ("Doppa", "nós") coleta, utiliza, armazena e exclui as informações da conta do <b>Instagram</b> dos criadores que optam por conectar seu perfil à plataforma Doppa. Ao conectar sua conta do Instagram à Doppa, você concorda com as práticas descritas abaixo.</p>
+
+      <h3>1. Quem somos</h3>
+      <p>A Doppa é uma plataforma de gestão de criadores de conteúdo operada pela <b>3C GAMING LTDA</b>, inscrita no CNPJ/MF sob o nº 38.146.381/0001-94, com sede na Avenida Engenheiro Luiz Carlos Berrini, nº 1493, conjuntos 81 e 82, Cidade Monções, São Paulo/SP, CEP 04571-011. Utilizamos a <b>API oficial do Instagram (Instagram Login / Instagram Graph API)</b>, da Meta, para acompanhar automaticamente o conteúdo publicado pelos criadores parceiros e suas métricas de visualização.</p>
+
+      <h3>2. Quais dados coletamos</h3>
+      <p>Coletamos, exclusivamente por meio da API oficial do Instagram e somente após a sua autorização expressa, as seguintes informações da conta que você conectar:</p>
+      <ul>
+        <li><b>Dados básicos da conta:</b> nome de usuário (@), identificador da conta e tipo de conta (profissional/criador).</li>
+        <li><b>Publicações:</b> mídias publicadas (Reels e posts), incluindo identificador, link permanente (permalink), data de publicação, tipo de mídia e legenda.</li>
+        <li><b>Métricas de desempenho:</b> visualizações, curtidas, alcance e demais indicadores de engajamento disponibilizados pela API para cada publicação.</li>
+        <li><b>Token de acesso:</b> o código de autorização fornecido pela Meta que permite a coleta automática das informações acima.</li>
+      </ul>
+      <div class="note warn"><p><b>Não coletamos</b> senha do seu Instagram, mensagens diretas (DMs), conteúdo privado, lista de seguidores ou qualquer dado além do necessário para contabilizar suas entregas e visualizações.</p></div>
+
+      <h3>3. Como coletamos</h3>
+      <p>A coleta ocorre por meio do <b>login oficial do Instagram (OAuth da Meta)</b>. Você é direcionado à tela oficial do Instagram, autoriza a conexão e retorna à Doppa. Nenhuma credencial (login ou senha) é digitada, vista ou armazenada por nós — a autorização é feita inteiramente dentro do ambiente da Meta.</p>
+
+      <h3>4. Para que usamos os dados</h3>
+      <p>As informações coletadas são utilizadas exclusivamente para:</p>
+      <ul>
+        <li>Contabilizar automaticamente as <b>entregas de conteúdo</b> (publicações) de cada criador nas campanhas da Doppa.</li>
+        <li>Registrar as <b>visualizações e métricas</b> de cada publicação para fins de acompanhamento de resultados.</li>
+        <li>Gerar relatórios internos de desempenho para a administração da Doppa.</li>
+      </ul>
+      <p>Não utilizamos os dados para publicidade direcionada, não os vendemos e não os compartilhamos com terceiros para fins comerciais.</p>
+
+      <h3>5. Como armazenamos e protegemos</h3>
+      <div class="note good"><p>O seu token de acesso é armazenado de forma <b>criptografada (AES-256-GCM)</b> e nunca é exibido, registrado em logs ou compartilhado.</p></div>
+      <ul>
+        <li>Os dados ficam em banco de dados seguro, com acesso restrito à administração da Doppa.</li>
+        <li>As métricas e publicações coletadas <b>não são visíveis para outros criadores</b> — apenas a equipe administrativa da Doppa tem acesso.</li>
+        <li>O token é <b>renovado automaticamente</b> junto à Meta e substituído com segurança, sem manter histórico do código anterior.</li>
+      </ul>
+
+      <h3>6. Por quanto tempo mantemos</h3>
+      <p>Mantemos os dados enquanto sua conta estiver conectada à Doppa e for parceira ativa. Quando você <b>revoga o acesso</b> ou <b>solicita a exclusão</b>, o token é imediatamente apagado e os dados associados são removidos, conforme a seção seguinte.</p>
+
+      <h3>7. Seus direitos e como excluir seus dados</h3>
+      <p>Você tem total controle sobre a conexão a qualquer momento:</p>
+      <ul>
+        <li><b>Desconectar pela Doppa:</b> na sua wallet Doppa, é possível desconectar o perfil a qualquer momento. Ao desconectar, apagamos o token de acesso.</li>
+        <li><b>Revogar pelo Instagram:</b> você pode remover o acesso da Doppa diretamente no Instagram, em <b>Configurações → Apps e sites</b>. A revogação encerra imediatamente qualquer coleta.</li>
+        <li><b>Solicitar exclusão total:</b> envie um e-mail para <a href="mailto:creator@doppa.com.br">creator@doppa.com.br</a> solicitando a exclusão. Apagamos o token e todos os dados coletados (publicações e métricas) associados à sua conta.</li>
+      </ul>
+      <div class="note"><p>Ao revogar ou solicitar exclusão, removemos definitivamente o token de acesso e os dados coletados vinculados à sua conta do Instagram.</p></div>
+
+      <h3>8. Compartilhamento</h3>
+      <p>Não vendemos nem compartilhamos seus dados com terceiros para fins de marketing. Os dados são processados por provedores de infraestrutura (como serviços de banco de dados e hospedagem) estritamente para operar a plataforma, sob obrigações de confidencialidade e segurança.</p>
+
+      <h3>9. Conformidade com a Meta</h3>
+      <p>A Doppa utiliza a Plataforma da Meta em conformidade com os <a href="https://developers.facebook.com/terms/" target="_blank" rel="noopener">Termos da Plataforma Meta</a> e as políticas do desenvolvedor. O uso das informações do Instagram segue estritamente as permissões autorizadas por você e as regras da API oficial.</p>
+
+      <h3>10. Alterações nesta política</h3>
+      <p>Podemos atualizar esta Política de Privacidade periodicamente. A data da última atualização é sempre indicada no topo desta página. Alterações relevantes serão comunicadas aos criadores parceiros.</p>
+
+      <div class="contact-block">
+        <h3>Contato</h3>
+        <p class="co">3C GAMING LTDA</p>
+        <p>Dúvidas sobre privacidade e exclusão de dados: <a href="mailto:creator@doppa.com.br">creator@doppa.com.br</a></p>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">© 2026 Doppa · 3C GAMING LTDA. Todos os direitos reservados.</p>
+</div>
+</body>
+</html>
