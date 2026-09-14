@@ -11,6 +11,16 @@
 }
 .vsl-lock-badge svg{ width:100%; height:100%; }
 
+/* barra de progresso fina na base do botão trancado — avança rumo à liberação */
+.has-lock-prog{ position:relative; overflow:hidden; }
+.vsl-lock-prog{ position:absolute; left:0; right:0; bottom:0; height:3px; background:rgba(255,255,255,.18); pointer-events:none; }
+.vsl-lock-prog::before{ content:""; position:absolute; left:0; top:0; bottom:0;
+  width:calc(var(--vsl-progress,0) * 100%);
+  background:linear-gradient(90deg,#22D46E,#0FB6C6);
+  box-shadow:0 0 8px rgba(34,212,110,.6);
+  transition:width 1s linear; }
+@media (prefers-reduced-motion:reduce){ .vsl-lock-prog::before{ transition:none; } }
+
 /* pop-up (toast) que sobe ao tentar interagir travado */
 .vsl-toast{
   position:fixed; left:50%; bottom:26px;

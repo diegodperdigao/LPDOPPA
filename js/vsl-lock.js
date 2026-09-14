@@ -53,18 +53,37 @@
     toastTimer = setTimeout(() => toast.classList.remove("show"), 2800);
   };
 
-  /* ---------- cadeado dentro dos CTAs ---------- */
+  const HINT_ID = "vsl-lock-hint-text";
+
+  /* ---------- cadeado + barra de progresso dentro dos CTAs ---------- */
   const addBadges = () => {
     document.querySelectorAll(CTA_SEL).forEach(btn => {
-      if (btn.querySelector(".vsl-lock-badge")) return;
-      const b = document.createElement("span");
-      b.className = "vsl-lock-badge";
-      b.innerHTML = LOCK_SVG;
-      btn.appendChild(b);
+      if (!btn.querySelector(".vsl-lock-badge")) {
+        const b = document.createElement("span");
+        b.className = "vsl-lock-badge";
+        b.innerHTML = LOCK_SVG;
+        btn.appendChild(b);
+      }
+      if (!btn.querySelector(".vsl-lock-prog")) {
+        btn.classList.add("has-lock-prog");
+        const p = document.createElement("span");
+        p.className = "vsl-lock-prog";
+        p.setAttribute("aria-hidden", "true");
+        btn.appendChild(p);
+      }
+      // a11y: sinaliza estado bloqueado e aponta pro aviso explicativo
+      btn.setAttribute("aria-disabled", "true");
+      btn.setAttribute("aria-describedby", HINT_ID);
     });
   };
-  const removeBadges = () =>
-    document.querySelectorAll(".vsl-lock-badge").forEach(el => el.remove());
+  const removeBadges = () => {
+    document.querySelectorAll(".vsl-lock-badge, .vsl-lock-prog").forEach(el => el.remove());
+    document.querySelectorAll(".has-lock-prog").forEach(el => el.classList.remove("has-lock-prog"));
+    document.querySelectorAll(CTA_SEL).forEach(btn => {
+      btn.removeAttribute("aria-disabled");
+      btn.removeAttribute("aria-describedby");
+    });
+  };
 
   /* ---------- interceptação de cliques ---------- */
   const isVideo = el => el.closest("#vsl-player"); // deixa o vídeo tocar/replay
@@ -98,7 +117,7 @@
     hint.className = "vsl-locked-hint";
     hint.innerHTML =
       '<span class="vsl-locked-hint__pill">' + LOCK_SVG +
-      "<span>Assista ao vídeo até o final para desbloquear a sua vaga.</span></span>";
+      '<span id="' + HINT_ID + '">Assista ao vídeo até o final para desbloquear a sua vaga.</span></span>';
     host.appendChild(hint);
   };
 

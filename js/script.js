@@ -407,6 +407,9 @@ $("#year").textContent = new Date().getFullYear();
           if (t > maxSec) maxSec = t;
           const pct = t / d * 100;
           MILESTONES.forEach(m => { if (pct >= m && !milestonesSent[m]) { milestonesSent[m] = 1; logProgress("milestone", m, t); } });
+          // progresso rumo à liberação (pitch em CTA_AT_SECONDS, ou fim do vídeo) → barra no botão trancado
+          const target = CONFIG.CTA_AT_SECONDS > 0 ? CONFIG.CTA_AT_SECONDS : d;
+          if (target > 0) document.documentElement.style.setProperty("--vsl-progress", Math.min(1, t / target).toFixed(4));
           // pitch delay: libera o CTA no tempo configurado (vídeo continua tocando)
           if (!ctaShown && CONFIG.CTA_AT_SECONDS > 0 && t >= CONFIG.CTA_AT_SECONDS) {
             ctaShown = true;
