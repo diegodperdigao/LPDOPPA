@@ -11,6 +11,10 @@ const CONFIG = {
   // Vale para todas as páginas e origens.
   DISCORD_INVITE: "https://whatsapp.com/channel/0029Vb8QH7j2P59rJDonLM31",
 
+  // Convite dedicado do Discord usado NO E-MAIL de boas-vindas (Caminho 2),
+  // dá o cargo "e-mail" pra rastrear origem. Trocar se o convite expirar.
+  EMAIL_DISCORD_INVITE: "https://discord.gg/vgXQTkFuNg",
+
   // (Desativado) Destinos dedicados por btag. Hoje TODOS vão pra mesma comunidade
   // no WhatsApp (DISCORD_INVITE acima). A btag continua sendo registrada no lead
   // (Discord/planilha/Supabase); só o destino é único. Pra voltar a ter destinos
@@ -754,7 +758,9 @@ const sendWelcomeEmail = data => {
   const params = {
     email: data.email,
     nome: (data.nome || "").split(" ")[0] || data.nome, // primeiro nome, mais pessoal
-    discord_invite: getDiscordInvite(),
+    whatsapp_url: getDiscordInvite(),                    // comunidade no WhatsApp (Caminho 1)
+    discord_url: CONFIG.EMAIL_DISCORD_INVITE,            // convite dedicado do e-mail (Caminho 2)
+    discord_invite: getDiscordInvite(),                 // compat com template antigo
     origem: CONFIG.ORIGEM || "landing-page",
   };
   return window.emailjs.send(E.SERVICE_ID, E.TEMPLATE_ID, params).catch(e => console.warn("EmailJS:", e));
