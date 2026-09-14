@@ -128,6 +128,10 @@ body.is-unlocked .vsl-locked-hint{ opacity:0; visibility:hidden; pointer-events:
   right:clamp(16px,3.2vw,46px) !important;
   top:calc(clamp(14px,2.4vw,22px) + clamp(70px,8.01vw,106px) / 2) !important;
   transform:translateY(-50%) !important;
+  /* maior, pra equilibrar com a logo grande (segue centralizado pelo translateY) */
+  font-size:clamp(.92rem,1.5vw,1.02rem) !important;
+  padding:.8em 1.55em !important;
+  min-height:48px !important;
 }
 
 /* tudo cabe em uma tela: hero preenche o meio (vídeo centralizado), rodapé
