@@ -34,10 +34,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://www.youtube.com" />
 <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
 <link rel="preload" as="image" href="https://i.ytimg.com/vi/aV7ctWpg948/maxresdefault.jpg" fetchpriority="high" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap" /></noscript>
+<link rel="preload" href="../assets/fonts/anton-400.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="../assets/fonts/poppins-500.woff2" as="font" type="font/woff2" crossorigin />
 
 <link rel="stylesheet" href="../css/styles.css" />
 <link rel="stylesheet" href="../vsl/vsl.css" />
@@ -52,7 +50,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header class="nav" id="nav">
   <div class="container nav__inner">
     <a href="#hero" class="nav__brand" aria-label="Doppa">
-      <img src="../assets/doppa-logo.png" class="brand-logo" alt="Doppa" width="130" height="61" />
+      <picture><source srcset="../assets/doppa-logo.webp" type="image/webp" /><img src="../assets/doppa-logo.png" class="brand-logo" alt="Doppa" width="130" height="61" /></picture>
     </a>
 
     <nav class="nav__links" id="nav-links" aria-label="Navegação principal">
@@ -79,7 +77,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 
   <a href="#hero" class="hero__brand" aria-label="Doppa">
-    <img src="../assets/doppa-logo.png" alt="Doppa" width="1499" height="706" />
+    <picture><source srcset="../assets/doppa-logo.webp" type="image/webp" /><img src="../assets/doppa-logo.png" alt="Doppa" width="1499" height="706" /></picture>
   </a>
 
   <div class="container hero__inner">
@@ -106,8 +104,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="vsl__eye" aria-hidden="true">
           <span class="hero__halo hero__halo--sm"></span>
           <div class="eye-follow" id="eye-follow" data-maxx="4.6" data-maxup="4.6" data-maxdown="4.6">
-            <img src="../assets/eye-base.png" class="eye-follow__base" alt="Doppa" width="627" height="624" />
-            <img src="../assets/eye-iris.png" class="eye-follow__iris" id="eye-iris" alt="" width="272" height="272" />
+            <img src="../assets/eye-base.webp" class="eye-follow__base" alt="Doppa" width="627" height="624" />
+            <img src="../assets/eye-iris.webp" class="eye-follow__iris" id="eye-iris" alt="" width="272" height="272" />
           </div>
         </div>
       </div>
@@ -216,7 +214,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ===================== COMUNIDADE ===================== -->
 <section class="section section--alt" id="comunidade">
   <div class="container container--narrow center">
-    <img src="../assets/mascote.png" class="comunidade__mascot reveal" alt="" aria-hidden="true" />
+    <img src="../assets/mascote.webp" class="comunidade__mascot reveal" alt="" aria-hidden="true" />
     <header class="head reveal">
       <span class="eyebrow">Você não cria sozinho</span>
       <h2 class="head__title">Uma <span class="hl">comunidade</span> que cresce junto</h2>
@@ -253,7 +251,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="container">
     <div class="cta__box cta__box--mascot reveal">
       <span class="cta__glow" aria-hidden="true"></span>
-      <img src="../assets/mascote.png" class="cta__mascot" alt="" aria-hidden="true" />
+      <img src="../assets/mascote.webp" class="cta__mascot" alt="" aria-hidden="true" />
       <h2 class="cta__title">As vagas são <span class="hl">Limitadas.</span></h2>
       <p class="cta__sub">Não tem ninguém no mercado oferecendo uma oportunidade assim pra quem está começando do zero. Garanta a sua antes que acabe.</p>
       <button class="btn btn--light btn--xl js-open-form" data-source="cta-band">
@@ -312,7 +310,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer class="footer">
   <div class="container footer__inner">
     <div class="footer__col">
-      <img src="../assets/doppa-logo.png" class="footer__logo" alt="Doppa" />
+      <picture><source srcset="../assets/doppa-logo.webp" type="image/webp" /><img src="../assets/doppa-logo.png" class="footer__logo" alt="Doppa" /></picture>
       <p class="footer__tag">Sua porta de entrada para <span class="hl">viver de conteúdo.</span></p>
     </div>
     <button class="btn btn--primary btn--sm js-open-form" data-source="footer">Quero minha vaga</button>
@@ -336,7 +334,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </button>
 
     <div class="modal__head" id="modal-head">
-      <img src="../assets/doppa-logo.png" class="modal__logo" alt="Doppa" />
+      <picture><source srcset="../assets/doppa-logo.webp" type="image/webp" /><img src="../assets/doppa-logo.png" class="modal__logo" alt="Doppa" /></picture>
       <h2 id="form-title">Garanta sua vaga na <span class="hl">Doppa</span></h2>
       <p>Preenche rapidinho e você já entra direto na comunidade no WhatsApp. Vagas limitadas · 18+.</p>
     </div>
