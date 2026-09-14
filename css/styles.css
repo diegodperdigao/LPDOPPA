@@ -602,15 +602,16 @@ body.modal-open .wpp-pop{display:none !important}
 
 /* checkbox 18+ (mesmo idioma visual dos options, quadrado com check) */
 .field--check{margin-top:2px}
-.checkbox{display:flex;align-items:flex-start;gap:12px;cursor:pointer;font-size:.95rem;line-height:1.4;
-  padding:13px 14px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);transition:.18s}
-.checkbox:hover{border-color:rgba(34,212,110,.5);background:rgba(34,212,110,.06)}
+/* especificidade acima de .field>label pra não herdar display:block/negrito */
+.field--check .checkbox{display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:500;font-size:.95rem;line-height:1.35;margin:0;
+  padding:13px 15px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);transition:.18s}
+.field--check .checkbox:hover{border-color:rgba(34,212,110,.5);background:rgba(34,212,110,.06)}
 .checkbox input{position:absolute;opacity:0;width:0;height:0}
 .checkbox__box{flex:none;width:22px;height:22px;border-radius:7px;border:2px solid var(--muted);
-  display:grid;place-items:center;color:transparent;transition:.18s;margin-top:1px}
+  display:grid;place-items:center;color:transparent;transition:.18s}
 .checkbox__box svg{width:14px;height:14px}
 .checkbox input:checked~.checkbox__box{border-color:var(--green);background:var(--green);color:#06351c}
-.checkbox:has(input:checked){border-color:var(--green);background:rgba(34,212,110,.1)}
+.field--check .checkbox:has(input:checked){border-color:var(--green);background:rgba(34,212,110,.1)}
 .checkbox input:focus-visible~.checkbox__box{outline:2px solid var(--cyan);outline-offset:2px}
 
 /* experiência: opções um pouco mais compactas */
