@@ -194,7 +194,9 @@
       if (phase >= 2) {
         const k = Math.min(1, (el - tFull)/CFG.GIANT_MS);
         if (FREEZE) {
-          drawGiantBg(ctx, easeIO(k));   // modo C: olho gigante centralizado crescendo por cima da chuva
+          // MESMO olho da transição (drawGiant), mas CENTRALIZADO e parando parcial
+          // (~0.42) — vira um olho gigante preenchendo a tela, sem engolir de vez.
+          drawGiant(ctx, { c: c, ctx: ctx, W: W, H: H, tx: W/2, ty: H/2 }, easeIO(k)*0.42, [], dt);
           if (k >= 1) { frozen = true; document.body.classList.add("is-eyefield"); done(); return; } // congela de fundo, abre o modal
         } else {
           drawGiant(ctx, S, easeIO(k), rays, dt);  // modo A: engole a tela
@@ -202,19 +204,6 @@
         }
       }
       requestAnimationFrame(frame);
-    }
-    // modo C: UM olho gigante (anel + esclera + íris) centralizado, cresce até preencher
-    // a tela e fica ESTÁTICO de fundo do modal (calmo, sem movimento aflito).
-    function drawGiantBg(ctx, k) {
-      const cx = W/2, cy = H/2, R = Math.hypot(W, H);
-      const e1 = k * 0.5;                      // até ~0.5 → olho bem grande, cobre até os cantos
-      const r = 60 + e1*R*1.15;
-      ctx.save();
-      ctx.globalAlpha = Math.min(1, k*1.5);
-      ctx.drawImage(S_BASE, cx-r, cy-r, r*2, r*2);      // anel roxo + esclera
-      const ir = r*.40;
-      ctx.drawImage(S_IRIS, cx-ir, cy-ir, ir*2, ir*2);  // íris + pupila, olhando pro centro
-      ctx.restore();
     }
     function finish() {
       document.body.classList.add("is-swallowed"); // o CSS do modal usa isso pro fundo "dentro do olho"
