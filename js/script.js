@@ -590,7 +590,16 @@ $$(".js-close-form").forEach(btn => btn.addEventListener("click", closeModal));
   });
 })();
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+  if (!modal.classList.contains("open")) return;
+  if (e.key === "Escape") { closeModal(); return; }
+  if (e.key !== "Tab") return;
+  // focus trap: Tab não escapa do modal
+  const foc = Array.from(modal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+    .filter(el => el.offsetParent !== null && !el.hidden);
+  if (!foc.length) return;
+  const first = foc[0], last = foc[foc.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 });
 
 /* ============================================================
@@ -791,20 +800,30 @@ formEl.addEventListener("submit", async e => {
     return;
   }
 
-  // sucesso → confetes → redireciona
+  // sucesso → confetes → contagem regressiva → redireciona (botão serve de fallback)
   modalHead.hidden = true;
   formEl.hidden = true;
   successEl.hidden = false;
-  $("#discord-link").href = getDiscordInvite();
+  const dest = getDiscordInvite();
+  $("#discord-link").href = dest;
   fireConfetti();
 
-  // Redireciona respeitando o tempo da animação (REDIRECT_DELAY) e, se o
-  // e-mail ainda estiver saindo, segura mais um pouco (cap de 3s) pra a
-  // navegação não cancelar o envio do EmailJS.
-  const minWait = new Promise(r => setTimeout(r, CONFIG.REDIRECT_DELAY));
+  // contagem visível 3 → 0
+  let n = 3;
+  const countEl = $("#redir-count");
+  if (countEl) countEl.textContent = n;
+  const countTick = setInterval(() => {
+    n -= 1;
+    if (countEl) countEl.textContent = Math.max(0, n);
+    if (n <= 0) clearInterval(countTick);
+  }, 1000);
+
+  // Redireciona ao fim da contagem (~3s) e, se o e-mail ainda estiver saindo,
+  // segura mais um pouco (cap de 3s) pra a navegação não cancelar o EmailJS.
+  const minWait = new Promise(r => setTimeout(r, 3200));
   const cap = new Promise(r => setTimeout(r, 3000));
   Promise.all([minWait, Promise.race([emailSent, cap])]).then(() => {
-    window.location.href = getDiscordInvite();
+    window.location.href = dest;
   });
 });
 
@@ -815,7 +834,7 @@ function fireConfetti() {
   const colors = ["#1E3AFF", "#6B3DFF", "#00D1FF", "#22D46E", "#FFD300", "#E040FB"];
   const canvas = document.createElement("canvas");
   canvas.style.cssText =
-    "position:fixed;inset:0;pointer-events:none;z-index:200";
+    "position:fixed;inset:0;pointer-events:none;z-index:10001"; // acima do modal (z-index 10000)
   document.body.appendChild(canvas);
   const ctx = canvas.getContext("2d");
   const resize = () => {
