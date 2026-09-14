@@ -24,11 +24,11 @@
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite:exclude;
 }
-/* ao completar/liberar, o botão ganha um brilho pulsante pra chamar atenção */
-.is-cta-pop{ animation:vslCtaGlow 1.3s ease-out 2; }
+/* ao completar/liberar, o botão ganha um brilho pulsante CONTÍNUO pra seguir chamando atenção */
+.is-cta-pop{ animation:vslCtaGlow 1.8s ease-out infinite; }
 @keyframes vslCtaGlow{
   0%{ box-shadow:0 0 0 0 rgba(34,212,110,.55); }
-  70%{ box-shadow:0 0 0 13px rgba(34,212,110,0); }
+  70%{ box-shadow:0 0 0 14px rgba(34,212,110,0); }
   100%{ box-shadow:0 0 0 0 rgba(34,212,110,0); }
 }
 @media (prefers-reduced-motion:reduce){ :root{ transition:none; } .is-cta-pop{ animation:none; } }
