@@ -22,6 +22,8 @@ body.is-swallowed #form-modal .modal__overlay{
   background:radial-gradient(70% 70% at 50% 50%,#070a22 55%,#2a1a9a 100%) !important;
   backdrop-filter:none !important; -webkit-backdrop-filter:none !important; animation:none !important;
 }
+/* card aparece na hora (sem o slideUp) quando vem pela chuva — tira o delayzinho */
+body.is-swallowed #form-modal .modal__dialog{ animation:none !important; }
 
 /* 1.4 — quando o float aparece, sobe o botão do WhatsApp pra não colar nele no mobile */
 @media (max-width:600px){ body.has-float-cta .wpp-fab{ bottom:calc(84px + env(safe-area-inset-bottom)) !important; } }
