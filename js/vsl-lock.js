@@ -98,7 +98,7 @@
     hint.className = "vsl-locked-hint";
     hint.innerHTML =
       '<span class="vsl-locked-hint__pill">' + LOCK_SVG +
-      "<span>Assista ao vídeo até o final para desbloquear o conteúdo e sua vaga.</span></span>";
+      "<span>Assista ao vídeo até o final para desbloquear a sua vaga.</span></span>";
     host.appendChild(hint);
   };
 
