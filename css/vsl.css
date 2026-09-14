@@ -25,11 +25,11 @@ body.is-swallowed #form-modal .modal__overlay{
 /* card aparece na hora (sem o slideUp) quando vem pela chuva — tira o delayzinho */
 body.is-swallowed #form-modal .modal__dialog{ animation:none !important; }
 
-/* MODO B (?eyes=freeze): olhos congelados ficam de FUNDO; véu escuro pra leitura e
-   o card cresce por cima (nasce do centro da tela de olhos) */
+/* MODO C (?eyes=freeze): OLHO GIGANTE estático fica de FUNDO do modal; véu leve pra
+   leitura e o card cresce por cima */
 body.is-eyefield .vsl-eyes{ display:block !important; }
 body.is-eyefield #form-modal .modal__overlay{
-  background:rgba(6,8,26,.55) !important; backdrop-filter:blur(1.5px) !important; -webkit-backdrop-filter:blur(1.5px) !important; animation:none !important;
+  background:rgba(7,10,34,.42) !important; backdrop-filter:blur(.5px) !important; -webkit-backdrop-filter:blur(.5px) !important; animation:none !important;
 }
 body.is-eyefield #form-modal .modal__dialog{ animation:eyeCardIn .42s cubic-bezier(.22,1,.36,1) both; }
 @keyframes eyeCardIn{ from{opacity:0;transform:scale(.72)} to{opacity:1;transform:none} }

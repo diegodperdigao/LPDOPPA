@@ -172,29 +172,11 @@
     }
 
     const rays = makeRays(tx, ty, 30); const t0 = performance.now(); let last = t0;
-    let idle = false, lastIdleDraw = 0;
+    let frozen = false;
     function frame(now) {
       if (stopReq) { playing = false; return; }
+      if (frozen) return;   // modo C: olho gigante estático de fundo — nada a redesenhar
       const elapsed = Math.min(50, now - last); last = now; const dt = elapsed/16.7; const el = now - t0;
-
-      // modo B (vivo): sem física; olhos piscam e "olham em volta" (throttle ~30fps pra não pesar)
-      if (idle) {
-        if (now - lastIdleDraw >= 32) {
-          lastIdleDraw = now;
-          ctx.clearRect(0, 0, W, H);
-          eyes.forEach(e => {
-            e.gt = (e.gt || 0) - elapsed;
-            if (e.gt <= 0) { e.tgx = Math.random()*1.6 - .8; e.tgy = Math.random()*1.6 - .8; e.gt = 900 + Math.random()*1800; }
-            e.gx = (e.gx || 0) + (((e.tgx || 0) - (e.gx || 0)) * .05);
-            e.gy = (e.gy || 0) + (((e.tgy || 0) - (e.gy || 0)) * .05);
-            e.blink -= elapsed;
-            if (e.blink < 0) { e.lid = Math.min(1, e.lid + .5); if (e.lid >= 1) e.blink = 2800 + Math.random()*4200; }
-            else if (e.lid > 0) e.lid = Math.max(0, e.lid - .5);
-            drawEye(ctx, e.x, e.y, e.r, e.rot, e.gx, e.gy, e.lid);
-          });
-        }
-        requestAnimationFrame(frame); return;
-      }
 
       physAcc += elapsed; let steps = 0; while (physAcc >= 16.7 && steps < 3) { step(el); physAcc -= 16.7; steps++; }
       const filled = eyes.length >= target || pileTop < TOP + R1*2.5;
@@ -210,24 +192,34 @@
         drawEye(ctx, e.x, e.y, e.r, e.rot, dx/d, dy/d, e.lid);
       });
       if (phase >= 2) {
-        if (FREEZE) { finishFreeze(); requestAnimationFrame(frame); return; }  // modo B: entra em idle, loop segue vivo
-        const k = Math.min(1, (el - tFull)/CFG.GIANT_MS); drawGiant(ctx, S, easeIO(k), rays, dt);
-        if (k >= 1) { finish(); return; }
+        const k = Math.min(1, (el - tFull)/CFG.GIANT_MS);
+        if (FREEZE) {
+          drawGiantBg(ctx, easeIO(k));   // modo C: olho gigante centralizado crescendo por cima da chuva
+          if (k >= 1) { frozen = true; document.body.classList.add("is-eyefield"); done(); return; } // congela de fundo, abre o modal
+        } else {
+          drawGiant(ctx, S, easeIO(k), rays, dt);  // modo A: engole a tela
+          if (k >= 1) { finish(); return; }
+        }
       }
       requestAnimationFrame(frame);
+    }
+    // modo C: UM olho gigante (anel + esclera + íris) centralizado, cresce até preencher
+    // a tela e fica ESTÁTICO de fundo do modal (calmo, sem movimento aflito).
+    function drawGiantBg(ctx, k) {
+      const cx = W/2, cy = H/2, R = Math.hypot(W, H);
+      const e1 = k * 0.5;                      // até ~0.5 → olho bem grande, cobre até os cantos
+      const r = 60 + e1*R*1.15;
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, k*1.5);
+      ctx.drawImage(S_BASE, cx-r, cy-r, r*2, r*2);      // anel roxo + esclera
+      const ir = r*.40;
+      ctx.drawImage(S_IRIS, cx-ir, cy-ir, ir*2, ir*2);  // íris + pupila, olhando pro centro
+      ctx.restore();
     }
     function finish() {
       document.body.classList.add("is-swallowed"); // o CSS do modal usa isso pro fundo "dentro do olho"
       done();
       setTimeout(() => { c.style.display = "none"; ctx.clearRect(0, 0, W, H); playing = false; }, CFG.SWALLOW_HOLD_MS);
-    }
-    // modo B: mantém os olhos VIVOS de fundo (idle) e abre o modal por cima
-    function finishFreeze() {
-      if (idle) return;
-      idle = true;
-      document.body.classList.add("is-eyefield");
-      done();
-      // o canvas fica visível como fundo; é limpo no closeModal via DoppaEyes.clear()
     }
     requestAnimationFrame(frame);
   }
