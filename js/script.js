@@ -788,7 +788,7 @@ formEl.addEventListener("submit", async e => {
   sendToDiscord(data);
   sendToSheet(data);
   sendToSupabase(data);
-  const emailSent = sendWelcomeEmail(data); // e-mail de boas-vindas (fire-and-forget)
+  sendWelcomeEmail(data); // e-mail de boas-vindas (fire-and-forget)
 
   const maiorDeIdade = data.maioridade === "De acordo, sou maior de idade";
 
@@ -800,31 +800,17 @@ formEl.addEventListener("submit", async e => {
     return;
   }
 
-  // sucesso → confetes → contagem regressiva → redireciona (botão serve de fallback)
+  // sucesso: abre a comunidade numa NOVA aba (dentro do gesto do submit → sem
+  // bloqueio de pop-up). A VSL continua viva nesta aba, então se algo falhar a
+  // pessoa só toca no botão de novo — sem precisar rever o vídeo.
+  const dest = getDiscordInvite();
+  try { window.open(dest, "_blank", "noopener"); } catch (e) {}
+
   modalHead.hidden = true;
   formEl.hidden = true;
   successEl.hidden = false;
-  const dest = getDiscordInvite();
   $("#discord-link").href = dest;
   fireConfetti();
-
-  // contagem visível 3 → 0
-  let n = 3;
-  const countEl = $("#redir-count");
-  if (countEl) countEl.textContent = n;
-  const countTick = setInterval(() => {
-    n -= 1;
-    if (countEl) countEl.textContent = Math.max(0, n);
-    if (n <= 0) clearInterval(countTick);
-  }, 1000);
-
-  // Redireciona ao fim da contagem (~3s) e, se o e-mail ainda estiver saindo,
-  // segura mais um pouco (cap de 3s) pra a navegação não cancelar o EmailJS.
-  const minWait = new Promise(r => setTimeout(r, 3200));
-  const cap = new Promise(r => setTimeout(r, 3000));
-  Promise.all([minWait, Promise.race([emailSent, cap])]).then(() => {
-    window.location.href = dest;
-  });
 });
 
 /* ============================================================
