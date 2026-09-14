@@ -234,6 +234,8 @@ img,svg{display:block;max-width:100%}
 }
 @keyframes hlShine{from{background-position:250% 0}to{background-position:-30% 0}}
 @media (prefers-reduced-motion:reduce){.hl--shine{animation:none}}
+/* 1.6 — valor em destaque estático (Poppins 700), sem animação */
+.hl--val{font-weight:700}
 .hero__cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px;width:100%}
 .hero__cta .btn{flex:1 1 auto;max-width:260px}
 .hero__trust{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:24px;color:var(--muted);font-size:.9rem}

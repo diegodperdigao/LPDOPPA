@@ -439,10 +439,64 @@ $("#year").textContent = new Date().getFullYear();
 
   let ytReady = false, wantsPlay = false, started = false;
 
+  // Toque/celular: sem cursor. No iOS o playVideo() via API é bloqueado com frequência,
+  // então deixamos os controles nativos ligados no mobile pra a pessoa dar play manual.
+  const isTouch = window.matchMedia("(hover: none)").matches || innerWidth < 768;
+
+  // registra falha de player (tabela video_plays, evento "error")
+  const logPlayEvent = evento => {
+    try {
+      if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) return;
+      fetch(`${CONFIG.SUPABASE_URL}/rest/v1/video_plays`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: CONFIG.SUPABASE_KEY, Authorization: `Bearer ${CONFIG.SUPABASE_KEY}`, Prefer: "return=minimal" },
+        body: JSON.stringify({ evento: evento, origem: CONFIG.ORIGEM || "landing-page", btag: (typeof getBtag === "function" ? getBtag() : "") || null }),
+        keepalive: true,
+      }).catch(() => {});
+    } catch (e) {}
+  };
+
+  // Watchdog: se 6s após o play o estado ainda for unstarted(-1)/cued(5)/buffering-parado(3@0s),
+  // trata como falha (tela preta muda). Cancelado no primeiro estado PLAYING.
+  let watchdog = null, errored = false;
+  const clearWatchdog = () => { if (watchdog) { clearTimeout(watchdog); watchdog = null; } };
+  const armWatchdog = () => {
+    clearWatchdog();
+    watchdog = setTimeout(() => {
+      try {
+        const p = window.__ytPlayer;
+        const st = p && p.getPlayerState ? p.getPlayerState() : -1;
+        const t = p && p.getCurrentTime ? p.getCurrentTime() : 0;
+        if (st === -1 || st === 5 || (st === 3 && (t || 0) === 0)) handlePlayerError("timeout");
+      } catch (e) { handlePlayerError("timeout"); }
+    }, 6000);
+  };
+  const showErrorOverlay = () => {
+    if (player.querySelector(".vsl__err")) return;
+    const box = document.createElement("div");
+    box.className = "vsl__err";
+    box.innerHTML =
+      '<button type="button" class="vsl__err-retry">Não carregou. Toque para tentar de novo.</button>' +
+      '<a class="vsl__err-yt" href="https://youtu.be/' + ytId + '" target="_blank" rel="noopener">Abrir no YouTube</a>';
+    player.appendChild(box);
+    box.querySelector(".vsl__err-retry").addEventListener("click", () => { box.remove(); errored = false; mount(); });
+  };
+  const handlePlayerError = () => {
+    if (errored) return; errored = true;
+    clearWatchdog();
+    logPlayEvent("error");
+    player.classList.remove("vsl__player--playing"); // volta a capa
+    try { window.__ytPlayer && window.__ytPlayer.destroy && window.__ytPlayer.destroy(); } catch (e) {}
+    window.__ytPlayer = null; ytReady = false; started = false; wantsPlay = false;
+    showErrorOverlay();
+  };
+
   const startYT = () => {
-    started = true;
-    try { window.__ytPlayer.unMute(); window.__ytPlayer.setVolume(100); window.__ytPlayer.seekTo(0, true); } catch (e) {}
-    window.__ytPlayer.playVideo();
+    started = true; errored = false;
+    try { window.__ytPlayer.unMute(); window.__ytPlayer.setVolume(100); } catch (e) {}
+    try { window.__ytPlayer.seekTo(0, true); } catch (e) {}   // seek separado: não impede o play
+    try { window.__ytPlayer.playVideo(); } catch (e) {}
+    armWatchdog();
   };
 
   const createYT = () => {
@@ -455,7 +509,7 @@ $("#year").textContent = new Date().getFullYear();
       playerVars: {
         autoplay: 1, rel: 0, modestbranding: 1,
         mute: preload ? 1 : 0, // no preload toca mudo pra já bufferizar → tap = som na hora
-        controls: CONFIG.VIDEO_HIDE_CONTROLS ? 0 : 1,
+        controls: (CONFIG.VIDEO_HIDE_CONTROLS && !isTouch) ? 0 : 1, // mobile mantém controles (play manual)
         disablekb: 1, fs: 0, iv_load_policy: 3, playsinline: 1
       },
       events: {
@@ -471,9 +525,11 @@ $("#year").textContent = new Date().getFullYear();
           }, 1400);
         },
         onStateChange: e => {
-          if (e.data === 0) showEnd();           // 0 = ENDED
+          if (e.data === 1) clearWatchdog();      // PLAYING → cancela o watchdog
+          if (e.data === 0) showEnd();            // 0 = ENDED
           else if (e.data === 1) startEndWatch(); // 1 = PLAYING → arma o fallback por tempo
-        }
+        },
+        onError: () => handlePlayerError()        // vídeo indisponível/erro → capa de "tentar de novo"
       }
     });
   };
@@ -498,10 +554,12 @@ $("#year").textContent = new Date().getFullYear();
     player.classList.add("vsl__player--playing");
 
     if (ytId) {
-      if (CONFIG.VIDEO_PRELOAD) {
-        // player já pré-carregado: toca DENTRO do gesto → sem duplo-play no mobile
-        ytReady ? startYT() : (wantsPlay = true);
+      if (window.__ytPlayer && ytReady) {
+        startYT();                       // player pronto (pré-carregado) → toca no gesto
+      } else if (window.__ytPlayer && !ytReady) {
+        wantsPlay = true;                // criado, ainda carregando → toca no onReady
       } else {
+        wantsPlay = true;                // sem player (1º clique sem preload, ou após erro) → cria e toca
         loadYT(() => createYT());
       }
     } else if (vimeoId) {

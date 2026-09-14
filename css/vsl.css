@@ -11,6 +11,14 @@
 }
 .vsl-lock-badge svg{ width:100%; height:100%; }
 
+/* capa de erro do player (tela preta / falha de carregamento) */
+.vsl__err{ position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+  background:rgba(10,14,43,.82); backdrop-filter:blur(4px); padding:22px; text-align:center; }
+.vsl__err-retry{ border:0; cursor:pointer; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:15px;
+  padding:14px 22px; border-radius:12px; max-width:100%; line-height:1.3;
+  background:linear-gradient(135deg,#2A52FF,#7B4DFF); box-shadow:0 12px 30px -10px rgba(60,80,255,.7); }
+.vsl__err-yt{ color:#9AA2CC; font-size:13px; text-decoration:underline; }
+
 /* CONTORNO de progresso ao redor do botão trancado — "desenha" conforme o vídeo avança */
 @property --vsl-progress{ syntax:'<number>'; inherits:true; initial-value:0; }
 :root{ transition:--vsl-progress 1s linear; }
