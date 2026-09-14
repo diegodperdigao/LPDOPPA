@@ -11,13 +11,6 @@
 }
 .vsl-lock-badge svg{ width:100%; height:100%; }
 
-/* máscaras da marca do YouTube — só aparecem tocando; deixam o clique passar pro iframe */
-.vsl__mask-top, .vsl__mask-br{ position:absolute; pointer-events:none; z-index:2; opacity:0; transition:opacity .2s; }
-.vsl__player--playing .vsl__mask-top, .vsl__player--playing .vsl__mask-br{ opacity:1; }
-.vsl__mask-top{ inset:0 0 auto 0; height:64px; background:linear-gradient(#0A0E2B 42%, transparent); border-radius:20px 20px 0 0; }
-.vsl__mask-br{ right:0; bottom:0; width:120px; height:42px; background:#0A0E2B; border-radius:0 0 20px 0; }
-@media (max-width:768px){ .vsl__mask-top{ height:56px; } .vsl__mask-br{ display:none; } } /* mobile usa controles nativos */
-
 /* 1.4 — quando o float aparece, sobe o botão do WhatsApp pra não colar nele no mobile */
 @media (max-width:600px){ body.has-float-cta .wpp-fab{ bottom:calc(84px + env(safe-area-inset-bottom)) !important; } }
 
