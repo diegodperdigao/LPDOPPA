@@ -986,8 +986,8 @@ function fireConfetti() {
       transition:transform .2s ease}
     .wpp-fab:hover{transform:scale(1.08)}
     .wpp-fab::after{content:"";position:absolute;inset:0;border-radius:50%;
-      box-shadow:0 0 0 0 rgba(37,211,102,.55);animation:wppPulse 2.4s infinite}
-    @keyframes wppPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+      border:2px solid rgba(37,211,102,.5);animation:wppPulse 2.4s ease-out infinite}
+    @keyframes wppPulse{0%{transform:scale(1);opacity:.6}70%{transform:scale(1.55);opacity:0}100%{transform:scale(1.55);opacity:0}}
     .wpp-pop{position:fixed;right:18px;bottom:86px;z-index:9999;width:min(290px,calc(100vw - 36px));
       background:#0E1335;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px 16px 14px;
       box-shadow:0 20px 48px -12px rgba(0,0,0,.6);opacity:0;transform:translateY(12px) scale(.96);
