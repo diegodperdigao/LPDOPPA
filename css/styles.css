@@ -279,10 +279,14 @@ img,svg{display:block;max-width:100%}
 .vsl__replay .ic{width:26px;height:26px;margin-left:2px}
 
 /* olho como detalhe: pequeno, espiando o canto do vídeo */
-.vsl__eye{position:absolute;right:-18px;bottom:-20px;z-index:5;
-  width:clamp(64px,9vw,104px);display:grid;place-items:center;
+/* olho ancorado FORA do canto do card (não cobre os controles/logo do YouTube) e sem capturar cliques */
+.vsl__eye{position:absolute;right:0;bottom:0;z-index:5;
+  width:clamp(72px,9vw,104px);transform:translate(40%,40%);pointer-events:none;
+  display:grid;place-items:center;
   filter:drop-shadow(0 8px 16px rgba(0,0,0,.55))}
 .vsl__eye .eye-follow{width:100%}
+/* no mobile não há cursor pra seguir e o espaço é curto: esconde pra não encostar no vídeo */
+@media (max-width:640px){.vsl__eye{display:none}}
 .hero__halo--sm{position:absolute;inset:2%;opacity:.35;filter:blur(14px)}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 
@@ -528,7 +532,11 @@ img,svg{display:block;max-width:100%}
 /* ============================================================
    MODAL + FORM
    ============================================================ */
-.modal{position:fixed;inset:0;z-index:100;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal{position:fixed;inset:0;z-index:10000;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* enquanto o modal está aberto, some com os flutuantes que ficavam por cima dele */
+body.modal-open .vsl-float-cta,
+body.modal-open .wpp-fab,
+body.modal-open .wpp-pop{display:none !important}
 .modal.open{display:block}
 .modal__overlay{position:fixed;inset:0;background:rgba(5,7,22,.8);backdrop-filter:blur(6px);animation:fade .3s ease}
 @keyframes fade{from{opacity:0}to{opacity:1}}

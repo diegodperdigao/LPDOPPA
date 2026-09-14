@@ -63,7 +63,7 @@ body.is-locked .footer__tag{ max-width:none; white-space:nowrap; }
 
 /* aviso (chip) logo abaixo do vídeo, dentro do hero (sem faixa separada) */
 /* margem extra no topo pra dar respiro entre o botão "Quero minha vaga" e a tag */
-.vsl-locked-hint{ display:flex; justify-content:center; margin:clamp(10px,3vw,22px) auto 0; padding:0 18px; }
+.vsl-locked-hint{ display:flex; justify-content:center; margin:clamp(10px,3vw,22px) auto 0; padding:0 18px; transition:opacity .35s ease, visibility .35s ease; }
 .vsl-locked-hint__pill{
   display:inline-flex; align-items:center; gap:9px;
   padding:11px 20px; border-radius:999px;
@@ -72,7 +72,8 @@ body.is-locked .footer__tag{ max-width:none; white-space:nowrap; }
   font-size:14.5px; line-height:1.35; text-align:left;
 }
 .vsl-locked-hint__pill svg{ flex:none; width:18px; height:18px; color:#FFD300; }
-body.is-unlocked .vsl-locked-hint{ display:none; }
+/* ao liberar, o aviso some SEM colapsar o espaço (evita o hero pular) */
+body.is-unlocked .vsl-locked-hint{ opacity:0; visibility:hidden; pointer-events:none; }
 
 @media (max-width:560px){
   .vsl-locked-hint__pill{ padding:9px 14px; gap:7px; font-size:12.5px; border-radius:14px; }
@@ -101,6 +102,9 @@ body.is-unlocked .vsl-locked-hint{ display:none; }
 body.is-locked, body.is-unlocked{ display:flex !important; flex-direction:column !important; min-height:100svh !important; }
 .hero--video{ flex:1 1 auto !important; display:flex; flex-direction:column; justify-content:center; }
 .footer{ flex:0 0 auto; margin-top:0 !important; padding:14px 0 !important; }
+/* quando o botão flutuante aparece, o rodapé reserva espaço pra não ficar embaixo dele */
+body.has-float-cta .footer{ padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important; }
+@media (max-width:600px){ body.has-float-cta .footer{ padding-bottom:calc(150px + env(safe-area-inset-bottom)) !important; } }
 /* rodapé compacto: sem a faixa/linha vazia acima do texto (não há mais conteúdo ali) */
 .footer__base{ margin-top:0 !important; padding-top:0 !important; border-top:0 !important; }
 

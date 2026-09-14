@@ -526,6 +526,7 @@ const openModal = () => {
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
+  document.body.classList.add("modal-open"); // esconde os flutuantes (float CTA / WhatsApp) enquanto o modal está aberto
   // garante estado limpo
   modalHead.hidden = false;
   formEl.hidden = false;
@@ -537,6 +538,7 @@ const closeModal = () => {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
+  document.body.classList.remove("modal-open");
   lastFocused?.focus();
 };
 
@@ -560,6 +562,7 @@ $$(".js-close-form").forEach(btn => btn.addEventListener("click", closeModal));
   document.addEventListener("doppa:videoended", () => {
     if (shown) return; shown = true;
     cta.classList.add("show");
+    document.body.classList.add("has-float-cta"); // reserva espaço no rodapé pra não ficar embaixo do botão
   });
 })();
 document.addEventListener("keydown", e => {
