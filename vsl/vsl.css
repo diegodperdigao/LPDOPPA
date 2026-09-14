@@ -111,8 +111,8 @@ body.has-float-cta .footer{ padding-bottom:calc(84px + env(safe-area-inset-botto
 /* logo não abre popup nem mostra flash de toque */
 .hero__brand, .nav__brand{ -webkit-tap-highlight-color:transparent; }
 
-/* 5.2 — subtítulo compacto: não deixa "como." sozinho numa 2ª linha */
-.hero--video .hero__sub{ max-width:34ch !important; text-wrap:balance; }
+/* 5.2 — subtítulo em UMA linha no desktop; quebra sozinho só quando não couber (mobile) */
+.hero--video .hero__sub{ max-width:min(760px,94vw) !important; text-wrap:balance; }
 /* 2.4 — dobra no desktop: espaçamentos mais justos entre título/subtítulo/vídeo
    pra vídeo + botão caberem juntos em telas de 13" sem rolar */
 .hero--video .hero__inner{ gap:clamp(14px,3vw,26px) !important; }
