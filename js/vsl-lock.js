@@ -10,7 +10,7 @@
    script.js), tudo é liberado.
    ============================================================ */
 (() => {
-  const CTA_MSG  = "Assista até o final para desbloquear sua vaga";
+  const CTA_MSG  = "Assista até o final para desbloquear a sua vaga";
   const INFO_MSG = "Assista até o final para desbloquear as informações";
 
   const LOCK_SVG =
