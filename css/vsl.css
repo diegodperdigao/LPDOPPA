@@ -11,6 +11,18 @@
 }
 .vsl-lock-badge svg{ width:100%; height:100%; }
 
+/* durante a chuva de olhos, esconde os flutuantes (ficariam acima do canvas) */
+body.eyes-playing .vsl-float-cta,
+body.eyes-playing .wpp-fab,
+body.eyes-playing .wpp-pop{ display:none !important; }
+
+/* "chuva de olhos": quando o modal abre engolido pelo olho, o backdrop vira o
+   gradiente "dentro do olho" (casa com a pupila do gigante), sem blur nem fade */
+body.is-swallowed #form-modal .modal__overlay{
+  background:radial-gradient(70% 70% at 50% 50%,#070a22 55%,#2a1a9a 100%) !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important; animation:none !important;
+}
+
 /* 1.4 — quando o float aparece, sobe o botão do WhatsApp pra não colar nele no mobile */
 @media (max-width:600px){ body.has-float-cta .wpp-fab{ bottom:calc(84px + env(safe-area-inset-bottom)) !important; } }
 

@@ -387,7 +387,7 @@ $("#year").textContent = new Date().getFullYear();
       '<button class="vsl__replay" type="button" aria-label="Assistir de novo"><svg class="ic"><use href="#i-play"></use></svg></button>' +
       '<button class="btn btn--primary btn--lg" type="button">Quero minha vaga <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg></button>';
     player.appendChild(end);
-    end.querySelector(".btn").addEventListener("click", openModal);
+    end.querySelector(".btn").addEventListener("click", ev => openFormFromCTA(ev.currentTarget));
     end.querySelector(".vsl__replay").addEventListener("click", () => {
       end.remove();
       if (window.__ytPlayer && window.__ytPlayer.seekTo) { window.__ytPlayer.seekTo(0); window.__ytPlayer.playVideo(); }
@@ -625,10 +625,23 @@ const closeModal = () => {
   modal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
   document.body.classList.remove("modal-open");
+  document.body.classList.remove("is-swallowed"); // desfaz o fundo "dentro do olho"
+  document.body.classList.remove("eyes-playing");
   lastFocused?.focus();
 };
 
-$$(".js-open-form").forEach(btn => btn.addEventListener("click", openModal));
+// Rota do CTA liberado: na VSL destravada, roda a "chuva de olhos" antes do modal;
+// senão (LP, reduced-motion, sprites ausentes, ou sem o vsl-eyes) abre direto.
+const openFormFromCTA = el => {
+  if (window.DoppaEyes && document.body.classList.contains("is-unlocked")) {
+    document.body.classList.add("eyes-playing"); // esconde float/WhatsApp durante a chuva
+    window.DoppaEyes.play(el || null, openModal);
+  } else {
+    openModal();
+  }
+};
+
+$$(".js-open-form").forEach(btn => btn.addEventListener("click", e => openFormFromCTA(e.currentTarget)));
 $$(".js-close-form").forEach(btn => btn.addEventListener("click", closeModal));
 
 /* ============================================================
@@ -642,7 +655,7 @@ $$(".js-close-form").forEach(btn => btn.addEventListener("click", closeModal));
   cta.type = "button";
   cta.className = "vsl-float-cta";
   cta.textContent = "Quero minha vaga →";
-  cta.addEventListener("click", openModal);
+  cta.addEventListener("click", () => openFormFromCTA(cta));
   document.body.appendChild(cta);
   let shown = false;
   document.addEventListener("doppa:videoended", () => {
