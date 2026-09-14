@@ -154,7 +154,8 @@ body.has-float-cta .footer{ padding-bottom:calc(84px + env(safe-area-inset-botto
    eliminando o vão morto no meio da tela */
 @media (max-width:640px){
   .hero--video{ justify-content:flex-start !important; }
-  .hero--video .hero__inner{ flex:1 1 auto; min-height:0; padding-top:clamp(72px,18vw,112px); padding-bottom:12px; gap:clamp(18px,4.5vw,28px) !important; }
+  .hero--video .hero__inner{ flex:1 1 auto; min-height:0; padding-top:clamp(60px,15vw,96px); padding-bottom:12px; gap:clamp(18px,4.5vw,28px) !important; }
+  .hero--video .vsl{ margin-top:clamp(10px,3.2vw,22px) !important; } /* respiro extra entre o subtítulo e o vídeo */
   .vsl-locked-hint{ margin-top:auto !important; margin-bottom:4px; }
 }
 
