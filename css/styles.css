@@ -150,13 +150,15 @@ img,svg{display:block;max-width:100%}
    NAVBAR
    ============================================================ */
 .nav{position:fixed;inset:0 0 auto 0;z-index:60;padding:14px 0;transition:background .3s,padding .3s,box-shadow .3s,backdrop-filter .3s}
-.nav.scrolled{background:rgba(10,14,43,.85);backdrop-filter:blur(14px);box-shadow:0 4px 24px -10px rgba(0,0,0,.7);padding:9px 0}
+/* no scroll o header fica transparente: sem faixa e sem logo — só o botão "Quero minha vaga" acompanha */
+.nav.scrolled{background:transparent;backdrop-filter:none;box-shadow:none;padding:14px 0}
 .nav__inner{display:flex;align-items:center;gap:16px}
-/* logo da navbar só aparece ao scrollar (ao entrar, só a logo grande do hero) */
-/* logo da navbar só aparece ao scrollar */
+/* logo da navbar fica sempre oculta (a logo grande já vive no hero) */
 .nav__brand{display:flex;align-items:center;gap:9px;opacity:0;visibility:hidden;transform:translateY(-8px);
   transition:opacity .3s var(--ease),transform .3s var(--ease),visibility .3s}
-.nav.scrolled .nav__brand{opacity:1;visibility:visible;transform:none}
+/* ao rolar, some com os links e mantém só o botão, alinhado à direita */
+.nav.scrolled .nav__links:not(.open){display:none}
+.nav.scrolled .nav__cta{margin-left:auto}
 .nav__links{display:none}
 .nav__cta{display:none}
 .nav__burger{display:flex;flex-direction:column;gap:5px;padding:8px;margin-left:auto;border-radius:10px}
