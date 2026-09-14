@@ -70,10 +70,22 @@
     rays.forEach(p => { p.x += p.vx*dt; p.y += p.vy*dt; p.vy += .35*dt; p.life -= .012*dt; p.rot += .05*dt;
       ctx.save(); ctx.globalAlpha = Math.max(0, p.life); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.col;
       ctx.beginPath(); ctx.moveTo(0, -p.w/2); ctx.lineTo(p.len, 0); ctx.lineTo(0, p.w/2); ctx.closePath(); ctx.fill(); ctx.restore(); });
+    ctx.save();
+    // olho gigante VETORIAL (círculos + gradientes) — nítido em qualquer tamanho, sem distorcer no upscale
+    const ring = ctx.createRadialGradient(tx, ty, r*.74, tx, ty, r);
+    ring.addColorStop(0, "#6a2df0"); ring.addColorStop(.55, "#4712C9"); ring.addColorStop(1, "#280a86");
+    ctx.fillStyle = ring; ctx.beginPath(); ctx.arc(tx, ty, r, 0, 7); ctx.fill();
+    // sheen (brilho suave no topo do anel, pra não ficar chapado)
+    const sheen = ctx.createLinearGradient(tx, ty - r, tx, ty);
+    sheen.addColorStop(0, "rgba(255,255,255,.28)"); sheen.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = sheen; ctx.beginPath(); ctx.arc(tx, ty, r, 0, 7); ctx.fill();
+    // esclera
+    ctx.fillStyle = "#eef0fb"; ctx.beginPath(); ctx.arc(tx, ty, r*.82, 0, 7); ctx.fill();
+    // pupila (radial escura → roxo)
     const ir = r*(.41 + e1*.7);
-    ctx.save(); ctx.drawImage(S_BASE, tx-r, ty-r, r*2, r*2);
     const g = ctx.createRadialGradient(tx, ty, ir*.35, tx, ty, ir); g.addColorStop(0, "#070a22"); g.addColorStop(.75, "#1a0f6b"); g.addColorStop(1, "#3d18c4");
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(tx, ty, ir, 0, 7); ctx.fill();
+    // brilho
     ctx.globalAlpha = Math.max(0, 1 - e1*1.3); ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(tx + ir*.28, ty - ir*.3, ir*.14, 0, 7); ctx.fill();
     ctx.restore();
   }
