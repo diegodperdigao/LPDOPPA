@@ -556,7 +556,7 @@ const openModal = () => {
   formEl.hidden = false;
   successEl.hidden = true;
   waitEl.hidden = true;
-  setTimeout(() => $("#f-email")?.focus(), 80);
+  setTimeout(() => $("#f-nome")?.focus(), 80);
 };
 const closeModal = () => {
   modal.classList.remove("open");
@@ -656,7 +656,7 @@ const validate = data => {
   if (!validatePhone(data.telefone)) { showError("telefone", "Coloca um telefone válido (com DDD, ou + código do país)."); ok = false; $("#f-telefone").classList.toggle("invalid", true); }
   else $("#f-telefone").classList.remove("invalid");
   if (!data.experiencia) { showError("experiencia", "Escolhe uma opção."); ok = false; }
-  if (!data.maioridade) { showError("maioridade", "Selecione uma opção."); ok = false; }
+  if (!data.maioridade) { showError("maioridade", "Confirme que você tem 18 anos ou mais."); ok = false; }
   return ok;
 };
 

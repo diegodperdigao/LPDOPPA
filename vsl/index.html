@@ -341,12 +341,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <form class="form" id="lead-form" novalidate>
       <div class="field">
-        <label for="f-email">Email <span class="req">*</span></label>
-        <input type="email" id="f-email" name="email" placeholder="seu@email.com" required autocomplete="email" />
-        <span class="field__error" data-for="email"></span>
-      </div>
-
-      <div class="field">
         <label for="f-nome">Nome completo <span class="req">*</span></label>
         <input type="text" id="f-nome" name="nome" placeholder="Seu nome completo" required autocomplete="name" />
         <span class="field__error" data-for="nome"></span>
@@ -356,6 +350,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <label for="f-telefone">Telefone com DDD <span class="req">*</span></label>
         <input type="tel" id="f-telefone" name="telefone" placeholder="(11) 99999-9999 · fora do BR use +" required autocomplete="tel" inputmode="tel" maxlength="16" />
         <span class="field__error" data-for="telefone"></span>
+      </div>
+
+      <div class="field">
+        <label for="f-email">Email <span class="req">*</span></label>
+        <input type="email" id="f-email" name="email" placeholder="seu@email.com" required autocomplete="email" />
+        <span class="field__error" data-for="email"></span>
       </div>
 
       <fieldset class="field">
@@ -369,14 +369,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="field__error" data-for="experiencia"></span>
       </fieldset>
 
-      <fieldset class="field">
-        <legend>Para aproveitar as oportunidades comerciais da Doppa é necessário ser maior de idade. <span class="req">*</span></legend>
-        <div class="options">
-          <label class="option"><input type="radio" name="maioridade" value="De acordo, sou maior de idade" required /><span class="option__mark"></span><span>De acordo, sou maior de idade</span></label>
-          <label class="option"><input type="radio" name="maioridade" value="Vou esperar mais um pouco" /><span class="option__mark"></span><span>Vou esperar mais um pouco</span></label>
-        </div>
+      <div class="field field--check">
+        <label class="checkbox">
+          <input type="checkbox" name="maioridade" value="De acordo, sou maior de idade" required />
+          <span class="checkbox__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span>Confirmo que tenho <strong>18 anos ou mais</strong>.</span>
+        </label>
         <span class="field__error" data-for="maioridade"></span>
-      </fieldset>
+      </div>
 
       <button type="submit" class="btn btn--primary btn--lg form__submit" id="submit-btn">
         <span class="form__submit-label">Entrar na Doppa <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg></span>
