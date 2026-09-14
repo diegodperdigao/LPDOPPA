@@ -101,6 +101,8 @@
     if (!locked) return;
     locked = false;
     removeBadges();
+    // contorno completou → botão ganha um brilho pulsante (chama atenção na liberação)
+    document.querySelectorAll(CTA_SEL).forEach(btn => btn.classList.add("is-cta-pop"));
     document.body.classList.remove("is-locked");
     document.body.classList.add("is-unlocked");
     // garante que todas as seções (que usam .reveal) fiquem visíveis
