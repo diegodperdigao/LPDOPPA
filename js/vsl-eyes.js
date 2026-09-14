@@ -45,6 +45,9 @@
   if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 4000 }); else setTimeout(warm, 3000);
 
   const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Modo B (teste): ?eyes=freeze → sem olho gigante; a chuva congela e o modal
+  // abre por cima do campo de olhos (fundo de olhos). Padrão = olho gigante (A).
+  const FREEZE = new URLSearchParams(location.search).get("eyes") === "freeze";
   const easeIO = k => (k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3) / 2);
 
   // ---------- desenho ----------
@@ -185,6 +188,7 @@
         drawEye(ctx, e.x, e.y, e.r, e.rot, dx/d, dy/d, e.lid);
       });
       if (phase >= 2) {
+        if (FREEZE) { finishFreeze(); return; }  // modo B: congela os olhos como fundo
         const k = Math.min(1, (el - tFull)/CFG.GIANT_MS); drawGiant(ctx, S, easeIO(k), rays, dt);
         if (k >= 1) { finish(); return; }
       }
@@ -195,8 +199,21 @@
       done();
       setTimeout(() => { c.style.display = "none"; ctx.clearRect(0, 0, W, H); playing = false; }, CFG.SWALLOW_HOLD_MS);
     }
+    // modo B: para a física, mantém o campo de olhos desenhado como fundo e abre o modal por cima
+    function finishFreeze() {
+      document.body.classList.add("is-eyefield");
+      done();
+      // o canvas fica visível como fundo; é limpo no closeModal via DoppaEyes.clear()
+    }
     requestAnimationFrame(frame);
   }
 
-  window.DoppaEyes = { play, warm };
+  // tira o canvas de olhos usado como fundo (modo B) — chamado no closeModal
+  function clear() {
+    if (canvas) { canvas.style.display = "none"; try { canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height); } catch (e) {} }
+    document.body.classList.remove("is-eyefield");
+    playing = false;
+  }
+
+  window.DoppaEyes = { play, warm, clear };
 })();

@@ -627,6 +627,7 @@ const closeModal = () => {
   document.body.classList.remove("modal-open");
   document.body.classList.remove("is-swallowed"); // desfaz o fundo "dentro do olho"
   document.body.classList.remove("eyes-playing");
+  window.DoppaEyes && window.DoppaEyes.clear && window.DoppaEyes.clear(); // tira o campo de olhos (modo B)
   lastFocused?.focus();
 };
 
