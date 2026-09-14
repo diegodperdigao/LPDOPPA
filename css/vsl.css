@@ -154,7 +154,7 @@ body.has-float-cta .footer{ padding-bottom:calc(84px + env(safe-area-inset-botto
    eliminando o vão morto no meio da tela */
 @media (max-width:640px){
   .hero--video{ justify-content:flex-start !important; }
-  .hero--video .hero__inner{ flex:1 1 auto; min-height:0; padding-top:clamp(96px,25vw,150px); padding-bottom:12px; }
+  .hero--video .hero__inner{ flex:1 1 auto; min-height:0; padding-top:clamp(72px,18vw,112px); padding-bottom:12px; gap:clamp(18px,4.5vw,28px) !important; }
   .vsl-locked-hint{ margin-top:auto !important; margin-bottom:4px; }
 }
 

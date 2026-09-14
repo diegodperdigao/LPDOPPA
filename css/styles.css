@@ -641,6 +641,12 @@ body.modal-open .wpp-pop{display:none !important}
 /* hero acima da dobra: entra sozinho via CSS (não espera o JS carregar), rápido e sem cascata */
 .hero .reveal{animation:heroIn .4s var(--ease) both}
 @keyframes heroIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* mobile: entrada só em FADE (sem o "desliza pra cima" — estava parecendo slide) */
+@media (max-width:640px){
+  .reveal{transform:none}
+  .hero .reveal{animation:heroFade .3s var(--ease) both}
+}
+@keyframes heroFade{from{opacity:0}to{opacity:1}}
 
 /* ============================================================
    BREAKPOINTS (mobile-first → up)
