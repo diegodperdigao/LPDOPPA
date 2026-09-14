@@ -337,19 +337,27 @@ $("#year").textContent = new Date().getFullYear();
   const vimeoId = vimeoMatch ? vimeoMatch[1] : null;
   const isFile = /\.(mp4|webm|ogg)(\?|$)/i.test(url);
 
-  // capa/thumb antes do play
+  // capa/thumb antes do play. A VSL já traz a capa ESTÁTICA no HTML (paint imediato,
+  // é o LCP) — aqui só criamos se não existir, ou trocamos a src caso o vídeo tenha
+  // sido sobrescrito por ?v=.
   if (url) {
-    const poster = CONFIG.VIDEO_POSTER || (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : "");
-    if (poster) {
-      const img = document.createElement("img");
+    const poster = CONFIG.VIDEO_POSTER || (ytId ? `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg` : "");
+    let img = player.querySelector(".vsl__poster");
+    const wireFallback = el => {
+      if (ytId && !CONFIG.VIDEO_POSTER) el.onerror = () => { el.onerror = null; el.src = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`; };
+    };
+    if (poster && !img) {
+      img = document.createElement("img");
       img.className = "vsl__poster";
       img.alt = "";
       img.decoding = "async";
+      img.fetchPriority = "high"; // capa é o LCP da VSL
+      wireFallback(img);
       img.src = poster;
-      if (ytId && !CONFIG.VIDEO_POSTER) {
-        img.onerror = () => { img.onerror = null; img.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`; };
-      }
       player.insertBefore(img, player.firstChild);
+    } else if (poster && img && ytId && !CONFIG.VIDEO_POSTER && img.src.indexOf(ytId) === -1) {
+      wireFallback(img);
+      img.src = poster; // override de vídeo (?v=): ajusta a capa estática
     }
   }
 
@@ -501,11 +509,24 @@ $("#year").textContent = new Date().getFullYear();
     }
   };
 
-  // pré-carrega o YouTube (cued) atrás da capa, pra o toque já iniciar a reprodução
+  // Lite-embed: o player do YouTube NÃO entra no caminho crítico de render.
+  // Só é "aquecido" (cued, mudo, atrás da capa) quando a página fica ociosa OU no
+  // primeiro gesto do usuário — o que vier primeiro. Assim o toque em "play" ainda
+  // dispara DENTRO do gesto (som imediato, sem duplo-play no mobile), mas o render
+  // inicial não carrega o iframe_api + iframe junto (LCP mais rápido).
   if (ytId && CONFIG.VIDEO_PRELOAD) {
-    const poster = player.querySelector(".vsl__poster");
-    if (poster) poster.style.zIndex = "1";
-    loadYT(() => createYT());
+    let warmed = false;
+    const evs = ["pointerdown", "touchstart", "keydown", "scroll", "pointermove"];
+    const warm = () => {
+      if (warmed) return; warmed = true;
+      evs.forEach(ev => window.removeEventListener(ev, warm));
+      const poster = player.querySelector(".vsl__poster");
+      if (poster) poster.style.zIndex = "1";
+      loadYT(() => createYT());
+    };
+    evs.forEach(ev => window.addEventListener(ev, warm, { passive: true }));
+    if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 3000 });
+    else setTimeout(warm, 2200);
   }
 
   playBtn.addEventListener("click", mount);

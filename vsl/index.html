@@ -33,6 +33,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <link rel="preconnect" href="https://www.youtube.com" />
 <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
+<link rel="preload" as="image" href="https://i.ytimg.com/vi/aV7ctWpg948/maxresdefault.jpg" fetchpriority="high" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
@@ -94,6 +95,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="vsl__stage">
         <div class="vsl__player" id="vsl-player">
           <!-- O vídeo da VSL entra aqui (definido em CONFIG.VIDEO_URL no script.js) -->
+          <!-- Capa estática (LCP): pinta durante o parse, sem esperar o JS. O script.js reaproveita esta img. -->
+          <img class="vsl__poster" src="https://i.ytimg.com/vi/aV7ctWpg948/maxresdefault.jpg" alt="" width="1280" height="720" fetchpriority="high" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/aV7ctWpg948/hqdefault.jpg'" />
           <button class="vsl__play" id="vsl-play" aria-label="Assistir ao vídeo">
             <svg class="ic"><use href="#i-play"></use></svg>
           </button>
