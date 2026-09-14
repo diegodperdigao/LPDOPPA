@@ -449,7 +449,7 @@ $("#year").textContent = new Date().getFullYear();
         autoplay: 1, rel: 0, modestbranding: 1,
         mute: preload ? 1 : 0, // no preload toca mudo pra já bufferizar → tap = som na hora
         controls: CONFIG.VIDEO_HIDE_CONTROLS ? 0 : 1,
-        disablekb: 1, fs: 1, iv_load_policy: 3, playsinline: 1
+        disablekb: 1, fs: 0, iv_load_policy: 3, playsinline: 1
       },
       events: {
         onReady: () => {
