@@ -117,6 +117,14 @@ body.has-float-cta .footer{ padding-bottom:calc(84px + env(safe-area-inset-botto
    pra vídeo + botão caberem juntos em telas de 13" sem rolar */
 .hero--video .hero__inner{ gap:clamp(14px,3vw,26px) !important; }
 
+/* MOBILE: conteúdo encostado no topo (sob o header) e o aviso desce pro rodapé,
+   eliminando o vão morto no meio da tela */
+@media (max-width:640px){
+  .hero--video{ justify-content:flex-start !important; }
+  .hero--video .hero__inner{ flex:1 1 auto; min-height:0; padding-top:clamp(96px,25vw,150px); padding-bottom:12px; }
+  .vsl-locked-hint{ margin-top:auto !important; margin-bottom:4px; }
+}
+
 /* ===== Botão flutuante que aparece no pitch (8:48) — fixo, sempre visível ===== */
 .vsl-float-cta{
   position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(28px);
