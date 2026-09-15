@@ -591,15 +591,13 @@ $("#year").textContent = new Date().getFullYear();
       if (poster) poster.style.zIndex = "1";
       loadYT(() => createYT());
     };
-    // Desktop: aquece cedo (idle/gesto) pra o play ser instantâneo, sem pesar no LCP.
-    // Mobile: NÃO pré-carrega. A API + o iframe do YouTube são pesados e competiam com o
-    // 1º render no celular (site "demorava anos"). O player é criado só quando a pessoa
-    // toca em play — DENTRO do gesto, o que também deixa a reprodução no iOS mais confiável.
-    if (!isTouch) {
-      evs.forEach(ev => window.addEventListener(ev, warm, { passive: true }));
-      if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 3000 });
-      else setTimeout(warm, 2200);
-    }
+    evs.forEach(ev => window.addEventListener(ev, warm, { passive: true }));
+    // Mobile (iOS): o player precisa estar PRONTO antes do toque em play (aí o tap conta
+    // como gesto e o iOS libera a reprodução). Por isso aquece cedo, logo após o 1º paint.
+    // Desktop: mantém lite-embed (idle/gesto) pra não pesar no LCP.
+    if (isTouch) setTimeout(warm, 500);
+    else if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 3000 });
+    else setTimeout(warm, 2200);
   }
 
   playBtn.addEventListener("click", mount);
