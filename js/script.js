@@ -80,6 +80,16 @@ const CONFIG = {
 // definindo window.DOPPA_CONFIG_OVERRIDES antes de carregar este script.
 if (window.DOPPA_CONFIG_OVERRIDES) Object.assign(CONFIG, window.DOPPA_CONFIG_OVERRIDES);
 
+// MOBILE: NÃO pré-carrega o YouTube. Medido (throttle 4G+CPU 4x): nosso render pinta em
+// ~0,6s, mas o base.js do YouTube (~1-2MB) carregado antes do toque saturava a banda e
+// travava a main thread durante o 1º paint → FCP ia pra 7s. No celular o player só é criado
+// quando a pessoa toca em play; a barra nativa (controls) fica ligada como fallback do
+// autoplay do iOS. No desktop segue o pré-aquecimento (lá não há gargalo de banda/CPU).
+if (window.matchMedia && window.matchMedia("(hover: none), (max-width: 767px)").matches) {
+  CONFIG.VIDEO_PRELOAD = false;
+  CONFIG.VIDEO_HIDE_CONTROLS = false;
+}
+
 /* ============================================================
    Rastreio de afiliado (btag)
    ------------------------------------------------------------

@@ -34,10 +34,9 @@ else w.addEventListener('load',function(){setTimeout(load,1200);});
 <meta name="twitter:description" content="Crie vídeos de futebol e apostas e seja recompensado. Assista ao vídeo e saiba como entrar." />
 <meta name="twitter:image" content="https://doppa.com.br/assets/og-doppa.jpg" />
 
-<link rel="preconnect" href="https://www.youtube.com" />
 <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
-<link rel="preconnect" href="https://rr1---sn-googlevideo.com" crossorigin />
-<link rel="dns-prefetch" href="https://googlevideo.com" />
+<link rel="preconnect" href="https://www.youtube.com" />
+<link rel="preload" as="image" href="https://i.ytimg.com/vi/aV7ctWpg948/hqdefault.jpg" fetchpriority="high" />
 <link rel="preload" href="assets/fonts/anton-400.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/fonts/poppins-500.woff2" as="font" type="font/woff2" crossorigin />
 
@@ -73,6 +72,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </header>
 
 <!-- ===================== HERO ===================== -->
+<main>
 <section class="hero hero--video" id="hero">
   <div class="hero__bg" aria-hidden="true">
     <span class="orb orb--a"></span>
@@ -85,15 +85,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </a>
 
   <div class="container hero__inner">
-    <h1 class="hero__title reveal">
+    <h1 class="hero__title">
       Sua porta de entrada <br class="only-mobile" />para <span class="hl">viver de conteúdo.</span>
     </h1>
 
-    <p class="hero__sub reveal">
+    <p class="hero__sub">
       <span class="hl hl--val">Mais de R$ 1.400</span> para criar vídeos. Assista ao vídeo e saiba como.
     </p>
 
-    <div class="vsl reveal">
+    <div class="vsl">
       <div class="vsl__stage">
         <div class="vsl__player" id="vsl-player">
           <!-- O vídeo da VSL entra aqui (definido em CONFIG.VIDEO_URL no script.js) -->
@@ -115,200 +115,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <div class="hero__cta reveal">
+    <div class="hero__cta">
       <button class="btn btn--primary btn--xl js-open-form" data-source="hero">
         Quero minha vaga <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg>
       </button>
     </div>
   </div>
 </section>
-
-<!-- ===================== TRUST STRIP ===================== -->
-<section class="strip">
-  <div class="container strip__row reveal">
-    <span class="strip__item"><svg class="ic"><use href="#i-check"></use></svg> Sem custo</span>
-    <span class="strip__item"><svg class="ic"><use href="#i-check"></use></svg> Sem assinatura</span>
-    <span class="strip__item"><svg class="ic"><use href="#i-check"></use></svg> Sem curso</span>
-  </div>
-</section>
-
-<!-- ===================== QUEBRA DE OBJEÇÕES ===================== -->
-<section class="section" id="sem-complicacao">
-  <div class="container">
-    <header class="head reveal">
-      <span class="eyebrow">Comece agora</span>
-      <h2 class="head__title">Você já tem <span class="hl">tudo que precisa</span></h2>
-      <p class="head__lead">O que costuma travar a maioria, na Doppa já está resolvido.</p>
-    </header>
-
-    <div class="req-grid reveal">
-      <div class="req-item"><span class="req-item__tile"><svg class="ic"><use href="#i-check"></use></svg></span><h3>Tem zero seguidores? Tudo certo.</h3></div>
-      <div class="req-item"><span class="req-item__tile"><svg class="ic"><use href="#i-check"></use></svg></span><h3>Nunca criou? Perfeito.</h3></div>
-      <div class="req-item"><span class="req-item__tile"><svg class="ic"><use href="#i-check"></use></svg></span><h3>Edição? Esquece.</h3></div>
-      <div class="req-item"><span class="req-item__tile"><svg class="ic"><use href="#i-check"></use></svg></span><h3>Roteiros 100% prontos.</h3></div>
-      <div class="req-item"><span class="req-item__tile"><svg class="ic"><use href="#i-check"></use></svg></span><h3>Cabe na sua rotina.</h3></div>
-      <div class="req-item"><span class="req-item__tile"><svg class="ic"><use href="#i-check"></use></svg></span><h3>Não precisa usar o seu perfil pessoal.</h3></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== COMO FUNCIONA (lógica invertida) ===================== -->
-<section class="section section--alt" id="como-funciona">
-  <div class="container">
-    <header class="head reveal">
-      <span class="eyebrow">A lógica invertida</span>
-      <h2 class="head__title">Dois caminhos. <span class="hl">Resultados diferentes.</span></h2>
-    </header>
-
-    <div class="versus reveal">
-      <div class="vs-col vs-col--old">
-        <div class="vs-col__head">
-          <span class="vs-col__tag">Do jeito antigo</span>
-          <span class="vs-col__base">Começa com <strong>paixão</strong></span>
-        </div>
-        <ol class="vs-list">
-          <li><span class="vs-num">1</span> Escolho algo que amo</li>
-          <li><span class="vs-num">2</span> Produzo conteúdo</li>
-          <li><span class="vs-num">3</span> Tento crescer</li>
-          <li><span class="vs-num">4</span> Construo audiência</li>
-          <li><span class="vs-num">5</span> Talvez consiga monetizar</li>
-        </ol>
-        <p class="vs-foot"><strong>Primeiro:</strong> anos de trabalho.<br/><strong>Depois talvez:</strong> o dinheiro.</p>
-      </div>
-
-      <div class="vs-or" aria-hidden="true"><span>VS</span></div>
-
-      <div class="vs-col vs-col--doppa">
-        <div class="vs-col__head">
-          <span class="vs-col__tag">Tese Doppa</span>
-          <span class="vs-col__base">Começa com <strong>dinheiro</strong></span>
-        </div>
-        <ol class="vs-list">
-          <li><span class="vs-num">1</span> Ganho dinheiro criando conteúdo</li>
-          <li><span class="vs-num">2</span> Desenvolvo minha comunicação</li>
-          <li><span class="vs-num">3</span> Aprendo o algoritmo na prática</li>
-          <li><span class="vs-num">4</span> Descubro formatos que funcionam</li>
-          <li><span class="vs-num">5</span> Escolho o que realmente quero construir</li>
-        </ol>
-        <p class="vs-foot"><strong>Primeiro:</strong> renda + experiência + aprendizado.<br/><strong>Depois:</strong> liberdade para escolher o que te faz feliz.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== PASSO A PASSO ===================== -->
-<section class="section" id="passos">
-  <div class="container container--narrow">
-    <header class="head reveal">
-      <span class="eyebrow">Passo a passo</span>
-      <h2 class="head__title">Como você <span class="hl">começa</span></h2>
-      <p class="head__lead">Do zero ao primeiro conteúdo publicado, sem mistério.</p>
-    </header>
-
-    <ol class="journey reveal">
-      <li class="journey__item"><span class="journey__num">1</span><div><h3>Entre na comunidade</h3><p>Você entra na nossa comunidade no WhatsApp e recebe as regras, os termos e as orientações.</p></div></li>
-      <li class="journey__item"><span class="journey__num">2</span><div><h3>Crie um perfil novo</h3><p>Um perfil só pra esse conteúdo, separado do pessoal. Isso ajuda o algoritmo a entender o seu nicho (misturar vários assuntos num perfil só atrapalha a entrega) e deixa você começar no seu tempo, sem precisar se expor pra amigos e familiares logo de cara.</p></div></li>
-      <li class="journey__item"><span class="journey__num">3</span><div><h3>Seja aprovado</h3><p>Aprovado, você libera o acesso aos roteiros e materiais prontos pra postar.</p></div></li>
-      <li class="journey__item"><span class="journey__num">4</span><div><h3>Grave e publique</h3><p>Siga o roteiro, grave com o celular e publique. Depois, é só enviar os links pela comunidade.</p></div></li>
-      <li class="journey__item"><span class="journey__num">5</span><div><h3>Receba pela sua entrega</h3><p>Ao fechar o ciclo mensal, você é remunerado pela sua produção. Renda extra recorrente, mês após mês.</p></div></li>
-    </ol>
-  </div>
-</section>
-
-<!-- ===================== COMUNIDADE ===================== -->
-<section class="section section--alt" id="comunidade">
-  <div class="container container--narrow center">
-    <img src="assets/mascote.webp" class="comunidade__mascot reveal" alt="" aria-hidden="true" width="400" height="425" loading="lazy" decoding="async" />
-    <header class="head reveal">
-      <span class="eyebrow">Você não cria sozinho</span>
-      <h2 class="head__title">Uma <span class="hl">comunidade</span> que cresce junto</h2>
-      <p class="head__lead">Na Doppa você entra num grupo de criadores que estão começando como você. Todo mundo troca dica, tira dúvida e comemora os resultados junto. Fica bem mais leve do que tentar sozinho.</p>
-    </header>
-    <div class="reveal center">
-      <span class="eyebrow--pill"><svg class="ic ic--xs"><use href="#i-users"></use></svg> Comunidade ativa no WhatsApp</span>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== A OPORTUNIDADE (iGaming / 18+) ===================== -->
-<section class="section" id="oportunidade">
-  <div class="container container--narrow">
-    <header class="head reveal">
-      <span class="eyebrow">Sobre o nicho</span>
-      <h2 class="head__title">Conteúdo para o mercado de <span class="hl">iGaming</span></h2>
-      <p class="head__lead">As oportunidades da Doppa vêm do mercado de apostas (iGaming), um dos que mais investem em conteúdo hoje.</p>
-    </header>
-
-    <div class="notice reveal">
-      <span class="notice__icon"><svg class="ic ic--lg"><use href="#i-trend"></use></svg></span>
-      <div>
-        <h3>Conteúdo para o mercado de iGaming (apostas) · 18+</h3>
-        <p>É um nicho forte, com marcas que investem pesado em conteúdo. É por isso que a Doppa consegue te pagar desde o primeiro dia. Como envolve apostas, é necessário ser <strong>maior de 18 anos</strong>.</p>
-        <p>Você cria com o roteiro pronto e todo o suporte da Doppa, sempre de forma responsável. Topou? É só garantir sua vaga.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== CTA BAND ===================== -->
-<section class="cta">
-  <div class="container">
-    <div class="cta__box cta__box--mascot reveal">
-      <span class="cta__glow" aria-hidden="true"></span>
-      <img src="assets/mascote.webp" class="cta__mascot" alt="" aria-hidden="true" width="400" height="425" loading="lazy" decoding="async" />
-      <h2 class="cta__title">As vagas são <span class="hl">Limitadas.</span></h2>
-      <p class="cta__sub">Não tem ninguém no mercado oferecendo uma oportunidade assim pra quem está começando do zero. Garanta a sua antes que acabe.</p>
-      <button class="btn btn--light btn--xl js-open-form" data-source="cta-band">
-        Quero minha vaga <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== FAQ ===================== -->
-<section class="section" id="faq">
-  <div class="container container--narrow">
-    <header class="head reveal">
-      <span class="eyebrow">Perguntas frequentes</span>
-      <h2 class="head__title">Ficou com alguma <span class="hl">dúvida?</span></h2>
-    </header>
-
-    <div class="faq reveal">
-      <details class="faq__item">
-        <summary>O que é a Doppa?<span class="faq__plus" aria-hidden="true"></span></summary>
-        <div class="faq__body"><p>A Doppa é uma oportunidade de renda extra que te paga pra criar conteúdo desde o primeiro dia, mesmo sem experiência e sem seguidores. As parcerias com as marcas, os roteiros e os formatos ficam por nossa conta: você posta e a comunidade te ajuda a evoluir. Participar é <strong>grátis</strong>.</p></div>
-      </details>
-      <details class="faq__item">
-        <summary>Preciso ter experiência ou seguidores?<span class="faq__plus" aria-hidden="true"></span></summary>
-        <div class="faq__body"><p>Não. A Doppa foi feita pra quem está começando <strong>do zero</strong>. Se você nunca criou conteúdo mas tem vontade, é exatamente pra você.</p></div>
-      </details>
-      <details class="faq__item">
-        <summary>Sobre o que é o conteúdo?<span class="faq__plus" aria-hidden="true"></span></summary>
-        <div class="faq__body"><p>Hoje as oportunidades vêm de marcas de <strong>iGaming (apostas)</strong>, por isso é necessário ser <strong>maior de 18 anos</strong>. Se não for um nicho com o qual você quer trabalhar, sem problemas: deixamos isso claro logo de cara.</p></div>
-      </details>
-      <details class="faq__item">
-        <summary>Preciso usar o meu perfil pessoal?<span class="faq__plus" aria-hidden="true"></span></summary>
-        <div class="faq__body"><p>Não. Você cria um <strong>perfil novo</strong>, só pra Doppa. Sua vida pessoal e seus conhecidos ficam de fora.</p></div>
-      </details>
-      <details class="faq__item">
-        <summary>Quanto tempo por dia eu preciso?<span class="faq__plus" aria-hidden="true"></span></summary>
-        <div class="faq__body"><p>Dá pra encaixar na rotina: em torno de <strong>2 horas por dia</strong>, usando o celular. Sem equipamento caro nem edição complicada.</p></div>
-      </details>
-      <details class="faq__item">
-        <summary>Quanto eu vou ganhar?<span class="faq__plus" aria-hidden="true"></span></summary>
-        <div class="faq__body"><p>Os valores e as condições explicamos em detalhe na <strong>próxima etapa</strong>, já dentro do processo. O importante: é uma renda extra recorrente, e participar é grátis.</p></div>
-      </details>
-      <details class="faq__item">
-        <summary>Como funciona o recebimento?<span class="faq__plus" aria-hidden="true"></span></summary>
-        <div class="faq__body"><p>O recebimento é por <strong>vínculo PJ</strong>: você assina um termo e recebe como pessoa jurídica, normalmente por um <strong>MEI</strong> (ou outra categoria de CNPJ que você já tenha), emitindo nota fiscal. Se você ainda não tem CNPJ, abrir um MEI é simples e a gente te orienta no passo a passo.</p></div>
-      </details>
-      <details class="faq__item">
-        <summary>Como eu entro?<span class="faq__plus" aria-hidden="true"></span></summary>
-        <div class="faq__body"><p>É só clicar em <strong>"Quero minha vaga"</strong>, preencher o formulário rapidinho e você será direcionado(a) para a nossa comunidade no WhatsApp, onde tudo começa. Lembrando que as <strong>vagas são limitadas</strong>.</p></div>
-      </details>
-    </div>
-  </div>
-</section>
+</main>
 
 <!-- ===================== FOOTER ===================== -->
 <footer class="footer">
