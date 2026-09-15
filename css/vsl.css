@@ -152,10 +152,16 @@ body.is-unlocked .vsl-locked-hint{ opacity:0; visibility:hidden; pointer-events:
   right:clamp(16px,3.2vw,46px) !important;
   top:calc(clamp(14px,2.4vw,22px) + clamp(70px,8.01vw,106px) / 2) !important;
   transform:translateY(-50%) !important;
-  /* maior, pra equilibrar com a logo grande (segue centralizado pelo translateY) */
-  font-size:clamp(.92rem,1.5vw,1.02rem) !important;
-  padding:.8em 1.55em !important;
-  min-height:48px !important;
+  /* tamanho em PX (não em rem/em) → consistente em todo aparelho, imune a zoom/
+     fonte-base do navegador. O clamp usa vw (viewport, estável por device), não rem. */
+  font-size:clamp(13px,3.4vw,16px) !important;
+  padding:0 clamp(14px,3.6vw,22px) !important;
+  min-height:46px !important;
+  line-height:1 !important;
+}
+/* telas bem estreitas: encolhe um tico pra não encostar na logo */
+@media (max-width:360px){
+  .nav__cta{ font-size:12.5px !important; padding:0 12px !important; min-height:42px !important; }
 }
 
 /* tudo cabe em uma tela: hero preenche o meio (vídeo centralizado), rodapé

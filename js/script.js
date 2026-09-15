@@ -619,6 +619,7 @@ const openModal = () => {
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
   document.body.classList.add("modal-open"); // esconde os flutuantes (float CTA / WhatsApp) enquanto o modal está aberto
+  ensureEmailJS(); // carrega o SDK do EmailJS agora (sob demanda), pronto pro envio
   // garante estado limpo
   modalHead.hidden = false;
   formEl.hidden = false;
@@ -843,11 +844,17 @@ const sendWelcomeEmail = data => {
   };
   return window.emailjs.send(E.SERVICE_ID, E.TEMPLATE_ID, params).catch(e => console.warn("EmailJS:", e));
 };
-// Carrega o SDK do EmailJS só quando há template configurado.
-if (CONFIG.EMAILJS && CONFIG.EMAILJS.PUBLIC_KEY && CONFIG.EMAILJS.TEMPLATE_ID) {
+// Carrega o SDK do EmailJS SOB DEMANDA (na 1ª abertura do modal), não no load da
+// página — assim ele não compete com o render. Chamado em openModal.
+let emailjsRequested = false;
+function ensureEmailJS() {
+  if (emailjsRequested) return;
+  const E = CONFIG.EMAILJS || {};
+  if (!E.PUBLIC_KEY || !E.SERVICE_ID || !E.TEMPLATE_ID) return;
+  emailjsRequested = true;
   const s = document.createElement("script");
   s.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
-  s.onload = () => window.emailjs && window.emailjs.init({ publicKey: CONFIG.EMAILJS.PUBLIC_KEY });
+  s.onload = () => window.emailjs && window.emailjs.init({ publicKey: E.PUBLIC_KEY });
   document.head.appendChild(s);
 }
 
