@@ -507,5 +507,68 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="js/script.js"></script>
 <script src="js/vsl-lock.js"></script>
 <script src="js/vsl-eyes.js" defer></script>
+
+<!-- ===== TESTE A/B: player VTurb (só quando ?player=vturb). Não afeta a home. ===== -->
+<script>
+(function(){
+  if (new URLSearchParams(location.search).get("player") !== "vturb") return;
+  var ACC = "569e0778-300c-4dff-85ab-9da035f16ade";
+  var PID = "6aa1b29c5568bc9098ba2ff7";
+  var P    = "https://scripts.converteai.net/"+ACC+"/players/"+PID+"/v4/player.js";
+  var WC   = "https://scripts.converteai.net/lib/js/smartplayer-wc/v4/smartplayer.js";
+  var M3U8 = "https://cdn.converteai.net/"+ACC+"/6aa1b21f5568bc9098ba2fa3/main.m3u8";
+
+  // speed code do VTurb (marca o tempo de início + pré-carrega o player/vídeo)
+  window._plt = window._plt || (performance && performance.timeOrigin ? performance.timeOrigin + performance.now() : Date.now());
+  function pre(href, as, f){ var l=document.createElement("link"); l.rel="preload"; l.href=href; l.as=as; if(f)l.crossOrigin=""; document.head.appendChild(l); }
+  function dns(h){ var l=document.createElement("link"); l.rel="dns-prefetch"; l.href=h; document.head.appendChild(l); }
+  pre(P,"script"); pre(WC,"script"); pre(M3U8,"fetch",true);
+  ["https://cdn.converteai.net","https://scripts.converteai.net","https://images.converteai.net","https://license.vturb.com"].forEach(dns);
+
+  // troca o miolo do vídeo pelo player do VTurb (o resto da página fica igual)
+  var slot = document.getElementById("vsl-player");
+  if (slot){
+    slot.innerHTML = '<vturb-smartplayer id="vid-'+PID+'" style="display:block;margin:0 auto;width:100%"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:56.25% 0 0;z-index:0;background-color:black"></div></vturb-smartplayer>';
+    var s=document.createElement("script"); s.src=P; s.async=true; document.head.appendChild(s);
+  }
+
+  // engancha o FIM do vídeo do VTurb na nossa lógica (botão flutuante aparece no fim).
+  // Tenta o <video> interno (DOM claro e shadow DOM) e, como reforço, a API do VTurb.
+  var cfg = window.DOPPA_CONFIG_OVERRIDES || {};
+  var CTA = +cfg.CTA_AT_SECONDS || 0, ctaFired=false, hooked=false;
+  function fireCTA(){ if(!ctaFired){ ctaFired=true; document.dispatchEvent(new Event("doppa:videoended")); } }
+  function findVideo(){
+    if(!slot) return null;
+    var v = slot.querySelector("video"); if(v) return v;
+    var el = slot.querySelector("vturb-smartplayer");
+    if(el && el.shadowRoot){ v = el.shadowRoot.querySelector("video"); if(v) return v; }
+    return null;
+  }
+  var iv = setInterval(function(){
+    if(hooked) return;
+    var v = findVideo();
+    if(v){
+      hooked=true;
+      v.addEventListener("timeupdate", function(){
+        var d=v.duration||0, t=v.currentTime||0, target=CTA>0?CTA:d;
+        if(target>0) document.documentElement.style.setProperty("--vsl-progress", Math.min(1,t/target).toFixed(4));
+        if(CTA>0 && t>=CTA) fireCTA();
+      });
+      v.addEventListener("ended", fireCTA);
+      return;
+    }
+    // reforço via API do VTurb (caso o vídeo esteja fora de alcance)
+    try{
+      var sp = window.smartplayer;
+      if(sp && sp.instances && sp.instances.length){
+        hooked=true;
+        var inst = sp.instances[0];
+        if(inst && inst.on){ inst.on("ended", fireCTA); if(CTA>0) inst.on("timeupdate", function(){ try{ if((inst.currentTime||0)>=CTA) fireCTA(); }catch(e){} }); }
+      }
+    }catch(e){}
+  }, 250);
+  setTimeout(function(){ clearInterval(iv); }, 25000);
+})();
+</script>
 </body>
 </html>

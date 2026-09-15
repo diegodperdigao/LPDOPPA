@@ -267,6 +267,9 @@ $("#year").textContent = new Date().getFullYear();
   const player = $("#vsl-player");
   const playBtn = $("#vsl-play");
   if (!player || !playBtn) return;
+  // Teste A/B: ?player=vturb troca o player do YouTube pelo do VTurb (ver bloco inline
+  // no index.html). Aqui o caminho do YouTube não roda pra não carregar os dois.
+  if (new URLSearchParams(location.search).get("player") === "vturb") return;
 
   // Rastreio de engajamento (GTM/dataLayer) — dispara mesmo sem conversão.
   // Eventos: doppa_video_play (clicou pra assistir) e doppa_video_complete (assistiu até o fim).

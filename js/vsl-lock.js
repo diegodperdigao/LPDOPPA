@@ -10,6 +10,10 @@
    script.js), tudo é liberado.
    ============================================================ */
 (() => {
+  // Teste A/B do VTurb (?player=vturb): sem trava, pra avaliar vídeo + formulário sem
+  // travar. A integração da trava com o evento de fim do VTurb entra depois, se aprovado.
+  if (new URLSearchParams(location.search).get("player") === "vturb") return;
+
   const CTA_MSG  = "Assista até o final para desbloquear a sua vaga";
   const INFO_MSG = "Assista até o final para desbloquear as informações";
 
