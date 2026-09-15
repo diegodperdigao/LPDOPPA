@@ -545,7 +545,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ===== TESTE A/B: player VTurb (só quando ?player=vturb). Não afeta a home. ===== -->
 <script>
 (function(){
-  if (new URLSearchParams(location.search).get("player") !== "vturb") return;
+  if (new URLSearchParams(location.search).get("player") === "youtube") return; // VTurb é o padrão; ?player=youtube = rollback
 
   // Funil completo no VTurb: a trava (cadeado + card) fica LIGADA, igual ao YouTube.
   // O gancho de "fim do vídeo" abaixo dispara doppa:videoended → o vsl-lock destrava.

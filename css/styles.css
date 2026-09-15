@@ -217,8 +217,9 @@ img,svg{display:block;max-width:100%}
    embaixo-esquerda), discretos (e sem animar, poupa CPU) */
 @media (max-width:640px){
   .orb{animation:none}
-  .orb--a{width:min(80vw,360px);top:-14%;right:-22%;bottom:auto;left:auto;transform:none;opacity:.28}
-  .orb--b{width:min(85vw,380px);left:-24%;right:auto;top:auto;bottom:-6%;transform:none;opacity:.20}
+  /* centros FORA da tela → só o brilho suave entra pelos cantos (sem blob visível no meio) */
+  .orb--a{width:min(70vw,300px);top:-32%;right:-34%;bottom:auto;left:auto;transform:none;opacity:.22}
+  .orb--b{width:min(70vw,300px);left:-40%;right:auto;top:auto;bottom:-24%;transform:none;opacity:.15}
 }
 
 .hero__inner{position:relative;z-index:2;display:flex;flex-direction:column;gap:clamp(36px,8vw,56px);text-align:center;align-items:center}
