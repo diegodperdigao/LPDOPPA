@@ -544,43 +544,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     slot.innerHTML = '<vturb-smartplayer id="vid-'+PID+'" style="display:block;margin:0 auto;width:100%"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:56.25% 0 0;z-index:0;background-color:black"></div></vturb-smartplayer>';
     var s=document.createElement("script"); s.src=P; s.async=true; document.head.appendChild(s);
   }
+  // o olho decorativo do canto (desktop) conflita com o player do VTurb → esconde no modo VTurb
+  var eye = document.querySelector(".vsl__eye"); if(eye) eye.style.display = "none";
 
-  // engancha o FIM do vídeo do VTurb na nossa lógica (botão flutuante aparece no fim).
-  // Tenta o <video> interno (DOM claro e shadow DOM) e, como reforço, a API do VTurb.
+  // Engancha o progresso/fim do vídeo do VTurb na nossa lógica (destrava o CTA + barra
+  // de progresso, igual ao YouTube). API oficial do SmartPlayer:
+  //   smartplayer.instances[0].on('timeupdate', ...) e .video.currentTime
   var cfg = window.DOPPA_CONFIG_OVERRIDES || {};
   var CTA = +cfg.CTA_AT_SECONDS || 0, ctaFired=false, hooked=false;
   function fireCTA(){ if(!ctaFired){ ctaFired=true; document.dispatchEvent(new Event("doppa:videoended")); } }
-  function findVideo(){
-    if(!slot) return null;
-    var v = slot.querySelector("video"); if(v) return v;
-    var el = slot.querySelector("vturb-smartplayer");
-    if(el && el.shadowRoot){ v = el.shadowRoot.querySelector("video"); if(v) return v; }
-    return null;
-  }
+  function setProg(f){ document.documentElement.style.setProperty("--vsl-progress", Math.max(0,Math.min(1,f)).toFixed(4)); }
+  function timeOf(inst){ return (inst && inst.video && inst.video.currentTime) || (inst && inst.currentTime) || 0; }
+  function durOf(inst){ return (inst && inst.video && inst.video.duration) || (inst && inst.duration) || 0; }
+
   var iv = setInterval(function(){
     if(hooked) return;
-    var v = findVideo();
-    if(v){
-      hooked=true;
-      v.addEventListener("timeupdate", function(){
-        var d=v.duration||0, t=v.currentTime||0, target=CTA>0?CTA:d;
-        if(target>0) document.documentElement.style.setProperty("--vsl-progress", Math.min(1,t/target).toFixed(4));
-        if(CTA>0 && t>=CTA) fireCTA();
-      });
-      v.addEventListener("ended", fireCTA);
-      return;
-    }
-    // reforço via API do VTurb (caso o vídeo esteja fora de alcance)
-    try{
-      var sp = window.smartplayer;
-      if(sp && sp.instances && sp.instances.length){
-        hooked=true;
-        var inst = sp.instances[0];
-        if(inst && inst.on){ inst.on("ended", fireCTA); if(CTA>0) inst.on("timeupdate", function(){ try{ if((inst.currentTime||0)>=CTA) fireCTA(); }catch(e){} }); }
-      }
-    }catch(e){}
-  }, 250);
-  setTimeout(function(){ clearInterval(iv); }, 25000);
+    var sp = window.smartplayer;
+    if(!(sp && sp.instances && sp.instances.length)) return;
+    var inst = sp.instances[0];
+    if(!inst || typeof inst.on !== "function") return;
+    hooked = true; clearInterval(iv);
+    inst.on("timeupdate", function(){
+      var t = timeOf(inst), target = CTA>0 ? CTA : durOf(inst);
+      if(target>0) setProg(t/target);
+      if(CTA>0 && t>=CTA) fireCTA();
+    });
+    try{ inst.on("ended", function(){ setProg(1); fireCTA(); }); }catch(e){}
+  }, 200);
+  setTimeout(function(){ clearInterval(iv); }, 30000);
+
+  // FAIL-SAFE: se por qualquer motivo a API não engatar, ainda destrava — nunca deixa o
+  // botão preso. Conta a partir do load (o VTurb autoplaya), com folga sobre o CTA.
+  if(CTA>0) setTimeout(fireCTA, (CTA + 12) * 1000);
 })();
 </script>
 </body>
