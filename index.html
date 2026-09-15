@@ -556,6 +556,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var WC   = "https://scripts.converteai.net/lib/js/smartplayer-wc/v4/smartplayer.js";
   var M3U8 = "https://cdn.converteai.net/"+ACC+"/6aa1b21f5568bc9098ba2fa3/main.m3u8";
 
+  // Item 6: mata a tela "You have already started watching this video" (o "resume" do VTurb).
+  // Ela usa backdrop-filter:blur no shadow DOM sobre o vídeo → no iOS re-desfoca a tela 60x/s e
+  // derruba o fps. Limpando o progresso salvo do VTurb no load, o player sempre começa limpo.
+  try{ var _rx=new RegExp("vturb|smartplayer|converteai|"+PID+"|6aa1b","i"); for(var _i=localStorage.length-1;_i>=0;_i--){ var _k=localStorage.key(_i); if(_k && _rx.test(_k)) localStorage.removeItem(_k); } }catch(e){}
+
   // speed code do VTurb (marca o tempo de início + pré-carrega o player/vídeo)
   window._plt = window._plt || (performance && performance.timeOrigin ? performance.timeOrigin + performance.now() : Date.now());
   function pre(href, as, f){ var l=document.createElement("link"); l.rel="preload"; l.href=href; l.as=as; if(f)l.crossOrigin=""; document.head.appendChild(l); }
@@ -641,8 +646,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var times=[], last=performance.now();
   (function tick(now){ times.push(now-last); last=now; if(times.length>30)times.shift(); requestAnimationFrame(tick); })(last);
   function fps(){ if(!times.length)return 0; var a=0; for(var i=0;i<times.length;i++)a+=times[i]; return Math.round(1000/(a/times.length)); }
-  function blurCount(){ var n=0, all=document.querySelectorAll("*"); for(var i=0;i<all.length;i++){ var s=getComputedStyle(all[i]); if((s.backdropFilter&&s.backdropFilter!=="none")||(s.webkitBackdropFilter&&s.webkitBackdropFilter!=="none"))n++; } return n; }
+  // blur pierce shadow DOM (o overlay do VTurb fica lá dentro); custoso → só a cada 2s.
+  function walk(root, cb){ var els=root.querySelectorAll("*"); for(var i=0;i<els.length;i++){ cb(els[i]); if(els[i].shadowRoot) walk(els[i].shadowRoot, cb); } }
+  function blurCount(){ var n=0; try{ walk(document, function(el){ var s=getComputedStyle(el); if((s.backdropFilter&&s.backdropFilter!=="none")||(s.webkitBackdropFilter&&s.webkitBackdropFilter!=="none"))n++; }); }catch(e){} return n; }
+  var blur="?", bt=0;
   setInterval(function(){
+    var now=Date.now();
+    if(now-bt>2000){ bt=now; blur=blurCount(); } // pesado → 1x/2s, fora do caminho do fps
     var sp=window.smartplayer, P=(sp&&sp.instances&&sp.instances[0]&&sp.instances[0].instance)||null;
     var pe=document.querySelector(".vsl-lock-prog");
     box.textContent=
@@ -651,7 +661,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       "video: "+(P?((P.paused?"paused":"playing")+" @"+(+P.currentTime||0).toFixed(1)+"s"):"-")+"\n"+
       "hooked: "+(!!window.DoppaVideo)+"   prog: "+(pe?getComputedStyle(pe).getPropertyValue("--vsl-progress").trim():"-")+"\n"+
       "eyes: "+((window.DoppaEyes&&window.DoppaEyes.state)||"-")+"\n"+
-      "blur: "+blurCount()+"   anim: "+(document.getAnimations?document.getAnimations().length:"?");
+      "blur(shadow): "+blur+"   anim: "+(document.getAnimations?document.getAnimations().length:"?");
   }, 250);
 })();
 </script>
