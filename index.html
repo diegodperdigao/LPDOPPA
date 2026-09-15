@@ -232,6 +232,9 @@ body.is-unlocked .vsl-locked-hint{ opacity:0; visibility:hidden; pointer-events:
 /* tudo cabe em uma tela: hero preenche o meio (vídeo centralizado), rodapé
    colado embaixo — sem rolagem e sem espaço vazio */
 body.is-locked, body.is-unlocked{ display:flex !important; flex-direction:column !important; min-height:100svh !important; }
+/* o <main> que envolve o hero precisa repassar o crescimento do flex, senão o rodapé "sobe"
+   (sai do fim da tela) e o card "assista até o final" não desce. */
+body.is-locked main, body.is-unlocked main{ display:flex !important; flex-direction:column !important; flex:1 1 auto !important; min-height:0; }
 .hero--video{ flex:1 1 auto !important; display:flex; flex-direction:column; justify-content:center; }
 .footer{ flex:0 0 auto; margin-top:0 !important; padding:14px 0 !important; }
 /* quando o botão flutuante aparece, o rodapé reserva espaço pra não ficar embaixo dele */
