@@ -112,6 +112,10 @@ body.is-eyefield #form-modal .modal__dialog{ animation:eyeCardIn .42s cubic-bezi
   100%{ box-shadow:0 0 0 0 rgba(34,212,110,0); }
 }
 @media (prefers-reduced-motion:reduce){ :root{ transition:none; } .is-cta-pop{ animation:none; } }
+/* Mobile: sem a transição contínua da barra (repinta o conic-gradient a cada frame → travava
+   "como slide") e sem o glow em box-shadow (repaint pesado). A barra ainda anda (passo a passo,
+   no ritmo do timeupdate do vídeo) e o botão segue visível. */
+@media (max-width:640px){ :root{ transition:none; } .is-cta-pop{ animation:none; } }
 
 /* pop-up (toast) que sobe ao tentar interagir travado */
 .vsl-toast{
@@ -542,6 +546,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var slot = document.getElementById("vsl-player");
   if (slot){
     slot.innerHTML = '<vturb-smartplayer id="vid-'+PID+'" style="display:block;margin:0 auto;width:100%"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:56.25% 0 0;z-index:0;background-color:black"></div></vturb-smartplayer>';
+    slot.style.aspectRatio = "auto"; // o container é 16:9 rígido; deixa o VTurb definir a altura (evita o "reenquadrar")
     var s=document.createElement("script"); s.src=P; s.async=true; document.head.appendChild(s);
   }
 

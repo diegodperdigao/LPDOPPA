@@ -107,9 +107,9 @@
     if (playing) return;
     if (reduced()) { done(); return; }
     warm();
-    if (loaded < 2) { // espera os sprites (máx. 1,5s), senão abre direto
+    if (loaded < 2) { // espera os sprites (máx. 700ms), senão abre direto (sem prender o clique)
       const t = Date.now();
-      const wait = () => { if (loaded >= 2) run(fromEl, done); else if (Date.now() - t > 1500) done(); else setTimeout(wait, 50); };
+      const wait = () => { if (loaded >= 2) run(fromEl, done); else if (Date.now() - t > 700) done(); else setTimeout(wait, 50); };
       wait(); return;
     }
     run(fromEl, done);
@@ -117,15 +117,16 @@
 
   function run(fromEl, done) {
     playing = true; stopReq = false;
-    const c = getCanvas(), ctx = c.getContext("2d"); const dpr = Math.min(devicePixelRatio || 1, 2);
+    const c = getCanvas(), ctx = c.getContext("2d"); const dpr = Math.min(devicePixelRatio || 1, innerWidth < CFG.MOBILE_BP ? 1.5 : 2);
     const W = innerWidth, H = innerHeight; c.width = W*dpr; c.height = H*dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); c.style.display = "block";
     const br = fromEl && fromEl.getBoundingClientRect ? fromEl.getBoundingClientRect() : { left: W/2, top: H/2, width: 0, height: 0 };
     const tx = br.left + br.width/2, ty = br.top + br.height/2; // ponto de onde o gigante nasce
     const S = { c, ctx, W, H, tx, ty };
     const mobile = W < CFG.MOBILE_BP, TOP = 0, BOT = H;
 
-    const R0 = mobile ? 17 : 23, R1 = mobile ? 25 : 34, RA = (R0 + R1)/2;
-    const target = Math.floor((W*(BOT - TOP)) / (Math.PI*RA*RA) * 1.35); // teto; quem manda é a pilha tocar o topo
+    // Mobile: olhos maiores (menos corpos p/ encher a mesma tela) = muito menos física/draw.
+    const R0 = mobile ? 26 : 23, R1 = mobile ? 42 : 34, RA = (R0 + R1)/2;
+    const target = Math.floor((W*(BOT - TOP)) / (Math.PI*RA*RA) * (mobile ? 1.0 : 1.35)); // teto; quem manda é a pilha tocar o topo
     const G = mobile ? .7 : .8, VMAX = mobile ? 13 : 16, RATE = mobile ? 3.2 : 5;
     const eyes = []; const CS = R1*2, GW = Math.ceil(W/CS) + 1, GH = Math.ceil((H + 400)/CS) + 1; let grid;
     let pileTop = BOT;
@@ -144,7 +145,8 @@
       grid = new Array(GW*GH);
       const cellOf = e => Math.min(GH-1, Math.max(0, ((e.y - TOP + 400)/CS)|0))*GW + Math.min(GW-1, Math.max(0, (e.x/CS)|0));
       eyes.forEach((e, i) => { const k = cellOf(e); (grid[k] || (grid[k] = [])).push(i); });
-      for (let it = 0; it < 4; it++) {
+      const ITERS = mobile ? 2 : 4; // mobile: menos iterações do solver (colisão suficiente, bem mais leve)
+      for (let it = 0; it < ITERS; it++) {
         for (let i = 0; i < eyes.length; i++) {
           const a = eyes[i]; const gx = Math.min(GW-1, Math.max(0, (a.x/CS)|0)), gy = Math.min(GH-1, Math.max(0, ((a.y - TOP + 400)/CS)|0));
           for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) {
@@ -190,7 +192,11 @@
       if (frozen) return;   // modo C: olho gigante estático de fundo — nada a redesenhar
       const elapsed = Math.min(50, now - last); last = now; const dt = elapsed/16.7; const el = now - t0;
 
-      physAcc += elapsed; let steps = 0; while (physAcc >= 16.7 && steps < 3) { step(el); physAcc -= 16.7; steps++; }
+      // Mobile: no MÁX 1 substep/frame — impede o "efeito bola de neve" (frame lento → mais
+      // substeps → mais lento → trava). Prefere perder um pouco de precisão a congelar.
+      physAcc += elapsed; let steps = 0; const MAXSTEPS = mobile ? 1 : 3;
+      while (physAcc >= 16.7 && steps < MAXSTEPS) { step(el); physAcc -= 16.7; steps++; }
+      if (mobile) physAcc = 0; // não acumula dívida de física no celular
       const filled = eyes.length >= target || pileTop < TOP + R1*2.5;
       if (phase === 0 && filled) { if (!settledSince) settledSince = el; if (el - settledSince > CFG.SETTLE_MS) { phase = 2; tFull = el; } }
       if (phase === 0 && el > CFG.SAFETY_MS) { phase = 2; tFull = el; }
