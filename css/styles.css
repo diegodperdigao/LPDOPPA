@@ -202,9 +202,11 @@ img,svg{display:block;max-width:100%}
     radial-gradient(100% 90% at 0% 110%, #163a6e 0%, transparent 50%),
     linear-gradient(170deg,#0E1335,#0A0E2B 70%);
 }
-.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5}
-.orb--a{width:min(60vw,420px);aspect-ratio:1;background:var(--purple);top:-12%;right:-8%;animation:drift 10s ease-in-out infinite}
-.orb--b{width:min(55vw,380px);aspect-ratio:1;background:var(--green);bottom:-18%;left:-12%;animation:drift 13s ease-in-out infinite reverse}
+/* brilho suave via radial-gradient (NÃO filter:blur — um blur grande re-rasteriza a tela toda
+   por frame no iOS/WebKit e derrubava a página a 1-2fps). Mesmo visual, de graça pra GPU. */
+.orb{position:absolute;border-radius:50%;opacity:.5}
+.orb--a{width:min(75vw,520px);aspect-ratio:1;background:radial-gradient(circle,var(--purple) 0%,transparent 68%);top:-16%;right:-14%;animation:drift 10s ease-in-out infinite}
+.orb--b{width:min(70vw,480px);aspect-ratio:1;background:radial-gradient(circle,var(--green) 0%,transparent 68%);bottom:-22%;left:-16%;animation:drift 13s ease-in-out infinite reverse}
 .grid-dots{position:absolute;inset:0;opacity:.4;
   background-image:radial-gradient(rgba(0,209,255,.16) 1.3px,transparent 1.3px);background-size:24px 24px;
   -webkit-mask-image:radial-gradient(120% 70% at 70% 20%,#000,transparent 72%);
