@@ -112,10 +112,17 @@ body.is-eyefield #form-modal .modal__dialog{ animation:eyeCardIn .42s cubic-bezi
   100%{ box-shadow:0 0 0 0 rgba(34,212,110,0); }
 }
 @media (prefers-reduced-motion:reduce){ :root{ transition:none; } .is-cta-pop{ animation:none; } }
-/* Mobile: sem a transição contínua da barra (repinta o conic-gradient a cada frame → travava
-   "como slide") e sem o glow em box-shadow (repaint pesado). A barra ainda anda (passo a passo,
-   no ritmo do timeupdate do vídeo) e o botão segue visível. */
-@media (max-width:640px){ :root{ transition:none; } .is-cta-pop{ animation:none; } }
+/* Mobile: corta as pinturas caras que travavam tudo ao mesmo tempo.
+   - .vsl-lock-prog (ring de conic-gradient + mask): a pintura mais cara → escondido no mobile
+     (o cadeado no botão já sinaliza que está travado).
+   - .is-cta-pop e .vsl-float-cta: pulses em box-shadow (repaint por frame) → sem animação.
+   - :root transition do --vsl-progress: desligada. */
+@media (max-width:640px){
+  :root{ transition:none; }
+  .vsl-lock-prog{ display:none !important; }
+  .is-cta-pop{ animation:none !important; }
+  .vsl-float-cta.show{ animation:none !important; }
+}
 
 /* pop-up (toast) que sobe ao tentar interagir travado */
 .vsl-toast{
