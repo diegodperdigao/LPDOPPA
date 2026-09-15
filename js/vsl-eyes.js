@@ -91,7 +91,7 @@
   }
 
   // ---------- canvas fixo (viewport inteira) ----------
-  let canvas = null, playing = false, stopReq = false;
+  let canvas = null, playing = false, stopReq = false, state = "idle";
   function getCanvas() {
     if (canvas) return canvas;
     canvas = document.createElement("canvas");
@@ -105,18 +105,21 @@
   // ---------- a animação ----------
   function play(fromEl, done) {
     if (playing) return;
-    if (reduced()) { done(); return; }
+    if (reduced()) { state = "skipped:reduced-motion"; done(); return; }
     warm();
-    if (loaded < 2) { // espera os sprites (máx. 700ms), senão abre direto
+    if (loaded < 2) { // espera os sprites (máx. 2,5s), senão abre direto
+      state = "waiting-sprites";
       const t = Date.now();
-      const wait = () => { if (loaded >= 2) run(fromEl, done); else if (Date.now() - t > 700) done(); else setTimeout(wait, 50); };
+      const wait = () => { if (loaded >= 2) run(fromEl, done); else if (Date.now() - t > 2500) { state = "skipped:no-sprites"; done(); } else setTimeout(wait, 50); };
       wait(); return;
     }
     run(fromEl, done);
   }
 
   function run(fromEl, done) {
-    playing = true; stopReq = false;
+    playing = true; stopReq = false; state = "running";
+    // trava de segurança: se por algum motivo o loop não terminar, libera pra clicar de novo
+    setTimeout(() => { if (playing && state !== "done") playing = false; }, 8000);
     const c = getCanvas(), ctx = c.getContext("2d"); const dpr = Math.min(devicePixelRatio || 1, 2);
     const W = innerWidth, H = innerHeight; c.width = W*dpr; c.height = H*dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); c.style.display = "block";
     const br = fromEl && fromEl.getBoundingClientRect ? fromEl.getBoundingClientRect() : { left: W/2, top: H/2, width: 0, height: 0 };
@@ -205,12 +208,13 @@
         drawEye(ctx, e.x, e.y, e.r, e.rot, dx/d, dy/d, e.lid);
       });
       if (phase >= 2) {
+        state = "giant";
         const k = Math.min(1, (el - tFull)/CFG.GIANT_MS);
         if (FREEZE) {
           // MESMO olho da transição (drawGiant), mas CENTRALIZADO e parando parcial
           // (~0.42) — vira um olho gigante preenchendo a tela, sem engolir de vez.
           drawGiant(ctx, { c: c, ctx: ctx, W: W, H: H, tx: W/2, ty: H/2 }, easeIO(k)*0.42, [], dt);
-          if (k >= 1) { frozen = true; document.body.classList.add("is-eyefield"); done(); return; } // congela de fundo, abre o modal
+          if (k >= 1) { frozen = true; state = "done"; document.body.classList.add("is-eyefield"); done(); return; } // congela de fundo, abre o modal
         } else {
           drawGiant(ctx, S, easeIO(k), rays, dt);  // modo A: engole a tela
           if (k >= 1) { finish(); return; }
@@ -219,6 +223,7 @@
       requestAnimationFrame(frame);
     }
     function finish() {
+      state = "done";
       document.body.classList.add("is-swallowed"); // o CSS do modal usa isso pro fundo "dentro do olho"
       done();
       setTimeout(() => { c.style.display = "none"; ctx.clearRect(0, 0, W, H); playing = false; }, CFG.SWALLOW_HOLD_MS);
@@ -231,8 +236,8 @@
     stopReq = true; // encerra o loop idle do modo B
     if (canvas) { canvas.style.display = "none"; try { canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height); } catch (e) {} }
     document.body.classList.remove("is-eyefield");
-    playing = false;
+    playing = false; state = "idle";
   }
 
-  window.DoppaEyes = { play, warm, clear };
+  window.DoppaEyes = { play, warm, clear, get state(){ return state; } };
 })();

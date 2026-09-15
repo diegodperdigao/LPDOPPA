@@ -91,12 +91,14 @@ body.is-eyefield #form-modal .modal__dialog{ animation:eyeCardIn .42s cubic-bezi
   background:linear-gradient(135deg,#2A52FF,#7B4DFF); box-shadow:0 12px 30px -10px rgba(60,80,255,.7); }
 .vsl__err-yt{ color:#9AA2CC; font-size:13px; text-decoration:underline; }
 
-/* CONTORNO de progresso ao redor do botão trancado — "desenha" conforme o vídeo avança */
-@property --vsl-progress{ syntax:'<number>'; inherits:true; initial-value:0; }
-:root{ transition:--vsl-progress 1s linear; }
+/* CONTORNO de progresso ao redor do botão trancado — "desenha" conforme o vídeo avança.
+   --vsl-progress escrito DIRETO no .vsl-lock-prog (inherits:false → recálculo só nele) e a
+   transição de 1s desliza entre as atualizações de tempo do VTurb (~1x/s) → anel fluido. */
+@property --vsl-progress{ syntax:'<number>'; inherits:false; initial-value:0; }
 .has-lock-prog{ position:relative; }
 .vsl-lock-prog{
   position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:3px; z-index:3;
+  transition:--vsl-progress 1s linear;
   background:conic-gradient(from -90deg,
     #22D46E 0deg,
     #0FB6C6 calc(var(--vsl-progress,0) * 360deg),
@@ -104,18 +106,32 @@ body.is-eyefield #form-modal .modal__dialog{ animation:eyeCardIn .42s cubic-bezi
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite:exclude;
 }
-/* ao completar/liberar, o botão ganha um brilho pulsante CONTÍNUO pra seguir chamando atenção */
-.is-cta-pop{ animation:vslCtaGlow 1.8s ease-out infinite; }
-@keyframes vslCtaGlow{
-  0%{ box-shadow:0 0 0 0 rgba(34,212,110,.55); }
-  70%{ box-shadow:0 0 0 14px rgba(34,212,110,0); }
-  100%{ box-shadow:0 0 0 0 rgba(34,212,110,0); }
+/* brilho pulsante ao liberar — em transform/opacity (GPU), NUNCA box-shadow animado: num botão
+   fixo do header, sobre a camada do vídeo, repintar box-shadow por frame derruba a página no iOS. */
+.is-cta-pop{ position:relative; }
+.is-cta-pop::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  box-shadow:0 0 0 2px rgba(34,212,110,.55);
+  animation:vslCtaGlow 1.8s ease-out infinite;
 }
-@media (prefers-reduced-motion:reduce){ :root{ transition:none; } .is-cta-pop{ animation:none; } }
-/* Mobile: só desliga a transição contínua do --vsl-progress (a barra anda passo a passo, no
-   ritmo do vídeo, sem interpolar 60x/seg). A barra, o glow e o float-CTA ficam — o que os
-   deixava pesados era o box-shadow animado, convertido abaixo pra transform (GPU). */
-@media (max-width:640px){ :root{ transition:none; } }
+@keyframes vslCtaGlow{
+  0%{ transform:scale(1); opacity:.7; }
+  70%,100%{ transform:scale(1.22); opacity:0; }
+}
+@media (prefers-reduced-motion:reduce){ .vsl-lock-prog{ transition:none; } .is-cta-pop::after{ animation:none; } }
+/* iOS hardening: durante a chuva, só o canvas se move (pausa os pulses infinitos restantes). */
+body.eyes-playing .is-cta-pop::after,
+body.eyes-playing .vsl-float-cta::after,
+body.eyes-playing .wpp-fab::after{ animation-play-state:paused !important; }
+/* No touch: sem backdrop-filter (blur sobre área que muda a cada frame re-desfoca a tela inteira
+   60x/s no WebKit). Fundos sólidos no lugar. */
+@media (hover:none){
+  .modal__overlay,
+  body.is-eyefield #form-modal .modal__overlay{ backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+  .modal__overlay{ background:rgba(5,7,22,.94) !important; }
+  body.is-eyefield #form-modal .modal__overlay{ background:rgba(7,10,34,.9) !important; }
+  .nav__links.open{ backdrop-filter:none !important; -webkit-backdrop-filter:none !important; background:rgba(10,14,43,.98) !important; }
+}
 
 /* pop-up (toast) que sobe ao tentar interagir travado */
 .vsl-toast{
@@ -555,21 +571,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var s=document.createElement("script"); s.src=P; s.async=true; document.head.appendChild(s);
   }
 
-  // Engancha o progresso/fim do vídeo do VTurb na nossa lógica (destrava o CTA + barra
-  // de progresso, igual ao YouTube). API oficial do SmartPlayer:
-  //   smartplayer.instances[0].on('timeupdate', ...) e .video.currentTime
+  // Engancha o progresso/fim do vídeo do VTurb. API REAL do SmartPlayer (verificada no console):
+  //   inst.on('timeupdate') dispara ~1x/s; o player é inst.instance (play/pause/currentTime/duration).
+  //   inst.video tem SÓ currentTime (não é o <video>) e inst.pause NÃO existe.
   var cfg = window.DOPPA_CONFIG_OVERRIDES || {};
-  var CTA = +cfg.CTA_AT_SECONDS || 0, ctaFired=false, hooked=false;
-  function fireCTA(){ if(!ctaFired){ ctaFired=true; document.dispatchEvent(new Event("doppa:videoended")); } }
-  // Atualiza a barra SÓ nos botões travados (subárvore pequena) — nunca no :root, que com
-  // @property inherits:true forçaria recalc de estilo da PÁGINA INTEIRA a cada frame (travava tudo).
+  var CTA = +cfg.CTA_AT_SECONDS || 0, ctaFired=false, hooked=false, safeTimer=0;
+  function fireCTA(){ if(!ctaFired){ ctaFired=true; if(safeTimer){ clearTimeout(safeTimer); safeTimer=0; } document.dispatchEvent(new Event("doppa:videoended")); } }
+  // Escreve --vsl-progress no próprio .vsl-lock-prog (inherits:false → recálculo só nele); a
+  // transição CSS de 1s desliza entre as atualizações de tempo do VTurb (que vêm ~1x/s).
   function setProg(f){
     var v = Math.max(0,Math.min(1,f)).toFixed(3);
-    var els = document.querySelectorAll(".has-lock-prog");
+    var els = document.querySelectorAll(".vsl-lock-prog");
     for(var i=0;i<els.length;i++) els[i].style.setProperty("--vsl-progress", v);
   }
-  function timeOf(inst){ return (inst && inst.video && inst.video.currentTime) || (inst && inst.currentTime) || 0; }
-  function durOf(inst){ return (inst && inst.video && inst.video.duration) || (inst && inst.duration) || 0; }
 
   var iv = setInterval(function(){
     if(hooked) return;
@@ -577,32 +591,68 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if(!(sp && sp.instances && sp.instances.length)) return;
     var inst = sp.instances[0];
     if(!inst || typeof inst.on !== "function") return;
+    var P = inst.instance || inst; // o web component com play/pause/currentTime/duration
     hooked = true; clearInterval(iv);
-    // controle do vídeo pro resto da página (ex.: pausar enquanto a animação de olhos roda,
-    // pra ela não competir com o decode do vídeo → roda lisa)
+    function nowT(){ try{ return (P && P.currentTime) || (inst.video && inst.video.currentTime) || 0; }catch(e){ return 0; } }
+    function durT(){ try{ return (P && P.duration) || 0; }catch(e){ return 0; } }
+
+    // controle do vídeo: pausar E esconder durante a animação. No iOS, o <video> inline vive numa
+    // camada de composição própria; escondê-la (não só pausar) é o que libera a GPU pro canvas.
     window.DoppaVideo = {
-      // pausa o VÍDEO nativo direto (evita a UI/reframe do VTurb no meio da animação)
-      pause: function(){ try{ if(inst.video && inst.video.pause) inst.video.pause(); else if(inst.pause) inst.pause(); }catch(e){} },
-      resume: function(){ try{ if(inst.video && inst.video.play) inst.video.play(); else if(inst.play) inst.play(); }catch(e){} }
+      pause:  function(){ try{ P.pause && P.pause(); }catch(e){} },
+      resume: function(){ try{ P.play && P.play(); }catch(e){} },
+      hide:   function(on){ var el=document.querySelector("vturb-smartplayer"); if(el) el.style.visibility = on ? "hidden" : ""; }
     };
-    var lastT = 0;
+
+    var playStarted = false;
     inst.on("timeupdate", function(){
-      if(ctaFired) return; // destravou → para de mexer no progresso (main thread livre p/ a animação)
-      var t = timeOf(inst);
+      var t = nowT();
+      // FAIL-SAFE armado só quando o vídeo REALMENTE começou a tocar (currentTime > 0) — nunca
+      // pelo relógio da página. Sem play → nunca destrava (o gate segura).
+      if(!playStarted && t > 0){ playStarted = true; if(CTA>0) safeTimer = setTimeout(fireCTA, (CTA + 8) * 1000); }
+      if(ctaFired) return;
       if(CTA>0 && t>=CTA){ setProg(1); fireCTA(); return; }
-      var now = Date.now();
-      if(now - lastT < 60) return; // ~16x/seg: barra fluida no 120Hz, mas sem repintar a cada frame
-      lastT = now;
-      var target = CTA>0 ? CTA : durOf(inst);
+      var target = CTA>0 ? CTA : durT();
       if(target>0) setProg(t/target);
     });
     try{ inst.on("ended", function(){ if(!ctaFired){ setProg(1); fireCTA(); } }); }catch(e){}
   }, 200);
   setTimeout(function(){ clearInterval(iv); }, 30000);
+})();
+</script>
 
-  // FAIL-SAFE: se por qualquer motivo a API não engatar, ainda destrava — nunca deixa o
-  // botão preso. Conta a partir do load (o VTurb autoplaya), com folga sobre o CTA.
-  if(CTA>0) setTimeout(fireCTA, (CTA + 12) * 1000);
+<!-- ?debug=1 → painel de diagnóstico (fps/estado). ?nofx=blur,pulse,shadow,ring,video → desliga suspeitos. -->
+<script>
+(function(){
+  var q=new URLSearchParams(location.search);
+  var nofx=q.get("nofx");
+  if(nofx){ var css=""; nofx.split(",").forEach(function(x){
+    if(x==="blur")css+="*{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}";
+    if(x==="pulse")css+=".vsl-float-cta::after,.is-cta-pop::after{animation:none!important}";
+    if(x==="shadow")css+="*{box-shadow:none!important}";
+    if(x==="ring")css+=".vsl-lock-prog{display:none!important}";
+    if(x==="video")css+="vturb-smartplayer{visibility:hidden!important}";
+  }); var st=document.createElement("style"); st.textContent=css; document.head.appendChild(st); }
+
+  if(q.get("debug")!=="1") return;
+  var box=document.createElement("div");
+  box.style.cssText="position:fixed;left:6px;bottom:6px;z-index:99999;background:rgba(0,0,0,.82);color:#3f6;font:11px/1.45 ui-monospace,Menlo,monospace;padding:6px 8px;border-radius:6px;white-space:pre;pointer-events:none;max-width:64vw";
+  document.body.appendChild(box);
+  var times=[], last=performance.now();
+  (function tick(now){ times.push(now-last); last=now; if(times.length>30)times.shift(); requestAnimationFrame(tick); })(last);
+  function fps(){ if(!times.length)return 0; var a=0; for(var i=0;i<times.length;i++)a+=times[i]; return Math.round(1000/(a/times.length)); }
+  function blurCount(){ var n=0, all=document.querySelectorAll("*"); for(var i=0;i<all.length;i++){ var s=getComputedStyle(all[i]); if((s.backdropFilter&&s.backdropFilter!=="none")||(s.webkitBackdropFilter&&s.webkitBackdropFilter!=="none"))n++; } return n; }
+  setInterval(function(){
+    var sp=window.smartplayer, P=(sp&&sp.instances&&sp.instances[0]&&sp.instances[0].instance)||null;
+    var pe=document.querySelector(".vsl-lock-prog");
+    box.textContent=
+      "fps: "+fps()+"   dpr: "+devicePixelRatio+"\n"+
+      "vp: "+innerWidth+"x"+innerHeight+"\n"+
+      "video: "+(P?((P.paused?"paused":"playing")+" @"+(+P.currentTime||0).toFixed(1)+"s"):"-")+"\n"+
+      "hooked: "+(!!window.DoppaVideo)+"   prog: "+(pe?getComputedStyle(pe).getPropertyValue("--vsl-progress").trim():"-")+"\n"+
+      "eyes: "+((window.DoppaEyes&&window.DoppaEyes.state)||"-")+"\n"+
+      "blur: "+blurCount()+"   anim: "+(document.getAnimations?document.getAnimations().length:"?");
+  }, 250);
 })();
 </script>
 </body>

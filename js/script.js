@@ -426,7 +426,7 @@ $("#year").textContent = new Date().getFullYear();
           MILESTONES.forEach(m => { if (pct >= m && !milestonesSent[m]) { milestonesSent[m] = 1; logProgress("milestone", m, t); } });
           // progresso rumo à liberação (pitch em CTA_AT_SECONDS, ou fim do vídeo) → barra no botão trancado
           const target = CONFIG.CTA_AT_SECONDS > 0 ? CONFIG.CTA_AT_SECONDS : d;
-          if (target > 0) document.documentElement.style.setProperty("--vsl-progress", Math.min(1, t / target).toFixed(4));
+          if (target > 0) { const _v = Math.min(1, t / target).toFixed(4); document.querySelectorAll(".vsl-lock-prog").forEach(_el => _el.style.setProperty("--vsl-progress", _v)); }
           // pitch delay: libera o CTA no tempo configurado (vídeo continua tocando)
           if (!ctaShown && CONFIG.CTA_AT_SECONDS > 0 && t >= CONFIG.CTA_AT_SECONDS) {
             ctaShown = true;
@@ -633,8 +633,8 @@ const openModal = () => {
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
   document.body.classList.add("modal-open"); // esconde os flutuantes (float CTA / WhatsApp) enquanto o modal está aberto
-  // a animação já rodou (com o vídeo pausado); com o modal aberto, o vídeo volta a tocar atrás
-  window.DoppaVideo && window.DoppaVideo.resume && window.DoppaVideo.resume();
+  // a animação já rodou (vídeo pausado/escondido); com o modal aberto, mostra e retoma o vídeo atrás
+  if (window.DoppaVideo) { window.DoppaVideo.hide && window.DoppaVideo.hide(false); window.DoppaVideo.resume && window.DoppaVideo.resume(); }
   ensureEmailJS(); // carrega o SDK do EmailJS agora (sob demanda), pronto pro envio
   // garante estado limpo
   modalHead.hidden = false;
@@ -659,8 +659,9 @@ const closeModal = () => {
 const openFormFromCTA = el => {
   if (window.DoppaEyes && document.body.classList.contains("is-unlocked")) {
     document.body.classList.add("eyes-playing"); // esconde float/WhatsApp durante a chuva
-    // pausa o vídeo enquanto a animação roda → sem competir pelo decode, ela roda lisa no mobile
-    window.DoppaVideo && window.DoppaVideo.pause && window.DoppaVideo.pause();
+    // pausa E ESCONDE o vídeo durante a animação → no iOS tira a camada do vídeo da composição
+    // e libera a GPU pro canvas (só pausar não bastava). Volta ao abrir o modal.
+    if (window.DoppaVideo) { window.DoppaVideo.pause && window.DoppaVideo.pause(); window.DoppaVideo.hide && window.DoppaVideo.hide(true); }
     window.DoppaEyes.play(el || null, openModal);
   } else {
     openModal();
