@@ -581,8 +581,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // controle do vídeo pro resto da página (ex.: pausar enquanto a animação de olhos roda,
     // pra ela não competir com o decode do vídeo → roda lisa)
     window.DoppaVideo = {
-      pause: function(){ try{ if(inst.pause) inst.pause(); else if(inst.video) inst.video.pause(); }catch(e){} },
-      resume: function(){ try{ if(inst.play) inst.play(); else if(inst.video) inst.video.play(); }catch(e){} }
+      // pausa o VÍDEO nativo direto (evita a UI/reframe do VTurb no meio da animação)
+      pause: function(){ try{ if(inst.video && inst.video.pause) inst.video.pause(); else if(inst.pause) inst.pause(); }catch(e){} },
+      resume: function(){ try{ if(inst.video && inst.video.play) inst.video.play(); else if(inst.play) inst.play(); }catch(e){} }
     };
     var lastT = 0;
     inst.on("timeupdate", function(){

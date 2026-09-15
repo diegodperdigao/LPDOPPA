@@ -117,14 +117,15 @@
 
   function run(fromEl, done) {
     playing = true; stopReq = false;
-    const c = getCanvas(), ctx = c.getContext("2d"); const dpr = Math.min(devicePixelRatio || 1, innerWidth < CFG.MOBILE_BP ? 1.5 : 2);
+    // Mobile: dpr 1 (metade dos pixels do canvas p/ limpar/compor/pintar por frame — esse é o
+    // custo fixo que travava, não a contagem de olhos). Os olhos são grandes, então quase não perde nitidez.
+    const c = getCanvas(), ctx = c.getContext("2d"); const dpr = innerWidth < CFG.MOBILE_BP ? 1 : Math.min(devicePixelRatio || 1, 2);
     const W = innerWidth, H = innerHeight; c.width = W*dpr; c.height = H*dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); c.style.display = "block";
     const br = fromEl && fromEl.getBoundingClientRect ? fromEl.getBoundingClientRect() : { left: W/2, top: H/2, width: 0, height: 0 };
     const tx = br.left + br.width/2, ty = br.top + br.height/2; // ponto de onde o gigante nasce
     const S = { c, ctx, W, H, tx, ty };
     const mobile = W < CFG.MOBILE_BP, TOP = 0, BOT = H;
 
-    // Mobile: olhos maiores (menos corpos p/ encher a mesma tela) = muito menos física/draw.
     const R0 = mobile ? 26 : 23, R1 = mobile ? 42 : 34, RA = (R0 + R1)/2;
     const target = Math.floor((W*(BOT - TOP)) / (Math.PI*RA*RA) * (mobile ? 1.0 : 1.35)); // teto; quem manda é a pilha tocar o topo
     const G = mobile ? .7 : .8, VMAX = mobile ? 13 : 16, RATE = mobile ? 3.2 : 5;
