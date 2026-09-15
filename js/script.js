@@ -591,13 +591,14 @@ $("#year").textContent = new Date().getFullYear();
       if (poster) poster.style.zIndex = "1";
       loadYT(() => createYT());
     };
+    // Aquece no 1º gesto (scroll/toque) OU quando a página fica ociosa — nunca num timer
+    // fixo curto. No 4G do mobile, aquecer cedo demais fazia o base.js do YouTube (~1-2MB)
+    // saturar a banda e travar a main thread DURANTE o 1º paint → FCP ia pra 7s. Ocioso/gesto
+    // garante que o YouTube só entra DEPOIS que a página pintou, sem atrasar o play (a pessoa
+    // lê/assiste alguns segundos antes de tocar em "play", tempo de sobra pra aquecer).
     evs.forEach(ev => window.addEventListener(ev, warm, { passive: true }));
-    // Mobile (iOS): o player precisa estar PRONTO antes do toque em play (aí o tap conta
-    // como gesto e o iOS libera a reprodução). Por isso aquece cedo, logo após o 1º paint.
-    // Desktop: mantém lite-embed (idle/gesto) pra não pesar no LCP.
-    if (isTouch) setTimeout(warm, 500);
-    else if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 3000 });
-    else setTimeout(warm, 2200);
+    if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 3000 });
+    else setTimeout(warm, 2500);
   }
 
   playBtn.addEventListener("click", mount);

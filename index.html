@@ -36,6 +36,8 @@ else w.addEventListener('load',function(){setTimeout(load,1200);});
 
 <link rel="preconnect" href="https://www.youtube.com" />
 <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
+<link rel="preconnect" href="https://rr1---sn-googlevideo.com" crossorigin />
+<link rel="dns-prefetch" href="https://googlevideo.com" />
 <link rel="preload" href="assets/fonts/anton-400.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/fonts/poppins-500.woff2" as="font" type="font/woff2" crossorigin />
 
@@ -96,7 +98,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="vsl__player" id="vsl-player">
           <!-- O vídeo da VSL entra aqui (definido em CONFIG.VIDEO_URL no script.js) -->
           <!-- Capa estática (LCP): pinta durante o parse, sem esperar o JS. O script.js reaproveita esta img. -->
-          <img class="vsl__poster" src="https://i.ytimg.com/vi/aV7ctWpg948/hqdefault.jpg" alt="Vídeo de apresentação da Doppa" width="480" height="360" loading="eager" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/aV7ctWpg948/mqdefault.jpg'" />
+          <img class="vsl__poster" src="https://i.ytimg.com/vi/aV7ctWpg948/hqdefault.jpg" alt="Vídeo de apresentação da Doppa" width="480" height="360" loading="eager" fetchpriority="high" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/aV7ctWpg948/mqdefault.jpg'" />
           <button class="vsl__play" id="vsl-play" aria-label="Assistir ao vídeo">
             <svg class="ic"><use href="#i-play"></use></svg>
           </button>
