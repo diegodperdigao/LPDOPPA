@@ -268,7 +268,7 @@ body.has-float-cta .footer{ padding-bottom:calc(84px + env(safe-area-inset-botto
 
 </style>
 </head>
-<body>
+<body class="is-locked">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5JLXPMGZ"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -288,7 +288,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button class="btn btn--primary btn--sm js-open-form nav__cta-mobile" data-source="nav-menu">Quero minha vaga</button>
     </nav>
 
-    <button class="btn btn--primary btn--sm js-open-form nav__cta" data-source="navbar">Quero minha vaga</button>
+    <button class="btn btn--primary btn--sm js-open-form nav__cta has-lock-prog" data-source="navbar" aria-disabled="true" aria-describedby="vsl-lock-hint-text">Quero minha vaga<span class="vsl-lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.4"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span><span class="vsl-lock-prog" aria-hidden="true"></span></button>
 
     <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -341,9 +341,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <div class="hero__cta">
-      <button class="btn btn--primary btn--xl js-open-form" data-source="hero">
+      <button class="btn btn--primary btn--xl js-open-form has-lock-prog" data-source="hero" aria-disabled="true" aria-describedby="vsl-lock-hint-text">
         Quero minha vaga <svg class="ic ic--arrow"><use href="#i-arrow"></use></svg>
+        <span class="vsl-lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.4"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span>
+        <span class="vsl-lock-prog" aria-hidden="true"></span>
       </button>
+    </div>
+
+    <!-- Estado travado renderizado no HTML (paint imediato, sem "pulo" quando o JS roda).
+         O vsl-lock.js deduplica (não recria) e cuida da interação e do unlock. -->
+    <div class="vsl-locked-hint">
+      <span class="vsl-locked-hint__pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.4"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><span id="vsl-lock-hint-text">Assista ao vídeo até o final para desbloquear a sua vaga.</span></span>
     </div>
   </div>
 </section>
@@ -504,14 +512,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   window.DOPPA_CONFIG_OVERRIDES=o;
 })();
 </script>
-<script src="js/script.js"></script>
+<!-- vsl-lock antes do script.js (45KB): a trava/interação já valem cedo, sem esperar o parse do script maior -->
 <script src="js/vsl-lock.js"></script>
+<script src="js/script.js"></script>
 <script src="js/vsl-eyes.js" defer></script>
 
 <!-- ===== TESTE A/B: player VTurb (só quando ?player=vturb). Não afeta a home. ===== -->
 <script>
 (function(){
   if (new URLSearchParams(location.search).get("player") !== "vturb") return;
+
+  // Funil completo no VTurb: a trava (cadeado + card) fica LIGADA, igual ao YouTube.
+  // O gancho de "fim do vídeo" abaixo dispara doppa:videoended → o vsl-lock destrava.
+
   var ACC = "569e0778-300c-4dff-85ab-9da035f16ade";
   var PID = "6aa1b29c5568bc9098ba2ff7";
   var P    = "https://scripts.converteai.net/"+ACC+"/players/"+PID+"/v4/player.js";
