@@ -631,13 +631,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 (function(){
   var q=new URLSearchParams(location.search);
   var nofx=q.get("nofx");
-  if(nofx){ var css=""; nofx.split(",").forEach(function(x){
-    if(x==="blur")css+="*{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}";
-    if(x==="pulse")css+=".vsl-float-cta::after,.is-cta-pop::after{animation:none!important}";
-    if(x==="shadow")css+="*{box-shadow:none!important}";
-    if(x==="ring")css+=".vsl-lock-prog{display:none!important}";
-    if(x==="video")css+="vturb-smartplayer{visibility:hidden!important}";
-  }); var st=document.createElement("style"); st.textContent=css; document.head.appendChild(st); }
+  if(nofx){ var map={
+    blur:"*{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}",
+    filter:"*{filter:none!important}",                     // mata filter:blur (orbs, halo)
+    shadow:"*{box-shadow:none!important}",
+    anim:"*,*::before,*::after{animation:none!important}", // mata TODAS as animações CSS
+    pulse:".vsl-float-cta::after,.is-cta-pop::after{animation:none!important}",
+    ring:".vsl-lock-prog{display:none!important}",
+    orbs:".orb,.grid-dots{display:none!important}",         // fundo do hero (blobs desfocados)
+    wpp:".wpp-fab,.wpp-pop{display:none!important}",
+    video:"vturb-smartplayer{visibility:hidden!important}"
+  };
+  var keys = (nofx==="all") ? Object.keys(map) : nofx.split(",");
+  var css=""; keys.forEach(function(k){ if(map[k]) css+=map[k]; });
+  var st=document.createElement("style"); st.textContent=css; document.head.appendChild(st); }
 
   if(q.get("debug")!=="1") return;
   var box=document.createElement("div");
