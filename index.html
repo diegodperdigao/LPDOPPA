@@ -556,7 +556,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var cfg = window.DOPPA_CONFIG_OVERRIDES || {};
   var CTA = +cfg.CTA_AT_SECONDS || 0, ctaFired=false, hooked=false;
   function fireCTA(){ if(!ctaFired){ ctaFired=true; document.dispatchEvent(new Event("doppa:videoended")); } }
-  function setProg(f){ document.documentElement.style.setProperty("--vsl-progress", Math.max(0,Math.min(1,f)).toFixed(4)); }
+  // Atualiza a barra SÓ nos botões travados (subárvore pequena) — nunca no :root, que com
+  // @property inherits:true forçaria recalc de estilo da PÁGINA INTEIRA a cada frame (travava tudo).
+  function setProg(f){
+    var v = Math.max(0,Math.min(1,f)).toFixed(3);
+    var els = document.querySelectorAll(".has-lock-prog");
+    for(var i=0;i<els.length;i++) els[i].style.setProperty("--vsl-progress", v);
+  }
   function timeOf(inst){ return (inst && inst.video && inst.video.currentTime) || (inst && inst.currentTime) || 0; }
   function durOf(inst){ return (inst && inst.video && inst.video.duration) || (inst && inst.duration) || 0; }
 
@@ -567,12 +573,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var inst = sp.instances[0];
     if(!inst || typeof inst.on !== "function") return;
     hooked = true; clearInterval(iv);
+    var lastT = 0;
     inst.on("timeupdate", function(){
-      var t = timeOf(inst), target = CTA>0 ? CTA : durOf(inst);
+      if(ctaFired) return; // destravou → para de mexer no progresso (main thread livre p/ a animação)
+      var t = timeOf(inst);
+      if(CTA>0 && t>=CTA){ setProg(1); fireCTA(); return; }
+      var now = Date.now();
+      if(now - lastT < 180) return; // no máx ~5x/seg (o timeupdate do VTurb dispara MUITO mais)
+      lastT = now;
+      var target = CTA>0 ? CTA : durOf(inst);
       if(target>0) setProg(t/target);
-      if(CTA>0 && t>=CTA) fireCTA();
     });
-    try{ inst.on("ended", function(){ setProg(1); fireCTA(); }); }catch(e){}
+    try{ inst.on("ended", function(){ if(!ctaFired){ setProg(1); fireCTA(); } }); }catch(e){}
   }, 200);
   setTimeout(function(){ clearInterval(iv); }, 30000);
 
