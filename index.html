@@ -591,7 +591,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var t = timeOf(inst);
       if(CTA>0 && t>=CTA){ setProg(1); fireCTA(); return; }
       var now = Date.now();
-      if(now - lastT < 180) return; // no máx ~5x/seg (o timeupdate do VTurb dispara MUITO mais)
+      if(now - lastT < 60) return; // ~16x/seg: barra fluida no 120Hz, mas sem repintar a cada frame
       lastT = now;
       var target = CTA>0 ? CTA : durOf(inst);
       if(target>0) setProg(t/target);
