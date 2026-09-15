@@ -45,9 +45,9 @@
   if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 4000 }); else setTimeout(warm, 3000);
 
   const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  // Modo B (teste): ?eyes=freeze → sem olho gigante; a chuva congela e o modal
-  // abre por cima do campo de olhos (fundo de olhos). Padrão = olho gigante (A).
-  const FREEZE = new URLSearchParams(location.search).get("eyes") === "freeze";
+  // PADRÃO = modo C: o olho gigante da transição cresce centralizado e congela de
+  // fundo do modal. Pra testar o modo A (engole a tela), use ?eyes=giant.
+  const FREEZE = new URLSearchParams(location.search).get("eyes") !== "giant";
   const easeIO = k => (k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3) / 2);
 
   // ---------- desenho ----------

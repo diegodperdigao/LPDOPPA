@@ -461,6 +461,7 @@ $("#year").textContent = new Date().getFullYear();
   let watchdog = null, errored = false;
   const clearWatchdog = () => { if (watchdog) { clearTimeout(watchdog); watchdog = null; } };
   const armWatchdog = () => {
+    if (isTouch) return; // no mobile o play via API é bloqueado (iOS) e a pessoa usa os controles nativos → sem "timeout de falha"
     clearWatchdog();
     watchdog = setTimeout(() => {
       try {
