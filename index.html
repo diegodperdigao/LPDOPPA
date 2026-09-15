@@ -41,7 +41,232 @@ else w.addEventListener('load',function(){setTimeout(load,1200);});
 <link rel="preload" href="assets/fonts/poppins-500.woff2" as="font" type="font/woff2" crossorigin />
 
 <link rel="stylesheet" href="css/styles.css" />
-<link rel="stylesheet" href="css/vsl.css" />
+<!-- vsl.css inline (remove 1 requisicao render-blocking). Fonte editavel: css/vsl.css -->
+<style>
+/* ============================================================
+   DOPPA — Trava da página VSL (/vsl)
+   Página idêntica à LP, porém bloqueada até o vídeo terminar.
+   ============================================================ */
+
+/* cadeado dentro dos botões de CTA enquanto travado */
+.vsl-lock-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  vertical-align:middle; margin-left:9px; width:1em; height:1em;
+  opacity:.92;
+}
+.vsl-lock-badge svg{ width:100%; height:100%; }
+
+/* durante a chuva de olhos, esconde os flutuantes (ficariam acima do canvas) */
+body.eyes-playing .vsl-float-cta,
+body.eyes-playing .wpp-fab,
+body.eyes-playing .wpp-pop{ display:none !important; }
+
+/* "chuva de olhos": quando o modal abre engolido pelo olho, o backdrop vira o
+   gradiente "dentro do olho" (casa com a pupila do gigante), sem blur nem fade */
+body.is-swallowed #form-modal .modal__overlay{
+  background:radial-gradient(70% 70% at 50% 50%,#070a22 55%,#2a1a9a 100%) !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important; animation:none !important;
+}
+/* card aparece na hora (sem o slideUp) quando vem pela chuva — tira o delayzinho */
+body.is-swallowed #form-modal .modal__dialog{ animation:none !important; }
+
+/* MODO C (?eyes=freeze): OLHO GIGANTE estático fica de FUNDO do modal; véu leve pra
+   leitura e o card cresce por cima */
+body.is-eyefield .vsl-eyes{ display:block !important; }
+body.is-eyefield #form-modal .modal__overlay{
+  background:rgba(7,10,34,.42) !important; backdrop-filter:blur(.5px) !important; -webkit-backdrop-filter:blur(.5px) !important; animation:none !important;
+}
+body.is-eyefield #form-modal .modal__dialog{ animation:eyeCardIn .42s cubic-bezier(.22,1,.36,1) both; }
+@keyframes eyeCardIn{ from{opacity:0;transform:scale(.72)} to{opacity:1;transform:none} }
+@media (prefers-reduced-motion:reduce){ body.is-eyefield #form-modal .modal__dialog{ animation:none; } }
+
+/* 1.4 — quando o float aparece, sobe o botão do WhatsApp pra não colar nele no mobile */
+@media (max-width:600px){ body.has-float-cta .wpp-fab{ bottom:calc(84px + env(safe-area-inset-bottom)) !important; } }
+
+/* capa de erro do player (tela preta / falha de carregamento) */
+.vsl__err{ position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+  background:rgba(10,14,43,.82); backdrop-filter:blur(4px); padding:22px; text-align:center; }
+.vsl__err-retry{ border:0; cursor:pointer; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:15px;
+  padding:14px 22px; border-radius:12px; max-width:100%; line-height:1.3;
+  background:linear-gradient(135deg,#2A52FF,#7B4DFF); box-shadow:0 12px 30px -10px rgba(60,80,255,.7); }
+.vsl__err-yt{ color:#9AA2CC; font-size:13px; text-decoration:underline; }
+
+/* CONTORNO de progresso ao redor do botão trancado — "desenha" conforme o vídeo avança */
+@property --vsl-progress{ syntax:'<number>'; inherits:true; initial-value:0; }
+:root{ transition:--vsl-progress 1s linear; }
+.has-lock-prog{ position:relative; }
+.vsl-lock-prog{
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:3px; z-index:3;
+  background:conic-gradient(from -90deg,
+    #22D46E 0deg,
+    #0FB6C6 calc(var(--vsl-progress,0) * 360deg),
+    rgba(255,255,255,.16) calc(var(--vsl-progress,0) * 360deg));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite:exclude;
+}
+/* ao completar/liberar, o botão ganha um brilho pulsante CONTÍNUO pra seguir chamando atenção */
+.is-cta-pop{ animation:vslCtaGlow 1.8s ease-out infinite; }
+@keyframes vslCtaGlow{
+  0%{ box-shadow:0 0 0 0 rgba(34,212,110,.55); }
+  70%{ box-shadow:0 0 0 14px rgba(34,212,110,0); }
+  100%{ box-shadow:0 0 0 0 rgba(34,212,110,0); }
+}
+@media (prefers-reduced-motion:reduce){ :root{ transition:none; } .is-cta-pop{ animation:none; } }
+
+/* pop-up (toast) que sobe ao tentar interagir travado */
+.vsl-toast{
+  position:fixed; left:50%; bottom:26px;
+  transform:translate(-50%,160%);
+  z-index:600; max-width:calc(100vw - 28px);
+  display:flex; align-items:center; gap:11px;
+  background:#11163D; color:#fff;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:14px; padding:14px 20px;
+  font-family:"Poppins",sans-serif; font-weight:600; font-size:15px; line-height:1.3;
+  box-shadow:0 18px 46px rgba(0,0,0,.55);
+  opacity:0; transition:transform .42s cubic-bezier(.16,1,.3,1), opacity .3s;
+}
+.vsl-toast.show{ transform:translate(-50%,0); opacity:1; }
+.vsl-toast__ico{ flex:none; width:22px; height:22px; color:#FFD300; }
+.vsl-toast__ico svg{ width:100%; height:100%; }
+.vsl-toast--ok .vsl-toast__ico{ color:#22D46E; }
+
+@media (prefers-reduced-motion:reduce){
+  .vsl-toast{ transition:opacity .3s; }
+  .vsl-toast.show{ transform:translate(-50%,0); }
+}
+
+/* fundo do canvas igual ao do rodapé: evita a "faixa escura" abaixo do rodapé
+   quando a página travada é mais curta que a tela (some no mobile) */
+html{ background: var(--bg-800); }
+
+/* modo travado: a página ocupa a tela inteira, o vídeo/hero fica centralizado
+   verticalmente no espaço disponível e o rodapé fica ancorado no fim.
+   Assim o espaço que sobra vira respiro igual em cima e embaixo do vídeo. */
+body.is-locked{ display:flex; flex-direction:column; min-height:100vh; min-height:100svh; }
+body.is-locked .hero{ flex:1 0 auto; display:flex; flex-direction:column; justify-content:center; }
+
+/* ---- enquanto travado: esconde o conteúdo abaixo do vídeo (mantém o rodapé) ---- */
+body.is-locked .strip,
+body.is-locked .section,
+body.is-locked .cta,
+body.is-locked .mobile-cta{ display:none !important; }
+
+/* CTAs travados ficam iguais: sem seta, com cadeado */
+body.is-locked .js-open-form .ic--arrow{ display:none !important; }
+
+/* rodapé continua visível travado, porém sem o botão de CTA, tudo centralizado */
+body.is-locked .footer .js-open-form{ display:none !important; }
+body.is-locked .footer__inner{ flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+body.is-locked .footer__col{ align-items:center; text-align:center; }
+body.is-locked .footer__logo{ margin:0 auto; }
+body.is-locked .footer__tag{ max-width:none; white-space:nowrap; }
+@media (max-width:520px){ body.is-locked .footer__tag{ white-space:normal; } }
+
+/* aviso (chip) logo abaixo do vídeo, dentro do hero (sem faixa separada) */
+/* margem extra no topo pra dar respiro entre o botão "Quero minha vaga" e a tag */
+.vsl-locked-hint{ display:flex; justify-content:center; margin:clamp(10px,3vw,22px) auto 0; padding:0 18px; transition:opacity .35s ease, visibility .35s ease; }
+.vsl-locked-hint__pill{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:11px 20px; border-radius:999px;
+  background:rgba(255,211,0,.08); border:1px solid rgba(255,211,0,.3);
+  color:#FFE1A0; font-family:"Poppins",sans-serif; font-weight:600;
+  font-size:14.5px; line-height:1.35; text-align:left;
+}
+.vsl-locked-hint__pill svg{ flex:none; width:18px; height:18px; color:#FFD300; }
+/* ao liberar, o aviso some SEM colapsar o espaço (evita o hero pular) */
+body.is-unlocked .vsl-locked-hint{ opacity:0; visibility:hidden; pointer-events:none; }
+
+@media (max-width:560px){
+  .vsl-locked-hint__pill{ padding:9px 14px; gap:7px; font-size:12.5px; border-radius:14px; }
+  .vsl-locked-hint__pill svg{ width:15px; height:15px; }
+}
+
+/* (sem controles custom no player — tudo é nativo do YouTube) */
+
+/* ===== VSL enxuta: TUDO em uma tela — logo grande, sem rolagem/gap ===== */
+.nav__links, .nav__burger, .nav__cta-mobile,
+.hero__cta,
+.strip, .section, section.cta,
+.footer__inner{ display:none !important; }   /* mantém só o rodapé enxuto (footer__base) */
+
+/* botão do header alinhado ao centro da LOGO GRANDE do hero (margem simétrica) */
+.nav__cta{
+  display:inline-flex !important;
+  position:fixed !important; left:auto !important; margin:0 !important; z-index:61 !important;
+  right:clamp(16px,3.2vw,46px) !important;
+  top:calc(clamp(14px,2.4vw,22px) + clamp(70px,8.01vw,106px) / 2) !important;
+  transform:translateY(-50%) !important;
+  /* tamanho em PX (não em rem/em) → consistente em todo aparelho, imune a zoom/
+     fonte-base do navegador. O clamp usa vw (viewport, estável por device), não rem. */
+  font-size:clamp(13px,3.4vw,16px) !important;
+  padding:0 clamp(14px,3.6vw,22px) !important;
+  min-height:46px !important;
+  line-height:1 !important;
+}
+/* telas bem estreitas: encolhe um tico pra não encostar na logo */
+@media (max-width:360px){
+  .nav__cta{ font-size:12.5px !important; padding:0 12px !important; min-height:42px !important; }
+}
+
+/* tudo cabe em uma tela: hero preenche o meio (vídeo centralizado), rodapé
+   colado embaixo — sem rolagem e sem espaço vazio */
+body.is-locked, body.is-unlocked{ display:flex !important; flex-direction:column !important; min-height:100svh !important; }
+.hero--video{ flex:1 1 auto !important; display:flex; flex-direction:column; justify-content:center; }
+.footer{ flex:0 0 auto; margin-top:0 !important; padding:14px 0 !important; }
+/* quando o botão flutuante aparece, o rodapé reserva espaço pra não ficar embaixo dele */
+body.has-float-cta .footer{ padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important; }
+@media (max-width:600px){ body.has-float-cta .footer{ padding-bottom:calc(150px + env(safe-area-inset-bottom)) !important; } }
+/* rodapé compacto: sem a faixa/linha vazia acima do texto (não há mais conteúdo ali) */
+.footer__base{ margin-top:0 !important; padding-top:0 !important; border-top:0 !important; }
+
+/* logo não abre popup nem mostra flash de toque */
+.hero__brand, .nav__brand{ -webkit-tap-highlight-color:transparent; }
+
+/* 5.2 — subtítulo em UMA linha no desktop; quebra sozinho só quando não couber (mobile) */
+.hero--video .hero__sub{ max-width:min(760px,94vw) !important; text-wrap:balance; }
+/* 2.4 — dobra no desktop: espaçamentos mais justos entre título/subtítulo/vídeo
+   pra vídeo + botão caberem juntos em telas de 13" sem rolar */
+.hero--video .hero__inner{ gap:clamp(14px,3vw,26px) !important; }
+
+/* MOBILE: conteúdo encostado no topo (sob o header) e o aviso desce pro rodapé,
+   eliminando o vão morto no meio da tela */
+@media (max-width:640px){
+  .hero--video{ justify-content:flex-start !important; }
+  .hero--video .hero__inner{ flex:1 1 auto; min-height:0; padding-top:clamp(60px,15vw,96px); padding-bottom:12px; gap:clamp(18px,4.5vw,28px) !important; }
+  .hero--video .vsl{ margin-top:clamp(10px,3.2vw,22px) !important; } /* respiro extra entre o subtítulo e o vídeo */
+  .vsl-locked-hint{ margin-top:auto !important; margin-bottom:4px; }
+}
+
+/* ===== Botão flutuante que aparece no pitch (8:48) — fixo, sempre visível ===== */
+.vsl-float-cta{
+  position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(28px);
+  z-index:9990; opacity:0; pointer-events:none;
+  font-family:'Poppins',system-ui,'Segoe UI',Arial,sans-serif;
+  font-weight:800; font-size:clamp(16px,2.4vw,21px); letter-spacing:.02em; text-transform:uppercase;
+  color:#04231a; border:0; border-radius:999px; padding:16px 36px; cursor:pointer;
+  background:linear-gradient(120deg,#22D46E 0%,#12B6C6 55%,#00D1FF 100%);
+  box-shadow:0 18px 44px -8px rgba(34,212,110,.7);
+  transition:opacity .4s ease, transform .55s cubic-bezier(.22,1,.36,1);
+  max-width:calc(100vw - 32px); white-space:nowrap;
+}
+.vsl-float-cta.show{
+  opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0);
+  animation:vslFloatPulse 1.9s ease-in-out .55s infinite;
+}
+@keyframes vslFloatPulse{
+  0%,100%{ box-shadow:0 18px 44px -8px rgba(34,212,110,.55); }
+  50%{ box-shadow:0 18px 52px -4px rgba(34,212,110,1), 0 0 0 6px rgba(34,212,110,.18); }
+}
+@media (max-width:600px){
+  .vsl-float-cta{ bottom:84px; padding:14px 26px; } /* sobe pra não colar no botão do WhatsApp */
+}
+@media (prefers-reduced-motion:reduce){
+  .vsl-float-cta{ transition:opacity .3s; }
+  .vsl-float-cta.show{ animation:none; }
+}
+
+</style>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->

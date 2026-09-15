@@ -1,9 +1,21 @@
 # Cloudflare Pages — políticas de cache
+# /assets/*: versionados (imagens/ícones/fontes) → cache longo e imutável. Ao trocar, use novo nome de arquivo.
 # HTML/CSS/JS: sempre revalida (evita servir versão antiga enquanto iteramos).
-# /assets/*: imagens/ícones/fontes com cache longo e imutável (quando trocar, use novo nome de arquivo).
-
-/*
-  Cache-Control: public, max-age=0, must-revalidate
+# IMPORTANTE: não use uma regra /* junto de /assets/* — as duas casam no mesmo arquivo e o
+# Cloudflare manda DOIS Cache-Control (o aviso "cache lifetimes" do PageSpeed). Por isso as
+# regras abaixo não se sobrepõem: cada caminho casa com uma única regra.
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/css/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate
