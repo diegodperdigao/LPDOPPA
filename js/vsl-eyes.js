@@ -106,11 +106,8 @@
   function play(fromEl, done) {
     if (playing) return;
     if (reduced()) { done(); return; }
-    const isMobile = innerWidth < CFG.MOBILE_BP;
     warm();
-    // Desktop espera os sprites (a chuva usa as imagens). Mobile roda só o olho gigante
-    // (vetorial, sem sprites e sem física) → não precisa esperar nem congela a tela.
-    if (!isMobile && loaded < 2) {
+    if (loaded < 2) { // espera os sprites (máx. 700ms), senão abre direto
       const t = Date.now();
       const wait = () => { if (loaded >= 2) run(fromEl, done); else if (Date.now() - t > 700) done(); else setTimeout(wait, 50); };
       wait(); return;
@@ -173,9 +170,7 @@
     }
 
     // física em passo FIXO de 16,7ms → igual em 60Hz e 120Hz
-    // Mobile: começa direto na fase do olho gigante (pula a chuva/física, que travava o
-    // celular). Desktop: fase 0 = chuva de olhos normal.
-    let acc = 0, physAcc = 0, phase = mobile ? 2 : 0, tFull = 0, settledSince = 0;
+    let acc = 0, physAcc = 0, phase = 0, tFull = 0, settledSince = 0;
     function step(el) {
       if (phase === 0) { const rate = el < 300 ? .06 : RATE; acc += rate; let tries = 0;
         while (acc >= 1 && eyes.length < target && tries < 20) { if (spawn()) acc--; tries++; } if (tries >= 20) acc = 0; }

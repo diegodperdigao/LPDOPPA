@@ -633,6 +633,8 @@ const openModal = () => {
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
   document.body.classList.add("modal-open"); // esconde os flutuantes (float CTA / WhatsApp) enquanto o modal está aberto
+  // a animação já rodou (com o vídeo pausado); com o modal aberto, o vídeo volta a tocar atrás
+  window.DoppaVideo && window.DoppaVideo.resume && window.DoppaVideo.resume();
   ensureEmailJS(); // carrega o SDK do EmailJS agora (sob demanda), pronto pro envio
   // garante estado limpo
   modalHead.hidden = false;
@@ -657,6 +659,8 @@ const closeModal = () => {
 const openFormFromCTA = el => {
   if (window.DoppaEyes && document.body.classList.contains("is-unlocked")) {
     document.body.classList.add("eyes-playing"); // esconde float/WhatsApp durante a chuva
+    // pausa o vídeo enquanto a animação roda → sem competir pelo decode, ela roda lisa no mobile
+    window.DoppaVideo && window.DoppaVideo.pause && window.DoppaVideo.pause();
     window.DoppaEyes.play(el || null, openModal);
   } else {
     openModal();
