@@ -633,8 +633,9 @@ const openModal = () => {
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
   document.body.classList.add("modal-open"); // esconde os flutuantes (float CTA / WhatsApp) enquanto o modal está aberto
-  // a animação já rodou (vídeo pausado/escondido); com o modal aberto, mostra e retoma o vídeo atrás
-  if (window.DoppaVideo) { window.DoppaVideo.hide && window.DoppaVideo.hide(false); window.DoppaVideo.resume && window.DoppaVideo.resume(); }
+  // modal aberto: mantém o vídeo PAUSADO (a pessoa preenche sem ouvir o vídeo repetindo).
+  // Retoma de onde parou ao fechar sem enviar (não reinicia).
+  if (window.DoppaVideo && window.DoppaVideo.pause) window.DoppaVideo.pause();
   ensureEmailJS(); // carrega o SDK do EmailJS agora (sob demanda), pronto pro envio
   // garante estado limpo
   modalHead.hidden = false;
@@ -651,6 +652,8 @@ const closeModal = () => {
   document.body.classList.remove("is-swallowed"); // desfaz o fundo "dentro do olho"
   document.body.classList.remove("eyes-playing");
   window.DoppaEyes && window.DoppaEyes.clear && window.DoppaEyes.clear(); // tira o campo de olhos (modo B)
+  // fechou sem enviar: mostra e RETOMA o vídeo de onde parou (não reinicia)
+  if (window.DoppaVideo) { window.DoppaVideo.hide && window.DoppaVideo.hide(false); window.DoppaVideo.resume && window.DoppaVideo.resume(); }
   lastFocused?.focus();
 };
 

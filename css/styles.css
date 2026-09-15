@@ -213,12 +213,12 @@ img,svg{display:block;max-width:100%}
   mask-image:radial-gradient(120% 70% at 70% 20%,#000,transparent 72%);
 }
 @keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(0,32px)}}
-/* no mobile o verde deixa de aparecer como "triângulo" cortado no canto: vira um
-   brilho radial centrado atrás do vídeo, mais discreto (e sem animar, poupa CPU) */
+/* no mobile: brilhos ambiente ancorados nos cantos (roxo em cima-direita, verde
+   embaixo-esquerda), discretos (e sem animar, poupa CPU) */
 @media (max-width:640px){
   .orb{animation:none}
-  .orb--b{width:min(66vw,260px);left:50%;right:auto;bottom:auto;top:42%;transform:translate(-50%,-50%);opacity:.14}
-  .orb--a{width:min(58vw,280px);top:-6%;right:-16%;opacity:.32}
+  .orb--a{width:min(80vw,360px);top:-14%;right:-22%;bottom:auto;left:auto;transform:none;opacity:.28}
+  .orb--b{width:min(85vw,380px);left:-24%;right:auto;top:auto;bottom:-6%;transform:none;opacity:.20}
 }
 
 .hero__inner{position:relative;z-index:2;display:flex;flex-direction:column;gap:clamp(36px,8vw,56px);text-align:center;align-items:center}
