@@ -494,9 +494,10 @@ $("#year").textContent = new Date().getFullYear();
 
   const startYT = () => {
     started = true; errored = false;
-    try { window.__ytPlayer.unMute(); window.__ytPlayer.setVolume(100); } catch (e) {}
-    try { window.__ytPlayer.seekTo(0, true); } catch (e) {}   // seek separado: não impede o play
+    // Ordem importa no iOS: seek + PLAY primeiro (dentro do gesto), desmutar só depois.
+    try { window.__ytPlayer.seekTo(0, true); } catch (e) {}
     try { window.__ytPlayer.playVideo(); } catch (e) {}
+    try { window.__ytPlayer.unMute(); window.__ytPlayer.setVolume(100); } catch (e) {}
     armWatchdog();
   };
 
@@ -591,7 +592,11 @@ $("#year").textContent = new Date().getFullYear();
       loadYT(() => createYT());
     };
     evs.forEach(ev => window.addEventListener(ev, warm, { passive: true }));
-    if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 3000 });
+    // Mobile (iOS): o player precisa estar PRONTO antes do toque em play (aí o tap conta
+    // como gesto e o iOS libera a reprodução). Por isso aquece cedo, logo após o 1º paint.
+    // Desktop: mantém lite-embed (idle/gesto) pra não pesar no LCP.
+    if (isTouch) setTimeout(warm, 500);
+    else if ("requestIdleCallback" in window) requestIdleCallback(warm, { timeout: 3000 });
     else setTimeout(warm, 2200);
   }
 
