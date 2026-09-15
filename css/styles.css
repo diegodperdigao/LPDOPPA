@@ -270,7 +270,7 @@ img,svg{display:block;max-width:100%}
 /* limita o player p/ caber inteiro na primeira dobra (altura da viewport) */
 .vsl{width:100%;max-width:min(1120px, calc((100vh - 322px) * 16 / 9));margin:4px auto 0}
 .vsl__stage{position:relative}
-.vsl__player{position:relative;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;
+.vsl__player{position:relative;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;isolation:isolate;
   background:radial-gradient(120% 120% at 50% 0%, #1a2150, #0b1030);
   border:1px solid rgba(107,61,255,.45);
   box-shadow:0 30px 70px -25px rgba(0,0,0,.75), 0 20px 60px -30px rgba(80,60,220,.55), inset 0 1px 0 rgba(255,255,255,.06)}
