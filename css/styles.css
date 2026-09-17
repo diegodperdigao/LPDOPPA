@@ -639,6 +639,27 @@ body.modal-open .wpp-pop{display:none !important}
 .form-end h2{font-family:var(--font-display);font-size:1.8rem;margin-bottom:10px}
 .form-end p{color:var(--muted);margin-bottom:22px}
 
+/* ===== tela de sucesso com o mascote (pós-cadastro → WhatsApp) ===== */
+.form-end--success{padding-top:4px}
+.form-end--success h2{animation:pop .45s var(--ease)}
+.success-hero{position:relative;width:min(176px,50vw);margin:0 auto 10px;aspect-ratio:1;display:grid;place-items:center}
+/* glow verde via radial-gradient (sem filter:blur → seguro no iOS) */
+.success-glow{position:absolute;inset:-8%;border-radius:50%;
+  background:radial-gradient(circle,rgba(34,212,110,.42) 0%,rgba(34,212,110,0) 66%)}
+.success-mascot{position:relative;width:100%;height:auto;
+  filter:drop-shadow(0 12px 22px rgba(0,0,0,.45));animation:successFloat 3.4s ease-in-out infinite}
+@keyframes successFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.success-badge{display:inline-flex;align-items:center;gap:7px;margin:0 auto 14px;
+  padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:700;letter-spacing:.2px;
+  color:#22D46E;background:rgba(34,212,110,.12);border:1px solid rgba(34,212,110,.32)}
+.success-badge .ic{width:16px;height:16px}
+/* botão verde do WhatsApp */
+.btn--wpp{background:linear-gradient(135deg,#25D366,#12B152);color:#04231a;
+  box-shadow:0 16px 32px -12px rgba(37,211,102,.65);gap:8px}
+.btn--wpp:hover{filter:brightness(1.06)}
+.btn--wpp svg{flex:none}
+@media (prefers-reduced-motion:reduce){.success-mascot{animation:none}}
+
 /* ============================================================
    REVEAL
    ============================================================ */
