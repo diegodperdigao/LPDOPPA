@@ -2,3 +2,8 @@
 /vsl / 301
 /vsl/ / 301
 /vsl/index.html / 301
+
+# Tráfego pago: /tp serve a home SEM trocar a URL (rewrite 200), preservando fbclid/gclid.
+# O JS registra a btag "trafego-pago" (planilha = "Tráfego Pago") e limpa a URL pra "/".
+/tp /index.html 200
+/tp/ /index.html 200

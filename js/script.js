@@ -23,6 +23,13 @@ const CONFIG = {
     // fmg: "...", cmdwpp: "...", pilhado: "...", jon: "...",
   },
 
+  // Rótulo bonito da btag na planilha/Discord/Supabase. O código guardado é um slug
+  // (minúsculo, sem acento/espaço); aqui ele vira o nome legível no lead.
+  // Ex.: o link /pago registra "trafego-pago" e a planilha mostra "Tráfego Pago".
+  BTAG_LABELS: {
+    "trafego-pago": "Tráfego Pago",
+  },
+
   // URL do Google Apps Script (planilha). Cole depois de implantar.
   // Enquanto estiver vazia (""), a integração com a planilha fica desligada
   // e o resto continua funcionando normalmente.
@@ -106,12 +113,27 @@ const BTAG_KEY = "doppa_btag";
     const p = new URLSearchParams(location.search);
     const raw = p.get("btag") || p.get("ref") || p.get("af") || p.get("aff") || "";
     // sanitiza: só letras/números/._- e no máx. 64 chars
-    const btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64).toLowerCase();
+    let btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64).toLowerCase();
+    // Tráfego pago: entra por /tp (link limpo, sem ?btag= aparente). Afiliado (btag na URL) vence.
+    if (!btag && /^\/tp\/?$/i.test(location.pathname)) btag = "trafego-pago";
     if (btag) localStorage.setItem(BTAG_KEY, btag);
+    // Deixa a barra do navegador limpa: tira ?btag=/ref=/af=/aff= e normaliza /tp → /,
+    // mantendo os parâmetros do anúncio (fbclid, gclid, utm_*).
+    if ((raw || btag) && history.replaceState) {
+      const u = new URL(location.href);
+      ["btag", "ref", "af", "aff"].forEach(k => u.searchParams.delete(k));
+      const path = /^\/tp\/?$/i.test(u.pathname) ? "/" : u.pathname;
+      const qs = u.searchParams.toString();
+      history.replaceState(null, "", path + (qs ? "?" + qs : "") + u.hash);
+    }
   } catch (e) { /* localStorage bloqueado — ignora */ }
 })();
 const getBtag = () => {
   try { return localStorage.getItem(BTAG_KEY) || ""; } catch (e) { return ""; }
+};
+// Rótulo legível da btag pro lead/planilha (ex.: "trafego-pago" → "Tráfego Pago").
+const getBtagLabel = () => {
+  try { const b = getBtag(); return (CONFIG.BTAG_LABELS && CONFIG.BTAG_LABELS[b]) || b; } catch (e) { return getBtag(); }
 };
 // Convite do Discord conforme a btag: se houver um convite dedicado pra essa
 // btag (agência/parceiro), usa ele; senão, o convite padrão da página.
@@ -757,7 +779,7 @@ const getData = () => {
     telefone: (fd.get("telefone") || "").toString().trim(),
     experiencia: (fd.get("experiencia") || "").toString(),
     maioridade: (fd.get("maioridade") || "").toString(),
-    btag: getBtag(),
+    btag: getBtagLabel(), // rótulo legível na planilha (ex.: "Tráfego Pago"); afiliados seguem com o próprio código
   };
 };
 
