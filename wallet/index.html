@@ -242,6 +242,11 @@ td.r,th.r{text-align:right}
 <script>
 const API="https://ajwfpdprgdcvrkermcwx.supabase.co/functions/v1/wl";
 const IG_API="https://ajwfpdprgdcvrkermcwx.supabase.co/functions/v1/ig";
+// Enquanto o app do Instagram não estiver Live/aprovado, o card "Conectar Instagram"
+// fica escondido (criador comum tomaria erro "developer role insuficiente").
+// Vira true quando o App Review aprovar. Pra testar/gravar antes: abrir a wallet com &connect=1.
+const IG_CONNECT_ENABLED=false;
+function igConnectAllowed(){try{var q=new URLSearchParams(location.search);return IG_CONNECT_ENABLED||q.get("connect")==="1"||q.has("ig");}catch(e){return IG_CONNECT_ENABLED;}}
 const IG_ICON='<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2"/>';
 const BRL=n=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(n||0);
 const NUM=n=>new Intl.NumberFormat("pt-BR").format(n||0);
@@ -345,6 +350,7 @@ function render(m){
 }
 async function igEstado(){
  var card=document.getElementById("igConnect"); if(!card)return;
+ if(!igConnectAllowed()){ card.remove(); return; } // conectar ainda não liberado (app em Development)
  try{ var r=await fetch(IG_API+"/estado?id="+encodeURIComponent(STATE.id)); STATE._igSt=r.ok?await r.json():{}; }
  catch(e){ STATE._igSt={}; }
  igRenderConnect(STATE._igSt);
