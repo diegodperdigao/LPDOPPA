@@ -152,6 +152,43 @@ td.r,th.r{text-align:right}
 .atc{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text);background:rgba(255,255,255,.05);border:1px solid var(--line);padding:3px 10px 3px 4px;border-radius:999px}
 .atc i{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:999px;color:#04102a}
 .atc.esp i{background:var(--cyan)}.atc.cas i{background:var(--pink)}
+.igconnect{border-color:rgba(224,64,251,.3);background:linear-gradient(150deg,rgba(224,64,251,.08),rgba(107,61,255,.05)),var(--surface);margin-bottom:16px}
+.igbtns2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.igbtns2{grid-template-columns:1fr}}
+.igb{display:flex;align-items:center;gap:10px;text-decoration:none;border-radius:14px;padding:14px 16px;border:1px solid var(--line);transition:.15s}
+.igb .igbL{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.igb .igbL b{color:#fff;font-size:15px}
+.igb .igbL span{font-size:12px;color:var(--muted)}
+.igb.go{background:linear-gradient(135deg,#E040FB,#6B3DFF);border-color:transparent}
+.igb.go .igbL b,.igb.go .igbL span{color:#fff}
+.igb.go:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.igb.warn{background:rgba(255,176,32,.12);border-color:rgba(255,176,32,.4)}
+.igb.warn:hover{background:rgba(255,176,32,.18)}
+.igb.ok{background:rgba(34,212,110,.1);border-color:rgba(34,212,110,.35)}
+.igb .igtag{margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.igb .igtag.ok{background:rgba(34,212,110,.18);color:#7ff0b0}
+.igb .igtag.warn{background:rgba(255,176,32,.18);color:#ffcf80}
+.igb .igre{font-size:12px;color:var(--cyan);text-decoration:none;padding:4px 8px;border-radius:8px}
+.igb .igre:hover{text-decoration:underline}
+.igb svg{margin-left:auto;flex:none}
+.ighint{font-size:12px;color:var(--muted);margin:10px 0 0}
+.igban{border-radius:16px;padding:16px 18px;margin-bottom:16px;border:1px solid var(--line)}
+.igban__t{font-weight:700;font-size:15px;margin-bottom:4px}
+.igban__x{font-size:13.5px;color:var(--muted);line-height:1.5}
+.igban.ok{background:rgba(34,212,110,.1);border-color:rgba(34,212,110,.4)}
+.igban.ok .igban__t{color:#7ff0b0}
+.igban.err{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.45)}
+.igban.err .igban__t{color:#ffcf80}
+.igban__steps{margin:10px 0 0;padding-left:20px;font-size:13.5px;line-height:1.6;color:var(--text)}
+.igban__steps li{margin-bottom:4px}
+.igban__btns{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.igban__try{background:linear-gradient(135deg,#E040FB,#6B3DFF);color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:11px 18px;border-radius:12px}
+.igban__close{background:rgba(255,255,255,.08);color:var(--text);border:0;font:inherit;font-size:13px;padding:10px 16px;border-radius:12px;cursor:pointer}
+.igstrip{display:flex;align-items:center;gap:10px;background:rgba(34,212,110,.08);border:1px solid rgba(34,212,110,.32);border-radius:14px;padding:12px 16px;margin-bottom:16px}
+.igstrip svg{flex:none}
+.igstrip__t{color:#7ff0b0;font-size:14px;flex:none}
+.igstrip__ats{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-width:0}
+.igstrip__mng{margin-left:auto;background:rgba(255,255,255,.08);color:var(--text);border:0;font:inherit;font-size:12.5px;padding:7px 13px;border-radius:10px;cursor:pointer;flex:none}
 .mrh{font-family:var(--font-display);font-weight:400;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin:18px 0 10px}
 .mrank{display:flex;flex-direction:column;gap:6px}
 .mrow{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:11px;font-size:13.5px}
@@ -172,7 +209,7 @@ td.r,th.r{text-align:right}
 .jkv span{font-size:11px;color:var(--muted);margin-left:4px}
 @media(max-width:560px){.jkme{grid-template-columns:1fr}}
 
-.foot{text-align:center;color:var(--dim);font-size:11px;margin-top:26px;display:flex;align-items:center;justify-content:center;gap:8px}
+.foot{text-align:center;color:var(--dim);font-size:11px;margin-top:48px;display:flex;align-items:center;justify-content:center;gap:8px}
 .foot img{height:16px;opacity:.6}
 
 /* ============ MOBILE ============ */
@@ -204,6 +241,8 @@ td.r,th.r{text-align:right}
 </div>
 <script>
 const API="https://ajwfpdprgdcvrkermcwx.supabase.co/functions/v1/wl";
+const IG_API="https://ajwfpdprgdcvrkermcwx.supabase.co/functions/v1/ig";
+const IG_ICON='<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2"/>';
 const BRL=n=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(n||0);
 const NUM=n=>new Intl.NumberFormat("pt-BR").format(n||0);
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
@@ -240,7 +279,7 @@ function render(m){
    +'<div class="cycmenu" id="cycmenu">'+menu+'</div></div>'
    +'<button id="cnext" '+(atCur?'disabled':'')+' aria-label="Próximo ciclo">'+S(I.chevR,"#EAEDFB",18)+'</button></div>';
 
- const grid=my.days.map(d=>{var sub=d.videos>0?((d.esp||0)+'e · '+(d.cas||0)+'c'):'vídeos';return '<div class="day '+(d.ok?"ok":d.videos>0?"part":"zero")+'"><div class="dd">'+dm(d.date)+'</div><div class="dv">'+d.videos+'</div><div class="lbl">'+sub+'</div></div>';}).join("");
+ const grid=my.days.map(d=>{var sub=d.videos>0?((d.esp||0)+'e · '+(d.cas||0)+'n'):'vídeos';return '<div class="day '+(d.ok?"ok":d.videos>0?"part":"zero")+'"><div class="dd">'+dm(d.date)+'</div><div class="dv">'+d.videos+'</div><div class="lbl">'+sub+'</div></div>';}).join("");
  const mgm=m.mgmItens.length?m.mgmItens.map(i=>'<tr><td>'+esc(i.nome)+'</td><td class="r">'+i.videos+'</td><td class="r money">'+BRL(i.valor)+'</td></tr>').join("")
    :'<tr><td colspan="3" class="dim">Você ainda não indicou ninguém ativo.</td></tr>';
 
@@ -267,7 +306,8 @@ function render(m){
  }
 
  document.getElementById("app").innerHTML=
-  '<div class="top"><div class="brand"><img src="/assets/doppa-logo.png" alt="Doppa"><span class="tag">Wallet do criador</span></div>'+nav+'</div>'
+  igBanner()
+ +'<div class="top"><div class="brand"><img src="/assets/doppa-logo.png" alt="Doppa"><span class="tag">Wallet do criador</span></div>'+nav+'</div>'
  +'<div class="hero"><img class="hero__masc" src="/assets/mascote.png" alt="">'
    +'<div class="hero__in"><div class="eyebrow">Seu ciclo · '+cy.label+'</div>'
    +'<h1>'+esc(m.criador.nome)+'</h1>'+ats(m.criador)
@@ -278,8 +318,9 @@ function render(m){
        :'<div class="hero__earn"><div class="lab">Reta final do ciclo</div><div class="val">bora fechar!</div></div>';
      return '<div class="hero__earn"><div class="lab">Ciclo encerrado</div><div class="val" style="background:none;-webkit-text-fill-color:var(--muted);font-size:1.3rem">aguardando pagamento</div></div>';})()
    +'</div></div>'
+ +'<div class="card igconnect" id="igConnect"><div class="igbtns2"><span class="dim">carregando Instagram…</span></div></div>'
  +'<div class="kpis">'
-   +kpi("Vídeos",NUM(my.total),(my.totalEsp||0)+" esp · "+(my.totalCas||0)+" cas","var(--blue)")
+   +kpi("Vídeos",NUM(my.total),(my.totalEsp||0)+" esp · "+(my.totalCas||0)+" not","var(--blue)")
    +kpi("Dias perfeitos",my.perfect,"≥ "+p.meta+"/dia","var(--green)")
    +kpi("Sequência",my.streak,"maior seguida","var(--cyan)")
    +kpi("Tickets",NUM(my.tickets),"no sorteio em dobro","var(--purple)")
@@ -300,11 +341,42 @@ function render(m){
  +'<div class="foot"><img src="/assets/doppa-logo.png" alt="Doppa"> Atualizado automaticamente</div>';
 
  wire();
+ igEstado();
+}
+async function igEstado(){
+ var card=document.getElementById("igConnect"); if(!card)return;
+ try{ var r=await fetch(IG_API+"/estado?id="+encodeURIComponent(STATE.id)); STATE._igSt=r.ok?await r.json():{}; }
+ catch(e){ STATE._igSt={}; }
+ igRenderConnect(STATE._igSt);
+}
+function igRenderConnect(st){
+ var card=document.getElementById("igConnect"); if(!card)return;
+ var espOk=st&&st.esp&&st.esp.status==="ativo", casOk=st&&st.cas&&st.cas.status==="ativo";
+ if(espOk&&casOk&&!STATE.igManage){
+   card.className="igstrip";
+   card.innerHTML=S(IG_ICON,"#7ff0b0",16)+'<b class="igstrip__t">Instagram conectado</b>'
+     +'<span class="igstrip__ats">'+igTag("esp",st.esp.username)+igTag("cas",st.cas.username)+'</span>'
+     +'<button class="igstrip__mng" onclick="igManage()">gerenciar</button>';
+   return;
+ }
+ card.className="card igconnect";
+ card.innerHTML='<h2>'+S(IG_ICON,"#F0A6FF",20)+'Conectar Instagram</h2>'
+   +'<p class="dim" style="margin:-4px 0 12px">Conecte seus dois perfis pra acompanharmos suas publicações automaticamente. Leva 10 segundos cada.</p>'
+   +'<div class="igbtns2">'+igBtn("esp","Esportes",st&&st.esp)+igBtn("cas","Notícias",st&&st.cas)+'</div>'
+   +'<p class="dim ighint">Precisa ser conta Profissional (Criador ou Empresa) — a troca é gratuita nas configurações do Instagram.</p>';
+}
+window.igManage=function(){STATE.igManage=true;igRenderConnect(STATE._igSt||{});};
+function igTag(seg,u){return '<span class="atc '+(seg==="cas"?"cas":"esp")+'"><i>'+(seg==="cas"?"NOT":"ESP")+'</i>@'+esc(u||"")+'</span>';}
+function igBtn(seg,label,s){
+ const url=IG_API+"/start?token="+encodeURIComponent(STATE.id)+"&seg="+seg;
+ if(s&&s.status==="ativo") return '<div class="igb ok"><div class="igbL">'+igTag(seg,s.username)+'</div><span class="igtag ok">conectado</span><a class="igre" href="'+url+'">trocar</a></div>';
+ if(s&&s.status==="reconectar") return '<a class="igb warn" href="'+url+'"><div class="igbL"><b>'+label+'</b><span>reconectar perfil</span></div><span class="igtag warn">expirou</span></a>';
+ return '<a class="igb go" href="'+url+'"><div class="igbL"><b>Conectar perfil de '+label+'</b><span>ainda não conectado</span></div>'+S(IG_ICON,"#fff",18)+'</a>';
 }
 function kpi(k,v,m,bar){return '<div class="kpi" style="--bar:'+bar+'"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="m">'+m+'</div></div>';}
 function frow(l,v){return '<div class="frow"><span class="lbl">'+l+'</span><span class="val money">'+v+'</span></div>';}
 function igHandle(u){if(!u)return"";const m=u.match(/instagram\.com\/([^\/?#]+)/i);return m?"@"+decodeURIComponent(m[1]):(u[0]==="@"?u:"@"+u);}
-function ats(c){var o=[];if(c.instagram_esp)o.push('<span class="atc esp"><i>ESP</i>'+esc(igHandle(c.instagram_esp))+'</span>');if(c.instagram_cas)o.push('<span class="atc cas"><i>CAS</i>'+esc(igHandle(c.instagram_cas))+'</span>');if(!o.length&&c.instagram)o.push('<span class="atc">'+esc(igHandle(c.instagram))+'</span>');return o.length?'<div class="ats">'+o.join('')+'</div>':'';}
+function ats(c){var o=[];if(c.instagram_esp)o.push('<span class="atc esp"><i>ESP</i>'+esc(igHandle(c.instagram_esp))+'</span>');if(c.instagram_cas)o.push('<span class="atc cas"><i>NOT</i>'+esc(igHandle(c.instagram_cas))+'</span>');if(!o.length&&c.instagram)o.push('<span class="atc">'+esc(igHandle(c.instagram))+'</span>');return o.length?'<div class="ats">'+o.join('')+'</div>':'';}
 
 function wire(){
  const tog=document.getElementById("cyctog"),menu=document.getElementById("cycmenu");
@@ -326,10 +398,29 @@ async function load(cycleStart){
    render(await r.json());
  }catch(e){shell('<img src="/assets/doppa-eye.png" alt=""><div>Não consegui carregar agora.<br>Tente de novo em instantes.</div>');}
 }
+function igBanner(){
+ if(STATE.igMsg==="ok") return '<div class="igban ok"><div class="igban__t">Instagram conectado!</div><div class="igban__x">Prontinho — a partir de agora acompanhamos suas publicações automaticamente.</div><button class="igban__close" onclick="igDismiss()">ok</button></div>';
+ if(STATE.igMsg==="erro"){
+   var seg=STATE.igSeg==="cas"?"cas":"esp";
+   var url=IG_API+"/start?token="+encodeURIComponent(STATE.id||"")+"&seg="+seg;
+   return '<div class="igban err"><div class="igban__t">Não consegui conectar seu Instagram</div>'
+    +'<div class="igban__x">O motivo mais comum é o perfil <b>não ser Profissional</b> (Criador ou Empresa). É rápido e gratuito de resolver:</div>'
+    +'<ol class="igban__steps">'
+    +'<li>No Instagram, vá no seu perfil e toque no menu <b>☰</b> → <b>Configurações e privacidade</b>.</li>'
+    +'<li>Toque em <b>Tipo de conta e ferramentas</b> (em alguns apps aparece como <b>Conta</b>).</li>'
+    +'<li>Toque em <b>Mudar para conta profissional</b>.</li>'
+    +'<li>Escolha <b>Criador</b> e conclua (é reversível a qualquer momento).</li>'
+    +'<li>Volte aqui e toque em <b>Tentar de novo</b>.</li>'
+    +'</ol>'
+    +'<div class="igban__btns"><a class="igban__try" href="'+url+'">Tentar de novo</a><button class="igban__close" onclick="igDismiss()">fechar</button></div></div>';
+ }
+ return "";
+}
+window.igDismiss=function(){STATE.igMsg=null;var b=document.querySelector(".igban");if(b)b.remove();};
 function shell(html){document.getElementById("app").innerHTML='<div class="state">'+html+'</div>';}
 
 (function(){
- STATE.id=new URLSearchParams(location.search).get("id");
+ var _sp=new URLSearchParams(location.search); STATE.id=_sp.get("id"); STATE.igMsg=_sp.get("ig"); STATE.igSeg=_sp.get("seg");
  if(!STATE.id){shell('<img src="/assets/doppa-eye.png" alt=""><div>Link inválido — falta o identificador do criador.</div>');return;}
  load(null);
 })();
