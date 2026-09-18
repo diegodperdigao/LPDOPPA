@@ -645,8 +645,8 @@ body.modal-open .wpp-pop{display:none !important}
 .success-hero{position:relative;width:min(176px,50vw);margin:0 auto 10px;aspect-ratio:1;display:grid;place-items:center;
   animation:successFloat 3.4s ease-in-out infinite}
 /* glow verde via radial-gradient (sem filter:blur → seguro no iOS), pulsando de leve */
-.success-glow{position:absolute;inset:-8%;border-radius:50%;
-  background:radial-gradient(circle,rgba(34,212,110,.42) 0%,rgba(34,212,110,0) 66%);
+.success-glow{position:absolute;inset:-6%;border-radius:50%;
+  background:radial-gradient(circle,rgba(123,77,255,.5) 0%,rgba(123,77,255,.12) 45%,rgba(123,77,255,0) 70%);
   animation:successGlow 3.4s ease-in-out infinite}
 /* o mascote (o olho) PISCA de vez em quando — squash vertical rápido */
 .success-mascot{position:relative;width:100%;height:auto;transform-origin:50% 62%;
