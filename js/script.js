@@ -165,6 +165,10 @@ const getDiscordInvite = () => {
 // então tratamos esse caso de forma especial (aviso "abrir no navegador").
 const isInAppBrowser = () => {
   try {
+    // teste manual: ?inapp=1 força o modo (pra ver o aviso em qualquer navegador)
+    const p = new URLSearchParams(location.search).get("inapp");
+    if (p === "1") return true;
+    if (p === "0") return false;
     const ua = (navigator.userAgent || "").toLowerCase();
     return /(fban|fbav|fb_iab|instagram|messenger|line\/|micromessenger|twitter|tiktok|musical_ly|bytedance|snapchat|pinterest|linkedinapp|kakaotalk)/.test(ua);
   } catch (e) { return false; }
