@@ -159,6 +159,17 @@ const getDiscordInvite = () => {
   } catch (e) { return CONFIG.DISCORD_INVITE; }
 };
 
+// Detecta navegador EMBUTIDO (in-app browser / webview) — Instagram, Facebook,
+// TikTok, Messenger, Twitter, LinkedIn, etc. Nesses webviews o handoff pro app
+// do WhatsApp (esquema whatsapp://) costuma ser bloqueado e sobra tela branca,
+// então tratamos esse caso de forma especial (aviso "abrir no navegador").
+const isInAppBrowser = () => {
+  try {
+    const ua = (navigator.userAgent || "").toLowerCase();
+    return /(fban|fbav|fb_iab|instagram|messenger|line\/|micromessenger|twitter|tiktok|musical_ly|bytedance|snapchat|pinterest|linkedinapp|kakaotalk)/.test(ua);
+  } catch (e) { return false; }
+};
+
 /* ============================================================
    Helpers
    ============================================================ */
@@ -949,18 +960,49 @@ formEl.addEventListener("submit", async e => {
     return;
   }
 
-  // sucesso: abre a comunidade numa NOVA aba (dentro do gesto do submit → sem
-  // bloqueio de pop-up). A VSL continua viva nesta aba, então se algo falhar a
-  // pessoa só toca no botão de novo — sem precisar rever o vídeo.
+  // sucesso: mostramos SEMPRE a tela de sucesso e a pessoa toca no botão pra ir
+  // pro WhatsApp. Não abrimos mais a aba automaticamente: em navegador embutido
+  // (Instagram/FB/TikTok) essa aba automática ficava branca porque o webview não
+  // repassa o link pro app. Em navegador normal (Chrome/Safari), abrimos a nova
+  // aba na hora pra não perder o gesto — a VSL continua viva nesta aba.
   const dest = getDiscordInvite();
-  try { window.open(dest, "_blank", "noopener"); } catch (e) {}
+  const inApp = isInAppBrowser();
+
+  if (!inApp) {
+    try { window.open(dest, "_blank", "noopener"); } catch (e) {}
+  }
 
   modalHead.hidden = true;
   formEl.hidden = true;
   successEl.hidden = false;
-  $("#discord-link").href = dest;
+  setupSuccessCta(dest, inApp);
   fireConfetti();
 });
+
+/* ------------------------------------------------------------
+   Configura o botão da tela de sucesso conforme o ambiente.
+   - Navegador normal: link em nova aba (a VSL fica viva atrás).
+   - Navegador embutido (webview): navega na MESMA aba (mais confiável pra
+     acionar o app do WhatsApp) e mostra um aviso de "abrir no navegador",
+     porque muitos webviews não fazem o handoff e mostram tela branca.
+   ------------------------------------------------------------ */
+function setupSuccessCta(dest, inApp) {
+  const link = $("#discord-link");
+  if (!link) return;
+  link.href = dest;
+
+  const hint = $("#success-inapp-hint");
+  if (inApp) {
+    // mesma aba: em webview isso aciona o app com mais frequência que nova aba
+    link.removeAttribute("target");
+    link.removeAttribute("rel");
+    if (hint) hint.hidden = false;
+  } else {
+    link.setAttribute("target", "_blank");
+    link.setAttribute("rel", "noopener");
+    if (hint) hint.hidden = true;
+  }
+}
 
 /* ============================================================
    Confetti (puro canvas, sem libs)

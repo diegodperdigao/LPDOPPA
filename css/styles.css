@@ -663,6 +663,10 @@ body.modal-open .wpp-pop{display:none !important}
   box-shadow:0 16px 32px -12px rgba(37,211,102,.65);gap:8px}
 .btn--wpp:hover{filter:brightness(1.06)}
 .btn--wpp svg{flex:none}
+.success-hint{margin:14px auto 0;max-width:34ch;font-size:13px;line-height:1.5;
+  color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:10px 14px}
+.success-hint strong{color:var(--text)}
 @media (prefers-reduced-motion:reduce){.success-hero,.success-mascot,.success-glow{animation:none}}
 
 /* ============================================================
