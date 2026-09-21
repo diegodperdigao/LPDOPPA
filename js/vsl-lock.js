@@ -129,4 +129,12 @@
   document.body.classList.add("is-locked");
   addBadges();
   addHint();
+
+  // teste manual: ?unlock=1 libera o CTA na hora (sem precisar ver o video todo)
+  try {
+    if (new URLSearchParams(location.search).get("unlock") === "1") {
+      // espera o proximo tick pra garantir que badges/hint ja existem
+      setTimeout(unlock, 0);
+    }
+  } catch (e) {}
 })();
