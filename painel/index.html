@@ -239,20 +239,19 @@
     body.appendChild(el("h1", null, "Por origem (link/campanha)"));
     var pBt = el("div","panel");
     pBt.appendChild(el("div","ttl","Desempenho por origem"));
-    pBt.appendChild(el("div","desc","Cada link de tráfego pago, streamer ou afiliado aparece aqui pela sua etiqueta."));
+    pBt.appendChild(el("div","desc","Cada link (tráfego pago, streamer ou afiliado) pela sua etiqueta, do play ao WhatsApp. “Tela WA” = chegou na tela de sucesso · “Clicou” = tocou no botão do WhatsApp."));
     var bt = d.by_btag || [];
     if(!bt.length){ pBt.appendChild(el("div","muted","Sem dados no período.")); }
     else {
-      var maxLeads = Math.max.apply(null, bt.map(function(x){return x.leads||0;}).concat([1]));
-      var tb2 = el("table"); tb2.innerHTML = "<thead><tr><th>Origem</th><th class='num'>Plays</th><th class='num'>Cadastros</th><th style='width:130px'></th></tr></thead>";
+      var tb2 = el("table"); tb2.innerHTML = "<thead><tr><th>Origem</th><th class='num'>Plays</th><th class='num'>Cadastros</th><th class='num'>Tela WA</th><th class='num'>Clicou</th></tr></thead>";
       var tbody2 = el("tbody");
       bt.forEach(function(x){
         var tr = el("tr");
-        var barW = Math.round(pctNum(x.leads,maxLeads));
         tr.innerHTML = "<td><span class='tag'>"+esc(x.btag)+"</span></td>"+
           "<td class='num'>"+nf(x.plays)+"</td>"+
           "<td class='num'>"+nf(x.leads)+"</td>"+
-          "<td><div class='bar'><i style='width:"+barW+"%'></i></div></td>";
+          "<td class='num'>"+nf(x.wpp_view)+"</td>"+
+          "<td class='num'>"+nf(x.wpp_click)+"</td>";
         tbody2.appendChild(tr);
       });
       tb2.appendChild(tbody2); pBt.appendChild(tb2);
