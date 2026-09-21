@@ -5,7 +5,7 @@
 
 # Links de tracking "limpos": servem a home SEM trocar a URL (rewrite 200), preservando
 # fbclid/gclid. O JS registra a btag e limpa a URL pra "/". Planilha via BTAG_LABELS.
-# /tp = Tráfego Pago · /flp = Flupy · /knz = Kennzy · /slv = Slavision40k
+# /tp = Tráfego Pago · streamers: /flp = Flupy · /knz = Kennzy · /slv = Slavision40k
 /tp /index.html 200
 /tp/ /index.html 200
 /flp /index.html 200

@@ -28,9 +28,10 @@ const CONFIG = {
   // Ex.: o link /pago registra "trafego-pago" e a planilha mostra "Tráfego Pago".
   BTAG_LABELS: {
     "trafego-pago": "Tráfego Pago",
-    "flp": "Flupy",
-    "knz": "Kennzy",
-    "slv": "Slavision40k",
+    // Streamers (origem própria, separada de afiliados/tráfego pago) — prefixo p/ filtrar na planilha
+    "flp": "Streamer: Flupy",
+    "knz": "Streamer: Kennzy",
+    "slv": "Streamer: Slavision40k",
   },
 
   // URL do Google Apps Script (planilha). Cole depois de implantar.
@@ -116,9 +117,9 @@ const BTAG_KEY = "doppa_btag";
 // Pra adicionar alguém: 1 linha aqui + 1 no _redirects + 1 rótulo em BTAG_LABELS.
 const BTAG_PATHS = {
   tp: "trafego-pago",   // tráfego pago
-  flp: "flp",           // Flupy
-  knz: "knz",           // Kennzy
-  slv: "slv",           // Slavision40k
+  flp: "flp",           // streamer Flupy
+  knz: "knz",           // streamer Kennzy
+  slv: "slv",           // streamer Slavision40k
 };
 const btagFromPath = pn => { const m = (pn || "").match(/^\/([a-z0-9]{2,16})\/?$/i); return m && BTAG_PATHS[m[1].toLowerCase()]; };
 (function captureBtag() {
