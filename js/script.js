@@ -32,6 +32,7 @@ const CONFIG = {
     "flp": "Streamer: Flupy",
     "knz": "Streamer: Kennzy",
     "slv": "Streamer: Slavision40k",
+    "bgd": "Streamer: Bugado",
   },
 
   // URL do Google Apps Script (planilha). Cole depois de implantar.
@@ -120,6 +121,7 @@ const BTAG_PATHS = {
   flp: "flp",           // streamer Flupy
   knz: "knz",           // streamer Kennzy
   slv: "slv",           // streamer Slavision40k
+  bgd: "bgd",           // streamer Bugado
 };
 const btagFromPath = pn => { const m = (pn || "").match(/^\/([a-z0-9]{2,16})\/?$/i); return m && BTAG_PATHS[m[1].toLowerCase()]; };
 (function captureBtag() {
