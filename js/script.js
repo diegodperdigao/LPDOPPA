@@ -163,15 +163,73 @@ const getDiscordInvite = () => {
 // TikTok, Messenger, Twitter, LinkedIn, etc. Nesses webviews o handoff pro app
 // do WhatsApp (esquema whatsapp://) costuma ser bloqueado e sobra tela branca,
 // então tratamos esse caso de forma especial (aviso "abrir no navegador").
+// Lê o ambiente REAL a partir do userAgent: em qual app (se for webview) e em
+// qual plataforma. Não considera a flag de teste — isso é o ambiente de verdade.
+const uaInfo = () => {
+  let ua = "";
+  try { ua = (navigator.userAgent || "").toLowerCase(); } catch (e) {}
+  const plataforma = /iphone|ipad|ipod/.test(ua) ? "ios"
+                   : /android/.test(ua) ? "android" : "desktop";
+  let app = "browser";
+  if (/instagram/.test(ua)) app = "instagram";
+  else if (/fban|fbav|fb_iab/.test(ua)) app = "facebook";
+  else if (/messenger/.test(ua)) app = "messenger";
+  else if (/tiktok|musical_ly|bytedance/.test(ua)) app = "tiktok";
+  else if (/twitter/.test(ua)) app = "twitter";
+  else if (/micromessenger/.test(ua)) app = "wechat";
+  else if (/snapchat/.test(ua)) app = "snapchat";
+  else if (/pinterest/.test(ua)) app = "pinterest";
+  else if (/linkedinapp/.test(ua)) app = "linkedin";
+  else if (/kakaotalk/.test(ua)) app = "kakao";
+  else if (/line\//.test(ua)) app = "line";
+  return { app, plataforma, inApp: app !== "browser" };
+};
+
 const isInAppBrowser = () => {
   try {
     // teste manual: ?inapp=1 força o modo (pra ver o aviso em qualquer navegador)
     const p = new URLSearchParams(location.search).get("inapp");
     if (p === "1") return true;
     if (p === "0") return false;
-    const ua = (navigator.userAgent || "").toLowerCase();
-    return /(fban|fbav|fb_iab|instagram|messenger|line\/|micromessenger|twitter|tiktok|musical_ly|bytedance|snapchat|pinterest|linkedinapp|kakaotalk)/.test(ua);
+    return uaInfo().inApp;
   } catch (e) { return false; }
+};
+
+// Sessão de teste? (flags ?inapp / ?unlock) — nesses casos NÃO registramos
+// eventos, pra não sujar os números reais do funil.
+const isTestSession = () => {
+  try {
+    const q = new URLSearchParams(location.search);
+    return q.has("inapp") || q.has("unlock");
+  } catch (e) { return false; }
+};
+
+// Registra um evento do funil da tela de sucesso -> WhatsApp no Supabase.
+// evento: 'success_view' (chegou na tela) | 'wpp_click' (tocou no botão).
+const trackWpp = evento => {
+  try {
+    if (isTestSession()) return;                       // ignora testes
+    if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) return;
+    const env = uaInfo();
+    fetch(`${CONFIG.SUPABASE_URL}/rest/v1/wpp_events`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: CONFIG.SUPABASE_KEY,
+        Authorization: `Bearer ${CONFIG.SUPABASE_KEY}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        evento,
+        in_app: env.inApp,
+        app: env.app,
+        plataforma: env.plataforma,
+        origem: CONFIG.ORIGEM || "landing-page",
+        btag: getBtagLabel() || null,
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch (e) {}
 };
 
 /* ============================================================
@@ -980,6 +1038,7 @@ formEl.addEventListener("submit", async e => {
   formEl.hidden = true;
   successEl.hidden = false;
   setupSuccessCta(dest, inApp);
+  trackWpp("success_view"); // chegou na tela de sucesso (com botão do WhatsApp)
   fireConfetti();
 });
 
@@ -994,6 +1053,12 @@ function setupSuccessCta(dest, inApp) {
   const link = $("#discord-link");
   if (!link) return;
   link.href = dest;
+
+  // registra o clique no botão do WhatsApp (uma vez só por tela de sucesso)
+  if (!link.dataset.tracked) {
+    link.dataset.tracked = "1";
+    link.addEventListener("click", () => trackWpp("wpp_click"));
+  }
 
   const hint = $("#success-inapp-hint");
   if (inApp) {
