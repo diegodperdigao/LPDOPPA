@@ -620,18 +620,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       hide:   function(on){ var el=document.querySelector("vturb-smartplayer"); if(el) el.style.visibility = on ? "hidden" : ""; }
     };
 
+    // ---- Métricas do vídeo (VTurb): play, marcos %, conclusão e saída. Mesmo destino do
+    // caminho YouTube (tabelas video_plays / video_progress), pra o funil por origem (btag)
+    // continuar completo agora que o VTurb é o player padrão. Chave publishable (pública). ----
+    var SB="https://ajwfpdprgdcvrkermcwx.supabase.co", KEY="sb_publishable_7AIcd333tOtfC6hzaoNf2A_leFGCu82";
+    function btagVal(){ try{ return (typeof getBtagLabel==="function"?getBtagLabel():(localStorage.getItem("doppa_btag")||""))||null; }catch(e){ return null; } }
+    function visitorId(){ try{ var v=localStorage.getItem("doppa_visitor"); if(!v){ v=Date.now().toString(36)+Math.random().toString(36).slice(2,10); localStorage.setItem("doppa_visitor",v);} return v; }catch(e){ return "anon"; } }
+    var vsid = Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+    function post(table, body){ try{ fetch(SB+"/rest/v1/"+table,{method:"POST",headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY,Prefer:"return=minimal"},body:JSON.stringify(body),keepalive:true}).catch(function(){}); }catch(e){} }
+    function logPlay(evt){ post("video_plays",{evento:evt,origem:"vsl",btag:btagVal()}); }
+    function logProg(evt,pct,seg){ post("video_progress",{visitor:visitorId(),sid:vsid,evento:evt,pct:Math.round(pct||0),segundos:Math.round(seg||0),duracao:Math.round(durT()||0),origem:"vsl",btag:btagVal()}); }
+    var MS=[10,25,50,75,90], msSent={}, doneSent=false, exitSent=false;
+    function logExit(){ if(exitSent||doneSent) return; var d=durT(), t=nowT(); var pct=d?(t/d*100):0; if(pct>=98) return; exitSent=true; logProg("exit",pct,t); }
+    window.addEventListener("pagehide", logExit);
+    document.addEventListener("visibilitychange", function(){ if(document.visibilityState==="hidden") logExit(); });
+
     var playStarted = false;
     inst.on("timeupdate", function(){
-      var t = nowT();
+      var t = nowT(), d = durT();
       // FAIL-SAFE armado só quando o vídeo REALMENTE começou a tocar (currentTime > 0) — nunca
       // pelo relógio da página. Sem play → nunca destrava (o gate segura).
-      if(!playStarted && t > 0){ playStarted = true; if(CTA>0) safeTimer = setTimeout(fireCTA, (CTA + 8) * 1000); }
+      if(!playStarted && t > 0){ playStarted = true; logPlay("play"); logProg("play",0,t); if(CTA>0) safeTimer = setTimeout(fireCTA, (CTA + 8) * 1000); }
+      // marcos de retenção + conclusão (independem do CTA)
+      if(d>0){
+        var pctW = t/d*100;
+        for(var i=0;i<MS.length;i++){ var m=MS[i]; if(pctW>=m && !msSent[m]){ msSent[m]=1; logProg("milestone",m,t); } }
+        if(!doneSent && t>=d-1.2){ doneSent=true; logPlay("complete"); logProg("complete",100,d); }
+      }
       if(ctaFired) return;
       if(CTA>0 && t>=CTA){ setProg(1); fireCTA(); return; }
-      var target = CTA>0 ? CTA : durT();
+      var target = CTA>0 ? CTA : d;
       if(target>0) setProg(t/target);
     });
-    try{ inst.on("ended", function(){ if(!ctaFired){ setProg(1); fireCTA(); } }); }catch(e){}
+    try{ inst.on("ended", function(){ if(!doneSent){ doneSent=true; logPlay("complete"); logProg("complete",100,durT()); } if(!ctaFired){ setProg(1); fireCTA(); } }); }catch(e){}
   }, 200);
   setTimeout(function(){ clearInterval(iv); }, 30000);
 })();
