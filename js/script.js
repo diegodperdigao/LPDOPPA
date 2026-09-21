@@ -234,6 +234,42 @@ const trackWpp = evento => {
   } catch (e) {}
 };
 
+// Topo do funil: registra a ENTRADA (visita) uma vez por carregamento, com a
+// etiqueta da origem. É o que casa com o "cliques no link" das ferramentas
+// externas — só que aqui roda no navegador, então filtra os robôs de preview.
+const trackEntry = () => {
+  try {
+    if (isTestSession()) return;                       // ignora testes
+    if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) return;
+    const env = uaInfo();
+    let visitor = "";
+    try {
+      visitor = localStorage.getItem("doppa_visitor") || "";
+      if (!visitor) { visitor = Date.now().toString(36) + Math.random().toString(36).slice(2, 10); localStorage.setItem("doppa_visitor", visitor); }
+    } catch (e) {}
+    fetch(`${CONFIG.SUPABASE_URL}/rest/v1/page_hits`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: CONFIG.SUPABASE_KEY,
+        Authorization: `Bearer ${CONFIG.SUPABASE_KEY}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        visitor: visitor || null,
+        btag: getBtagLabel() || null,
+        origem: CONFIG.ORIGEM || "landing-page",
+        plataforma: env.plataforma,
+        app: env.app,
+        in_app: env.inApp,
+        path: (function(){ try { return location.pathname; } catch (e) { return null; } })(),
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch (e) {}
+};
+trackEntry(); // registra a visita atual (a captura da btag já rodou acima)
+
 /* ============================================================
    Helpers
    ============================================================ */

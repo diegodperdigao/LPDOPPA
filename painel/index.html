@@ -174,7 +174,8 @@
     /* KPIs */
     body.appendChild(el("h1", null, "Visão geral"));
     var cards = el("div","cards");
-    cards.appendChild(kpi("Views do vídeo", nf(t.plays), "quem deu play", "p"));
+    cards.appendChild(kpi("Entradas (visitantes)", nf(t.entries), "abriram a página", "p"));
+    cards.appendChild(kpi("Views do vídeo", nf(t.plays), pct(t.plays,t.entries)+" das entradas deram play", "p"));
     cards.appendChild(kpi("Assistiram até o fim", nf(t.completes), pct(t.completes,t.plays)+" dos plays", "g"));
     cards.appendChild(kpi("Cadastros (leads)", nf(t.leads), pct(t.leads,t.plays)+" dos plays viram lead", "p"));
     cards.appendChild(kpi("Viram a tela do WhatsApp", nf(t.wpp_view), "chegaram no fim do form", "y"));
@@ -243,11 +244,12 @@
     var bt = d.by_btag || [];
     if(!bt.length){ pBt.appendChild(el("div","muted","Sem dados no período.")); }
     else {
-      var tb2 = el("table"); tb2.innerHTML = "<thead><tr><th>Origem</th><th class='num'>Plays</th><th class='num'>Cadastros</th><th class='num'>Tela WA</th><th class='num'>Clicou</th></tr></thead>";
+      var tb2 = el("table"); tb2.innerHTML = "<thead><tr><th>Origem</th><th class='num'>Entradas</th><th class='num'>Plays</th><th class='num'>Cadastros</th><th class='num'>Tela WA</th><th class='num'>Clicou</th></tr></thead>";
       var tbody2 = el("tbody");
       bt.forEach(function(x){
         var tr = el("tr");
         tr.innerHTML = "<td><span class='tag'>"+esc(x.btag)+"</span></td>"+
+          "<td class='num'>"+nf(x.entries)+"</td>"+
           "<td class='num'>"+nf(x.plays)+"</td>"+
           "<td class='num'>"+nf(x.leads)+"</td>"+
           "<td class='num'>"+nf(x.wpp_view)+"</td>"+
