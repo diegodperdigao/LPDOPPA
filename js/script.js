@@ -28,6 +28,9 @@ const CONFIG = {
   // Ex.: o link /pago registra "trafego-pago" e a planilha mostra "Tráfego Pago".
   BTAG_LABELS: {
     "trafego-pago": "Tráfego Pago",
+    "flp": "Flupy",
+    "knz": "Kennzy",
+    "slv": "Slavision40k",
   },
 
   // URL do Google Apps Script (planilha). Cole depois de implantar.
@@ -108,21 +111,31 @@ if (window.matchMedia && window.matchMedia("(hover: none), (max-width: 767px)").
    quando chega uma btag nova na URL. Vai junto no lead enviado.
    ============================================================ */
 const BTAG_KEY = "doppa_btag";
+// Caminhos "limpos" que registram uma btag SEM ?btag= aparente. O código fica discreto
+// (não entrega o nome); a planilha mostra o nome legível via CONFIG.BTAG_LABELS.
+// Pra adicionar alguém: 1 linha aqui + 1 no _redirects + 1 rótulo em BTAG_LABELS.
+const BTAG_PATHS = {
+  tp: "trafego-pago",   // tráfego pago
+  flp: "flp",           // Flupy
+  knz: "knz",           // Kennzy
+  slv: "slv",           // Slavision40k
+};
+const btagFromPath = pn => { const m = (pn || "").match(/^\/([a-z0-9]{2,16})\/?$/i); return m && BTAG_PATHS[m[1].toLowerCase()]; };
 (function captureBtag() {
   try {
     const p = new URLSearchParams(location.search);
     const raw = p.get("btag") || p.get("ref") || p.get("af") || p.get("aff") || "";
     // sanitiza: só letras/números/._- e no máx. 64 chars
     let btag = raw.trim().replace(/[^\w.\-]/g, "").slice(0, 64).toLowerCase();
-    // Tráfego pago: entra por /tp (link limpo, sem ?btag= aparente). Afiliado (btag na URL) vence.
-    if (!btag && /^\/tp\/?$/i.test(location.pathname)) btag = "trafego-pago";
+    // Caminho limpo (/tp, /flp, ...). Afiliado com ?btag= na URL tem prioridade.
+    if (!btag) btag = btagFromPath(location.pathname) || "";
     if (btag) localStorage.setItem(BTAG_KEY, btag);
-    // Deixa a barra do navegador limpa: tira ?btag=/ref=/af=/aff= e normaliza /tp → /,
+    // Deixa a barra do navegador limpa: tira ?btag=/ref=/af=/aff= e normaliza /tp,/flp,... → /,
     // mantendo os parâmetros do anúncio (fbclid, gclid, utm_*).
     if ((raw || btag) && history.replaceState) {
       const u = new URL(location.href);
       ["btag", "ref", "af", "aff"].forEach(k => u.searchParams.delete(k));
-      const path = /^\/tp\/?$/i.test(u.pathname) ? "/" : u.pathname;
+      const path = btagFromPath(u.pathname) ? "/" : u.pathname;
       const qs = u.searchParams.toString();
       history.replaceState(null, "", path + (qs ? "?" + qs : "") + u.hash);
     }

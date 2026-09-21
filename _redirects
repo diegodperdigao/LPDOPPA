@@ -3,7 +3,14 @@
 /vsl/ / 301
 /vsl/index.html / 301
 
-# Tráfego pago: /tp serve a home SEM trocar a URL (rewrite 200), preservando fbclid/gclid.
-# O JS registra a btag "trafego-pago" (planilha = "Tráfego Pago") e limpa a URL pra "/".
+# Links de tracking "limpos": servem a home SEM trocar a URL (rewrite 200), preservando
+# fbclid/gclid. O JS registra a btag e limpa a URL pra "/". Planilha via BTAG_LABELS.
+# /tp = Tráfego Pago · /flp = Flupy · /knz = Kennzy · /slv = Slavision40k
 /tp /index.html 200
 /tp/ /index.html 200
+/flp /index.html 200
+/flp/ /index.html 200
+/knz /index.html 200
+/knz/ /index.html 200
+/slv /index.html 200
+/slv/ /index.html 200
