@@ -3,22 +3,24 @@
 /vsl/ / 301
 /vsl/index.html / 301
 
-# Links de tracking "limpos": servem a home SEM trocar a URL (rewrite 200), preservando
-# fbclid/gclid. O JS registra a btag e limpa a URL pra "/". Planilha via BTAG_LABELS.
+# Links de tracking "limpos": redirect 301 que injeta a btag como ?btag= (metodo
+# comprovado: a captura por query funciona; o rewrite 200 por PATH nao preservava o
+# caminho no Cloudflare, entao a btag nunca era capturada). O JS le a btag, limpa a
+# URL pra "/" e mantem fbclid/gclid. Planilha via BTAG_LABELS.
 # /tp = Tráfego Pago · streamers: /flp = Flupy · /knz = Kennzy · /slv = Slavision40k · /bgd = Bugado · /lvl = Level Up · /dkt = dukoth · /gvn = guiven
-/tp /index.html 200
-/tp/ /index.html 200
-/flp /index.html 200
-/flp/ /index.html 200
-/knz /index.html 200
-/knz/ /index.html 200
-/slv /index.html 200
-/slv/ /index.html 200
-/bgd /index.html 200
-/bgd/ /index.html 200
-/lvl /index.html 200
-/lvl/ /index.html 200
-/dkt /index.html 200
-/dkt/ /index.html 200
-/gvn /index.html 200
-/gvn/ /index.html 200
+/tp /?btag=trafego-pago 301
+/tp/ /?btag=trafego-pago 301
+/flp /?btag=flp 301
+/flp/ /?btag=flp 301
+/knz /?btag=knz 301
+/knz/ /?btag=knz 301
+/slv /?btag=slv 301
+/slv/ /?btag=slv 301
+/bgd /?btag=bgd 301
+/bgd/ /?btag=bgd 301
+/lvl /?btag=lvl 301
+/lvl/ /?btag=lvl 301
+/dkt /?btag=dkt 301
+/dkt/ /?btag=dkt 301
+/gvn /?btag=gvn 301
+/gvn/ /?btag=gvn 301
