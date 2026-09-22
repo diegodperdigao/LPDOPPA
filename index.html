@@ -562,15 +562,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // O gancho de "fim do vídeo" abaixo dispara doppa:videoended → o vsl-lock destrava.
 
   var ACC = "569e0778-300c-4dff-85ab-9da035f16ade";
-  var PID = "6aa1b29c5568bc9098ba2ff7";
+  var PID = "6ab29cda020ca9747558348f";
   var P    = "https://scripts.converteai.net/"+ACC+"/players/"+PID+"/v4/player.js";
   var WC   = "https://scripts.converteai.net/lib/js/smartplayer-wc/v4/smartplayer.js";
-  var M3U8 = "https://cdn.converteai.net/"+ACC+"/6aa1b21f5568bc9098ba2fa3/main.m3u8";
+  var M3U8 = "https://cdn.converteai.net/"+ACC+"/6ab29c8c35d24e69ad46ebd3/main.m3u8";
 
   // Item 6: mata a tela "You have already started watching this video" (o "resume" do VTurb).
   // Ela usa backdrop-filter:blur no shadow DOM sobre o vídeo → no iOS re-desfoca a tela 60x/s e
   // derruba o fps. Limpando o progresso salvo do VTurb no load, o player sempre começa limpo.
-  try{ var _rx=new RegExp("vturb|smartplayer|converteai|"+PID+"|6aa1b","i"); for(var _i=localStorage.length-1;_i>=0;_i--){ var _k=localStorage.key(_i); if(_k && _rx.test(_k)) localStorage.removeItem(_k); } }catch(e){}
+  try{ var _rx=new RegExp("vturb|smartplayer|converteai|"+PID+"|6aa1b|6ab29c","i"); for(var _i=localStorage.length-1;_i>=0;_i--){ var _k=localStorage.key(_i); if(_k && _rx.test(_k)) localStorage.removeItem(_k); } }catch(e){}
 
   // speed code do VTurb (marca o tempo de início + pré-carrega o player/vídeo)
   window._plt = window._plt || (performance && performance.timeOrigin ? performance.timeOrigin + performance.now() : Date.now());
