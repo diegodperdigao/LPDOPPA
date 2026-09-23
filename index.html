@@ -620,6 +620,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       hide:   function(on){ var el=document.querySelector("vturb-smartplayer"); if(el) el.style.visibility = on ? "hidden" : ""; }
     };
 
+    // ---- Trava a velocidade em 1x (impede acelerar a VSL) ----
+    // Backstop no site: acha o <video> do VTurb (mesmo dentro do shadow DOM) e mantém
+    // playbackRate = 1, resetando quando alguém tenta acelerar (controle nativo/teclado).
+    // Não é 100% à prova de devtools, mas barra a maioria. Desligue c/ ?speed=free.
+    if (new URLSearchParams(location.search).get("speed") !== "free") (function lockRate(){
+      var tagged = [];
+      function collectVideos(root, out){
+        if(!root || !root.querySelectorAll) return;
+        var v = root.querySelectorAll("video");
+        for(var i=0;i<v.length;i++) out.push(v[i]);
+        var all = root.querySelectorAll("*");
+        for(var j=0;j<all.length;j++){ if(all[j].shadowRoot) collectVideos(all[j].shadowRoot, out); }
+      }
+      function pin(v){ try{ if(v.playbackRate !== 1) v.playbackRate = 1; }catch(e){} }
+      function scan(){
+        var out=[]; try{ collectVideos(document, out); }catch(e){}
+        for(var i=0;i<out.length;i++){ var v=out[i]; pin(v);
+          if(tagged.indexOf(v)===-1){ tagged.push(v); v.addEventListener("ratechange", function(e){ pin(e.target); }); }
+        }
+      }
+      scan();
+      setInterval(scan, 1500); // pega o <video> quando ele aparece e re-trava periodicamente
+    })();
+
     // ---- Métricas do vídeo (VTurb): play, marcos %, conclusão e saída. Mesmo destino do
     // caminho YouTube (tabelas video_plays / video_progress), pra o funil por origem (btag)
     // continuar completo agora que o VTurb é o player padrão. Chave publishable (pública). ----
