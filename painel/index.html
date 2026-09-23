@@ -180,6 +180,8 @@
     cards.appendChild(kpi("Cadastros (leads)", nf(t.leads), pct(t.leads,t.plays)+" dos plays viram lead", "p"));
     cards.appendChild(kpi("Viram a tela do WhatsApp", nf(t.wpp_view), "chegaram no fim do form", "y"));
     cards.appendChild(kpi("Clicaram no WhatsApp", nf(t.wpp_click), pct(t.wpp_click,t.wpp_view)+" dos que viram clicaram", "g"));
+    var spd = d.speed || {};
+    cards.appendChild(kpi("Aceleraram o vídeo", nf(spd.total), pct(spd.total,t.plays)+" de quem deu play", "y"));
     body.appendChild(cards);
 
     /* Daily chart */
@@ -236,6 +238,24 @@
     g2.appendChild(pApp);
     body.appendChild(g2);
 
+    /* quem acelerou o vídeo */
+    body.appendChild(el("h1", null, "Velocidade do vídeo"));
+    var pSpd = el("div","panel");
+    pSpd.appendChild(el("div","ttl","Quem acelerou o vídeo"));
+    pSpd.appendChild(el("div","desc", (spd.total||0) ? (nf(spd.total)+" pessoas aceleraram (de "+nf(t.plays)+" que deram play). Distribuição pela velocidade escolhida:") : "Ninguém acelerou o vídeo neste período (ou ainda sem dados)."));
+    var rates = spd.by_rate || [];
+    if(rates.length){
+      var maxV = Math.max.apply(null, rates.map(function(x){return x.visitantes||0;}).concat([1]));
+      rates.forEach(function(r){
+        var row = el("div"); row.style.cssText="display:flex;align-items:center;gap:10px;margin:8px 0";
+        row.appendChild(elTxt("span", (r.rate)+"x","width:56px;color:var(--mut);font-size:13px;font-weight:600"));
+        var bar = el("div","bar"); bar.style.flex="1"; var i=el("i"); i.style.width=pctNum(r.visitantes,maxV)+"%"; bar.appendChild(i); row.appendChild(bar);
+        row.appendChild(elTxt("span", nf(r.visitantes)+" pessoas","width:96px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums"));
+        pSpd.appendChild(row);
+      });
+    }
+    body.appendChild(pSpd);
+
     /* por origem (btag) */
     body.appendChild(el("h1", null, "Por origem (link/campanha)"));
     var pBt = el("div","panel");
@@ -244,7 +264,7 @@
     var bt = d.by_btag || [];
     if(!bt.length){ pBt.appendChild(el("div","muted","Sem dados no período.")); }
     else {
-      var tb2 = el("table"); tb2.innerHTML = "<thead><tr><th>Origem</th><th class='num'>Entradas</th><th class='num'>Plays</th><th class='num'>Cadastros</th><th class='num'>Tela WA</th><th class='num'>Clicou</th></tr></thead>";
+      var tb2 = el("table"); tb2.innerHTML = "<thead><tr><th>Origem</th><th class='num'>Entradas</th><th class='num'>Plays</th><th class='num'>Cadastros</th><th class='num'>Tela WA</th><th class='num'>Clicou</th><th class='num'>Acelerou</th></tr></thead>";
       var tbody2 = el("tbody");
       bt.forEach(function(x){
         var tr = el("tr");
@@ -253,7 +273,8 @@
           "<td class='num'>"+nf(x.plays)+"</td>"+
           "<td class='num'>"+nf(x.leads)+"</td>"+
           "<td class='num'>"+nf(x.wpp_view)+"</td>"+
-          "<td class='num'>"+nf(x.wpp_click)+"</td>";
+          "<td class='num'>"+nf(x.wpp_click)+"</td>"+
+          "<td class='num'>"+nf(x.speeders)+"</td>";
         tbody2.appendChild(tr);
       });
       tb2.appendChild(tbody2); pBt.appendChild(tb2);

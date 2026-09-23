@@ -620,12 +620,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       hide:   function(on){ var el=document.querySelector("vturb-smartplayer"); if(el) el.style.visibility = on ? "hidden" : ""; }
     };
 
-    // ---- Trava a velocidade em 1x (impede acelerar a VSL) ----
-    // Backstop no site: acha o <video> do VTurb (mesmo dentro do shadow DOM) e mantém
-    // playbackRate = 1, resetando quando alguém tenta acelerar (controle nativo/teclado).
-    // Não é 100% à prova de devtools, mas barra a maioria. Desligue c/ ?speed=free.
-    if (new URLSearchParams(location.search).get("speed") !== "free") (function lockRate(){
-      var tagged = [];
+    // ---- Mede quem ACELERA a VSL (não bloqueia — só registra) ----
+    // Acha o <video> do VTurb (inclusive no shadow DOM) e escuta 'ratechange'. Cada
+    // velocidade > 1x nova é registrada uma vez por visitante, com a origem (btag) e o
+    // aparelho. Sessões de teste (?unlock/?inapp/?speed) não contam.
+    (function trackSpeed(){
+      var q = new URLSearchParams(location.search);
+      if (q.has("unlock") || q.has("inapp") || q.has("speed")) return;
+      var SB2="https://ajwfpdprgdcvrkermcwx.supabase.co", KEY2="sb_publishable_7AIcd333tOtfC6hzaoNf2A_leFGCu82";
+      function btag2(){ try{ return (typeof getBtagLabel==="function"?getBtagLabel():(localStorage.getItem("doppa_btag")||""))||null; }catch(e){ return null; } }
+      function visitor2(){ try{ var v=localStorage.getItem("doppa_visitor"); if(!v){ v=Date.now().toString(36)+Math.random().toString(36).slice(2,10); localStorage.setItem("doppa_visitor",v);} return v; }catch(e){ return "anon"; } }
+      var ua=""; try{ ua=(navigator.userAgent||"").toLowerCase(); }catch(e){}
+      var plat = /iphone|ipad|ipod/.test(ua)?"ios":/android/.test(ua)?"android":"desktop";
+      var app = /instagram/.test(ua)?"instagram":/fban|fbav|fb_iab/.test(ua)?"facebook":/tiktok|musical_ly|bytedance/.test(ua)?"tiktok":/messenger/.test(ua)?"messenger":"browser";
+      var logged = {}, tagged = [];
+      function log(rate){
+        var r = Math.round((rate||1)*100)/100;
+        if(r<=1 || logged[r]) return; logged[r]=1;
+        try{ fetch(SB2+"/rest/v1/speed_events",{method:"POST",headers:{"Content-Type":"application/json",apikey:KEY2,Authorization:"Bearer "+KEY2,Prefer:"return=minimal"},
+          body:JSON.stringify({visitor:visitor2(),rate:r,btag:btag2(),origem:"vsl",plataforma:plat,app:app}),keepalive:true}).catch(function(){}); }catch(e){}
+      }
       function collectVideos(root, out){
         if(!root || !root.querySelectorAll) return;
         var v = root.querySelectorAll("video");
@@ -633,15 +647,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         var all = root.querySelectorAll("*");
         for(var j=0;j<all.length;j++){ if(all[j].shadowRoot) collectVideos(all[j].shadowRoot, out); }
       }
-      function pin(v){ try{ if(v.playbackRate !== 1) v.playbackRate = 1; }catch(e){} }
       function scan(){
         var out=[]; try{ collectVideos(document, out); }catch(e){}
-        for(var i=0;i<out.length;i++){ var v=out[i]; pin(v);
-          if(tagged.indexOf(v)===-1){ tagged.push(v); v.addEventListener("ratechange", function(e){ pin(e.target); }); }
+        for(var i=0;i<out.length;i++){ var v=out[i];
+          if(tagged.indexOf(v)===-1){ tagged.push(v);
+            v.addEventListener("ratechange", function(e){ log(e.target.playbackRate); });
+            if(v.playbackRate>1) log(v.playbackRate);
+          }
         }
       }
       scan();
-      setInterval(scan, 1500); // pega o <video> quando ele aparece e re-trava periodicamente
+      setInterval(scan, 1500);
     })();
 
     // ---- Métricas do vídeo (VTurb): play, marcos %, conclusão e saída. Mesmo destino do
