@@ -24,3 +24,12 @@
 /dkt/ /?btag=dkt 301
 /gvn /?btag=gvn 301
 /gvn/ /?btag=gvn 301
+
+# Curinga self-service: crie quantos links quiser SEM mexer no codigo.
+#   /s/<nome> = streamer   ->  planilha "Streamer: <nome>"
+#   /t/<nome> = trafego pago -> "Tráfego Pago: <nome>"
+#   /a/<nome> = afiliado    -> "Afiliado: <nome>"
+# Ex.: doppa.com.br/s/galeguins  ->  ?btag=str-galeguins  ->  "Streamer: galeguins"
+/s/:code /?btag=str-:code 301
+/t/:code /?btag=tp-:code 301
+/a/:code /?btag=af-:code 301

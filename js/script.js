@@ -153,9 +153,23 @@ const btagFromPath = pn => { const m = (pn || "").match(/^\/([a-z0-9]{2,16})\/?$
 const getBtag = () => {
   try { return localStorage.getItem(BTAG_KEY) || ""; } catch (e) { return ""; }
 };
-// Rótulo legível da btag pro lead/planilha (ex.: "trafego-pago" → "Tráfego Pago").
+// Convenção self-service de prefixo → rótulo bonito, SEM precisar cadastrar cada
+// código no BTAG_LABELS. Ex.: "str-galeguins" → "Streamer: galeguins",
+// "tp-facebook" → "Tráfego Pago: facebook", "af-joao" → "Afiliado: joao".
+// Assim dá pra criar links novos só montando a URL, e a planilha já rotula sozinha.
+const prettyBtag = code => {
+  const m = (code || "").match(/^(str|tp|af)-(.+)$/);
+  if (!m) return code;
+  const nome = m[2].replace(/[-_]+/g, " ").trim();
+  if (m[1] === "str") return "Streamer: " + nome;
+  if (m[1] === "tp")  return "Tráfego Pago: " + nome;
+  if (m[1] === "af")  return "Afiliado: " + nome;
+  return code;
+};
+// Rótulo legível da btag pro lead/planilha. Ordem: 1) mapa explícito (nomes
+// curados), 2) convenção de prefixo (self-service), 3) o próprio código.
 const getBtagLabel = () => {
-  try { const b = getBtag(); return (CONFIG.BTAG_LABELS && CONFIG.BTAG_LABELS[b]) || b; } catch (e) { return getBtag(); }
+  try { const b = getBtag(); return (CONFIG.BTAG_LABELS && CONFIG.BTAG_LABELS[b]) || prettyBtag(b); } catch (e) { return getBtag(); }
 };
 // Convite do Discord conforme a btag: se houver um convite dedicado pra essa
 // btag (agência/parceiro), usa ele; senão, o convite padrão da página.
