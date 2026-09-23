@@ -36,6 +36,7 @@ const CONFIG = {
     "lvl": "Streamer: Level Up",
     "dkt": "Streamer: dukoth",
     "gvn": "Streamer: guiven",
+    "glg": "Streamer: galeguins",
   },
 
   // URL do Google Apps Script (planilha). Cole depois de implantar.
@@ -128,6 +129,7 @@ const BTAG_PATHS = {
   lvl: "lvl",           // streamer Level Up
   dkt: "dkt",           // streamer dukoth
   gvn: "gvn",           // streamer guiven
+  glg: "glg",           // streamer galeguins
 };
 const btagFromPath = pn => { const m = (pn || "").match(/^\/([a-z0-9]{2,16})\/?$/i); return m && BTAG_PATHS[m[1].toLowerCase()]; };
 (function captureBtag() {

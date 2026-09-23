@@ -7,7 +7,7 @@
 # comprovado: a captura por query funciona; o rewrite 200 por PATH nao preservava o
 # caminho no Cloudflare, entao a btag nunca era capturada). O JS le a btag, limpa a
 # URL pra "/" e mantem fbclid/gclid. Planilha via BTAG_LABELS.
-# /tp = Tráfego Pago · streamers: /flp = Flupy · /knz = Kennzy · /slv = Slavision40k · /bgd = Bugado · /lvl = Level Up · /dkt = dukoth · /gvn = guiven
+# /tp = Tráfego Pago · streamers: /flp = Flupy · /knz = Kennzy · /slv = Slavision40k · /bgd = Bugado · /lvl = Level Up · /dkt = dukoth · /gvn = guiven · /glg = galeguins
 /tp /?btag=trafego-pago 301
 /tp/ /?btag=trafego-pago 301
 /flp /?btag=flp 301
@@ -24,6 +24,8 @@
 /dkt/ /?btag=dkt 301
 /gvn /?btag=gvn 301
 /gvn/ /?btag=gvn 301
+/glg /?btag=glg 301
+/glg/ /?btag=glg 301
 
 # Curinga self-service: crie quantos links quiser SEM mexer no codigo.
 #   /s/<nome> = streamer   ->  planilha "Streamer: <nome>"
