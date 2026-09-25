@@ -4,6 +4,7 @@ const NOMES: Record<Passo, string> = {
   regras: "Boas-vindas",
   criar: "Crie seus perfis",
   vincular: "Vincule seus perfis",
+  grupo: "Grupo dos criadores",
   perfil: "Monte seu perfil",
   producao: "Como gravar",
 };

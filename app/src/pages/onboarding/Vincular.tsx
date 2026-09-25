@@ -55,7 +55,7 @@ export default function Vincular() {
       const troca = !!conta?.perfis_em;
       await api.vincularPerfis(esp, cas);
       await recarregar();
-      nav(troca ? "/mais" : "/onboarding/perfil", { replace: true, state: { festa: !troca } });
+      nav(troca ? "/perfil" : "/onboarding/grupo", { replace: true, state: { festa: !troca } });
     } catch (x) {
       setErro(x instanceof ErroApp ? x.message : "Não deu pra vincular agora. Tenta de novo.");
     } finally { setSalvando(false); }

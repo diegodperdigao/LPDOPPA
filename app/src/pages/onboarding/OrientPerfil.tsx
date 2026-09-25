@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BIO_LINK, BIO_TEXTO, DESTAQUES, RODAPE, RODAPE_ITENS, SEGMENTOS } from "../../content";
 import { api, type Segmento } from "../../lib/api";
 import { useConta } from "../../lib/conta";
 import { Phone } from "../../components/Phone";
-import { Confetti, CopyButton, Dock } from "../../components/ui";
+import { CopyButton, Dock } from "../../components/ui";
 import Layout from "./Layout";
 
 function Guia({ n, titulo, feito, onFeito, children }: { n: number; titulo: string; feito: boolean; onFeito: () => void; children: React.ReactNode }) {
@@ -27,7 +27,6 @@ function Guia({ n, titulo, feito, onFeito, children }: { n: number; titulo: stri
 export default function OrientPerfil() {
   const { conta, recarregar } = useConta();
   const nav = useNavigate();
-  const festa = (useLocation().state as { festa?: boolean } | null)?.festa;
   const [seg, setSeg] = useState<Segmento>("esp");
   const [feitos, setFeitos] = useState<Record<string, boolean>>({});
   const [salvando, setSalvando] = useState(false);
@@ -48,14 +47,6 @@ export default function OrientPerfil() {
 
   return (
     <Layout passo="perfil">
-      {festa && <Confetti />}
-      {festa && (
-        <div className="card card--glow center" style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 40 }}>🎉</div>
-          <b style={{ fontSize: 18 }}>Perfis vinculados! Você já é criador Doppa.</b>
-          <p className="muted" style={{ fontSize: 14 }}>Agora deixa seus perfis com a cara certa.</p>
-        </div>
-      )}
       <div className="center">
         <h1 className="h-display h1">Monte seu <span className="grad-text">perfil</span></h1>
         <p className="muted" style={{ margin: "8px 0 16px" }}>Perfil bem montado passa confiança e entrega mais.</p>

@@ -22,7 +22,7 @@ export default function Regras() {
         <img src="/mascote.webp" alt="" style={{ width: 150, margin: "4px auto 0" }} />
         <h1 className="h-display h1">Bem-vindo{primeiroNome ? `, ${primeiroNome}` : ""}! <span className="grad-text">👀</span></h1>
         <p className="muted" style={{ margin: "8px 0 22px" }}>
-          Em <b style={{ color: "var(--text)" }}>5 passos rápidos</b> você sai daqui pronto pra gravar seu primeiro vídeo.
+          Em <b style={{ color: "var(--text)" }}>6 passos rápidos</b> você sai daqui pronto pra gravar seu primeiro vídeo.
         </p>
       </div>
 

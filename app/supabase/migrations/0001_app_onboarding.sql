@@ -1,6 +1,6 @@
 -- ============================================================================
 -- DOPPA app (app.doppa.com.br) — contas, onboarding e roteiros
--- ⚠️ AINDA NÃO APLICADA. Revisar antes de rodar no projeto de produção.
+-- Só ACRESCENTA (tabelas, funções e policies novas). Não altera dados existentes.
 --
 -- Princípios:
 --  * Nada de escrita direta pelo navegador em tabelas sensíveis: o app chama
@@ -13,7 +13,7 @@
 
 -- @ normalizado a partir de @, link, link com /reels, ?igsh=... (mesma regra do app)
 create or replace function public.app_norm_ig(p text)
-returns text language sql immutable as $$
+returns text language sql immutable set search_path = pg_catalog as $$
   select nullif(
     regexp_replace(
       split_part(split_part(split_part(
@@ -42,6 +42,7 @@ create table if not exists public.contas (
   perfis_em          timestamptz,
   orient_perfil_em   timestamptz,
   orient_producao_em timestamptz,
+  grupo_em           timestamptz,
   termo_em           timestamptz,
   criado_em          timestamptz not null default now()
 );
@@ -116,7 +117,9 @@ begin
       'ig_esp', app_norm_ig(w.instagram_esp), 'ig_cas', app_norm_ig(w.instagram_cas),
       'regras_em', c.regras_em, 'perfis_em', c.perfis_em,
       'orient_perfil_em', c.orient_perfil_em, 'orient_producao_em', c.orient_producao_em,
-      'termo_em', c.termo_em
+      'termo_em', c.termo_em, 'grupo_em', c.grupo_em,
+      'wl_token', w.token,
+      'grupo_link', case when c.perfis_em is not null then (select valor from app_config where chave = 'grupo_whatsapp') end
     )
     from contas c left join wl_criadores w on w.id = c.criador_id
     where c.id = v_uid
@@ -134,6 +137,9 @@ begin
   if not found then raise exception 'Sessão expirada.'; end if;
   if p_etapa = 'regras' then
     update contas set regras_em = coalesce(regras_em, now()) where id = c.id;
+  elsif p_etapa = 'grupo' then
+    if c.perfis_em is null then raise exception 'Vincule seus perfis primeiro.'; end if;
+    update contas set grupo_em = coalesce(grupo_em, now()) where id = c.id;
   elsif p_etapa = 'orient_perfil' then
     if c.perfis_em is null then raise exception 'Vincule seus perfis primeiro.'; end if;
     update contas set orient_perfil_em = coalesce(orient_perfil_em, now()) where id = c.id;
@@ -230,6 +236,19 @@ begin
    where id = c.id;
 end $$;
 
+-- ---------------------------------------------------------------------------
+-- Imagens dos roteiros (Storage): leitura pública, escrita só admin
+-- ---------------------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('roteiros', 'roteiros', true)
+on conflict (id) do nothing;
+create policy roteiros_img_admin_insert on storage.objects for insert to authenticated
+  with check (bucket_id = 'roteiros' and public.app_eh_admin());
+create policy roteiros_img_admin_update on storage.objects for update to authenticated
+  using (bucket_id = 'roteiros' and public.app_eh_admin());
+create policy roteiros_img_admin_delete on storage.objects for delete to authenticated
+  using (bucket_id = 'roteiros' and public.app_eh_admin());
+
 -- Só usuário logado chama as RPCs do app
 revoke all on function public.app_minha_conta() from public, anon;
 revoke all on function public.app_marcar_etapa(text) from public, anon;
@@ -239,3 +258,5 @@ grant execute on function public.app_minha_conta() to authenticated;
 grant execute on function public.app_marcar_etapa(text) to authenticated;
 grant execute on function public.app_vincular_perfis(text, text) to authenticated;
 grant execute on function public.app_aceitar_termo(jsonb) to authenticated;
+revoke all on function public.app_eh_admin() from public, anon;
+grant execute on function public.app_eh_admin() to authenticated;
