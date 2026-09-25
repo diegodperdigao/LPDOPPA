@@ -1,0 +1,11 @@
+{
+  // Worker separado da LP: serve o app em app.doppa.com.br.
+  // A LP (doppa.com.br) continua no Worker "doppa" da raiz do repositório.
+  "name": "doppa-app",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "./dist",
+    // SPA: qualquer rota desconhecida devolve o index.html (o React Router resolve).
+    "not_found_handling": "single-page-application"
+  }
+}

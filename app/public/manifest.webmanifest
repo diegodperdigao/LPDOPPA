@@ -1,0 +1,9 @@
+{
+  "name": "DOPPA",
+  "short_name": "DOPPA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0E2B",
+  "theme_color": "#0A0E2B",
+  "icons": [{ "src": "/doppa-eye.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+}
