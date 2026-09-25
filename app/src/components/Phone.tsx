@@ -8,11 +8,12 @@ interface Props {
   nome: string;
   emoji: string;
   bio?: string;
+  link?: string;
   destaques?: { emoji: string; nome: string }[];
   small?: boolean;
 }
 
-function Perfil({ usuario, nome, emoji, bio, destaques, children, pro }: Omit<Props, "tela" | "small"> & { children?: React.ReactNode; pro?: boolean }) {
+function Perfil({ usuario, nome, emoji, bio, link, destaques, children, pro }: Omit<Props, "tela" | "small"> & { children?: React.ReactNode; pro?: boolean }) {
   return (
     <>
       <div className="ig-bar">🔒 {usuario} ▾<span className="sp" />＋ ☰</div>
@@ -24,6 +25,7 @@ function Perfil({ usuario, nome, emoji, bio, destaques, children, pro }: Omit<Pr
         <div className="ig-name">{nome}</div>
         {pro && <div className="ig-badge">✓ Painel profissional</div>}
         {bio && <div className="ig-bio">{bio}</div>}
+        {link && <div className="ig-bio" style={{ color: "#e0f1ff", fontWeight: 600 }}>🔗 {link.replace(/^https?:\/\//, "")}</div>}
         <div className="ig-btns"><div>Editar perfil</div><div>Compartilhar</div></div>
         {destaques && (
           <div className="ig-hl">{destaques.map((d) => <div key={d.nome}><i>{d.emoji}</i>{d.nome}</div>)}</div>
@@ -115,7 +117,7 @@ export function Phone(p: Props) {
       conteudo = <Perfil usuario={usuario} nome={nome} emoji={emoji} pro />;
       break;
     case "perfil":
-      conteudo = <Perfil usuario={usuario} nome={nome} emoji={emoji} bio={p.bio} destaques={p.destaques} pro />;
+      conteudo = <Perfil usuario={usuario} nome={nome} emoji={emoji} bio={p.bio} link={p.link} destaques={p.destaques} pro />;
       break;
   }
 

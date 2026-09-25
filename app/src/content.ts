@@ -1,5 +1,5 @@
 // Textos do onboarding num lugar só, pra editar sem mexer nas telas.
-// ⚠️ RASCUNHO: BIO, RODAPE (aviso do Ministério da Fazenda) e as dicas de produção
+// ⚠️ RASCUNHO: RODAPE (aviso do Ministério da Fazenda) e as dicas de produção
 // precisam ser trocados pelos textos oficiais dos fóruns de orientação do Discord.
 
 export const SEGMENTOS = {
@@ -14,10 +14,9 @@ export const REGRAS = [
   { icone: "🤖", titulo: "Nada de vídeo feito por IA", texto: "Vídeo com você gravando, mínimo de 30 segundos." },
 ];
 
-export const BIO: Record<"esp" | "cas", string> = {
-  esp: "⚽ Notícias e bastidores do futebol todo dia\n🔥 Odds turbinadas no link\n🔞 +18 | Aposte com responsabilidade",
-  cas: "📰 As notícias e fofocas do dia em 1 minuto\n🔥 Promoções no link\n🔞 +18 | Aposte com responsabilidade",
-};
+// Bio oficial: a MESMA nos dois perfis. Texto e link precisam estar exatos, senão os vídeos podem não ser validados.
+export const BIO_TEXTO = "Conheça agora o King Panda 👇";
+export const BIO_LINK = "https://go.3c.gg/doppa";
 
 // Os 5 itens que o coletor confere em cada legenda (ig_config.conformidade).
 export const RODAPE_ITENS = ["#publi", "+18", "Aposte com Responsabilidade", "Aposta não é Investimento", "Aviso do Ministério da Fazenda"];
@@ -51,4 +50,4 @@ export const PRODUCAO = [
 
 export const TERMO_VERSAO = "1.0";
 export const TERMO_URL = "https://doppa.com.br/termo";
-export const WHATSAPP_SUPORTE = "https://wa.me/5511999999999"; // TODO: número oficial de suporte
+export const WHATSAPP_SUPORTE = "https://wa.me/5511936242999";

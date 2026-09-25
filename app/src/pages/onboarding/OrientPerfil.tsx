@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BIO, DESTAQUES, RODAPE, RODAPE_ITENS, SEGMENTOS } from "../../content";
+import { BIO_LINK, BIO_TEXTO, DESTAQUES, RODAPE, RODAPE_ITENS, SEGMENTOS } from "../../content";
 import { api, type Segmento } from "../../lib/api";
 import { useConta } from "../../lib/conta";
 import { Phone } from "../../components/Phone";
@@ -68,14 +68,25 @@ export default function OrientPerfil() {
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }} key={seg} className="ob-body">
-        <Phone tela="perfil" usuario={user} nome={s.exemploNome} emoji={s.emoji} bio={BIO[seg]} destaques={DESTAQUES} small />
+        <Phone tela="perfil" usuario={user} nome={s.exemploNome} emoji={s.emoji} bio={BIO_TEXTO} link={BIO_LINK} destaques={DESTAQUES} small />
       </div>
 
       <div className="stack">
-        <Guia n={1} titulo="Cole a bio" feito={!!feitos.bio} onFeito={() => marca("bio")}>
-          <p className="muted" style={{ fontSize: 14 }}>Editar perfil → Bio. Uma pra cada perfil.</p>
-          <div className="copy-box">{BIO[seg]}</div>
-          <CopyButton texto={BIO[seg]} label={`Copiar bio de ${s.nome}`} />
+        <Guia n={1} titulo="Bio e link (iguais nos 2 perfis)" feito={!!feitos.bio} onFeito={() => marca("bio")}>
+          <div className="pro-alert" style={{ padding: 12 }}>
+            <div className="pro-alert__ico" style={{ flexBasis: 38, height: 38, fontSize: 20 }}>‼️</div>
+            <span>Texto <b style={{ display: "inline", color: "var(--yellow)" }}>E</b> link exatamente assim, nos <b style={{ display: "inline", color: "var(--yellow)" }}>dois perfis</b>. Senão os vídeos podem não ser validados.</span>
+          </div>
+          <div className="stack" style={{ gap: 8 }}>
+            <span className="muted" style={{ fontSize: 14 }}>✏️ Editar perfil → <b style={{ color: "var(--text)" }}>Bio</b></span>
+            <div className="copy-box">{BIO_TEXTO}</div>
+            <CopyButton texto={BIO_TEXTO} label="Copiar texto da bio" />
+          </div>
+          <div className="stack" style={{ gap: 8 }}>
+            <span className="muted" style={{ fontSize: 14 }}>🔗 Editar perfil → <b style={{ color: "var(--text)" }}>Adicionar link</b></span>
+            <div className="copy-box" style={{ color: "var(--cyan)" }}>{BIO_LINK}</div>
+            <CopyButton texto={BIO_LINK} label="Copiar link" />
+          </div>
         </Guia>
 
         <Guia n={2} titulo="Rodapé legal em TODA legenda" feito={!!feitos.legenda} onFeito={() => marca("legenda")}>
