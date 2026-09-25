@@ -4,3 +4,5 @@ _*.js
 preview-*.png
 package*.json
 .DS_Store
+!app/package.json
+!app/package-lock.json
