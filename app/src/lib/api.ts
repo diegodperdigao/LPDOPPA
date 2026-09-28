@@ -29,10 +29,14 @@ export interface Roteiro {
   marca: string | null;
   titulo: string;
   texto: string;
-  imagem_url: string | null;
+  // Imagens pra inserir no vídeo e vídeos base pro React.
+  midias: Midia[];
+  legenda: string | null;
+  instrucoes: string | null;
   ordem: number;
   publicado: boolean;
 }
+export interface Midia { url: string; tipo: "imagem" | "video"; nome: string }
 export type RoteiroNovo = Omit<Roteiro, "id"> & { id?: string };
 
 export interface DadosTermo { nome: string; cpf: string; cnpj: string; telefone: string }
@@ -94,7 +98,7 @@ export interface Api {
   // admin
   salvarRoteiro(r: RoteiroNovo): Promise<void>;
   excluirRoteiro(id: string): Promise<void>;
-  enviarImagem(arquivo: File): Promise<string>;
+  enviarMidia(arquivo: File): Promise<Midia>;
   minhasNfs(): Promise<NotaFiscal[]>;
   nfPrazoDias(): Promise<number>;
   enviarNf(e: EnvioNf): Promise<void>;
@@ -165,7 +169,7 @@ function apiSupabase(sb: SupabaseClient): Api {
     },
     async roteiros(data) {
       const { data: rows, error } = await sb.from("roteiros")
-        .select("id,data,segmento,marca,titulo,texto,imagem_url,ordem,publicado")
+        .select("id,data,segmento,marca,titulo,texto,midias,legenda,instrucoes,ordem,publicado")
         .eq("data", data).order("segmento").order("ordem").order("criado_em");
       if (error) throw new ErroApp(error.message);
       return (rows ?? []) as Roteiro[];
@@ -188,12 +192,12 @@ function apiSupabase(sb: SupabaseClient): Api {
       const { error } = await sb.from("roteiros").delete().eq("id", id);
       if (error) throw new ErroApp(error.message);
     },
-    async enviarImagem(arquivo) {
+    async enviarMidia(arquivo) {
       const ext = (arquivo.name.split(".").pop() || "jpg").toLowerCase();
       const caminho = `${hojeSP()}/${crypto.randomUUID()}.${ext}`;
       const { error } = await sb.storage.from("roteiros").upload(caminho, arquivo, { contentType: arquivo.type, upsert: false });
       if (error) throw new ErroApp(error.message);
-      return sb.storage.from("roteiros").getPublicUrl(caminho).data.publicUrl;
+      return { url: sb.storage.from("roteiros").getPublicUrl(caminho).data.publicUrl, tipo: arquivo.type.startsWith("video/") ? "video" : "imagem", nome: arquivo.name };
     },
     async minhasNfs() {
       const { data, error } = await sb.from("notas_fiscais").select("id,ciclo_start,ciclo_end,numero,valor,status,motivo,enviada_em,arquivo_path").order("ciclo_start", { ascending: false });
@@ -268,17 +272,17 @@ const campanhasExemplo = (): Campanha[] => {
   const base = { marcas: ["kingpanda", "superbet"], meta_dia: 30, duracao_min: 30, valor_mes: 1400, publicado: true,
     regras: ["Vídeos com no mínimo 30 segundos", "Nada de IA: é você gravando", "Rodapé legal completo em toda legenda", "Hashtag da marca do roteiro (#kingpanda, #superbet)"] };
   return [
-    { ...base, id: "c4", titulo: "King Panda + Superbet", ciclo: "Ciclo 4", inicio: "2026-09-25", fim: "2026-10-25",
+    { ...base, id: "c4", titulo: "King Panda + Superbet", ciclo: "Ciclo 4", inicio: "2026-09-26", fim: "2026-10-26",
       corpo: "EXEMPLO: aqui entra o texto do post da campanha, do jeito que ia pro Discord. Metas, bônus, datas importantes e o que muda nesse ciclo." },
-    { ...base, id: "c3", titulo: "King Panda + Superbet", ciclo: "Ciclo 3", inicio: "2026-08-25", fim: "2026-09-25", corpo: "" },
+    { ...base, id: "c3", titulo: "King Panda + Superbet", ciclo: "Ciclo 3", inicio: "2026-08-26", fim: "2026-09-25", corpo: "" },
   ];
 };
 const avisosExemplo = (): AvisoAdmin[] => {
   const ontem = new Date(Date.now() - 864e5).toISOString();
   return [
-    { id: "a1", titulo: "Ciclo 4 começou!", corpo: "Novas campanhas de King Panda e Superbet no ar. A meta continua 30 vídeos por dia e os roteiros saem todo dia de manhã.", tipo: "popup", tom: "sucesso", publico: "todos", cta_texto: "Ver roteiros", cta_url: "/roteiros", inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 41, cliques: 18 },
+    { id: "a1", titulo: "Live de resultados na sexta", corpo: "Vamos mostrar quem mais postou na semana e tirar dúvidas ao vivo, às 19h.", tipo: "mural", tom: "sucesso", publico: "todos", cta_texto: "Ver roteiros", cta_url: "/roteiros", inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 41, cliques: 18 },
     { id: "a2", titulo: "NF do ciclo 3 até 28/09", corpo: "Envie sua nota fiscal pela Carteira pra receber sem atraso.", tipo: "faixa", tom: "alerta", publico: "todos", cta_texto: "Enviar NF", cta_url: "/carteira", inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 22, cliques: 9 },
-    { id: "a3", titulo: "Live de dicas na quinta às 19h", corpo: "Vamos mostrar os vídeos que mais performaram na semana e responder dúvidas ao vivo.", tipo: "mural", tom: "info", publico: "todos", cta_texto: null, cta_url: null, inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 12, cliques: 0 },
+    { id: "a3", titulo: "Dica: grave em lote", corpo: "Separe um horário fixo e grave vários roteiros de uma vez. Rende muito mais.", tipo: "mural", tom: "info", publico: "todos", cta_texto: null, cta_url: null, inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 12, cliques: 0 },
   ];
 };
 
@@ -294,12 +298,20 @@ function apiDemo(): Api {
   };
   const exemplo = (): Roteiro[] => {
     const d = hojeSP();
+    const img = (nome: string, url: string): Midia => ({ url, tipo: "imagem", nome });
+    const base = { ordem: 0, publicado: true, legenda: null as string | null, instrucoes: null as string | null };
     return [
-      { id: "1", data: d, segmento: "esp", marca: "kingpanda", titulo: "Virada histórica no clássico", imagem_url: null, ordem: 0, publicado: true,
+      { ...base, id: "1", data: d, segmento: "esp", marca: "kingpanda", titulo: "Virada histórica no clássico",
+        midias: [img("placar.webp", "/mascote.webp"), img("jogador.png", "/doppa-eye.png")],
+        legenda: "EXEMPLO: Que virada foi essa?! 🔥 #kingpanda #publi +18 Aposte com responsabilidade.",
+        instrucoes: "Use a imagem do placar no começo e a do jogador no fim. Poste no perfil de Esportes.",
         texto: "EXEMPLO — Você viu o que aconteceu ontem? O time estava perdendo por dois a zero e virou nos últimos dez minutos...\n\nE se você curte sentir essa emoção valendo, no King Panda tem odd turbinada todo dia. Link na bio." },
-      { id: "2", data: d, segmento: "esp", marca: "superbet", titulo: "Artilheiro em alta", imagem_url: null, ordem: 1, publicado: true,
+      { ...base, id: "2", data: d, segmento: "esp", marca: "superbet", titulo: "Artilheiro em alta", ordem: 1,
+        midias: [img("artilheiro.webp", "/mascote.webp")],
+        legenda: "EXEMPLO: Ninguém segura! ⚽ #superbet #publi +18",
         texto: "EXEMPLO — Quinto jogo seguido marcando. Ninguém segura esse cara...\n\nNa Superbet você acompanha cada lance. Link na bio." },
-      { id: "3", data: d, segmento: "cas", marca: "kingpanda", titulo: "A fofoca do dia", imagem_url: null, ordem: 0, publicado: true,
+      { ...base, id: "3", data: d, segmento: "cas", marca: "kingpanda", titulo: "A fofoca do dia", midias: [],
+        instrucoes: "Faça React em cima do vídeo base. Poste no perfil de Notícias/Variedades.",
         texto: "EXEMPLO — Gente, vocês não vão acreditar no que aconteceu com aquela famosa ontem à noite...\n\nE falando em surpresa, no King Panda a Hora do Panda turbina as odds. Link na bio." },
     ];
   };
@@ -372,8 +384,9 @@ function apiDemo(): Api {
       else gravarJ(DEMO_ROT, [...lista, { ...r, id: String(Date.now()) } as Roteiro]);
     },
     async excluirRoteiro(id) { gravarJ(DEMO_ROT, todos().filter((x) => x.id !== id)); },
-    async enviarImagem(arquivo) {
-      return await new Promise<string>((ok) => { const f = new FileReader(); f.onload = () => ok(String(f.result)); f.readAsDataURL(arquivo); });
+    async enviarMidia(arquivo) {
+      const url = await new Promise<string>((ok) => { const f = new FileReader(); f.onload = () => ok(String(f.result)); f.readAsDataURL(arquivo); });
+      return { url, tipo: arquivo.type.startsWith("video/") ? "video" : "imagem", nome: arquivo.name };
     },
     async minhasNfs() { return lerJ<NotaFiscal[]>(DEMO_NF, []); },
     async nfPrazoDias() { return 5; },

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { CalendarClock, DoorOpen, Film, Flame, Moon, NotebookPen, Search, Smartphone, Tag, BookOpen, FileSignature, type LucideIcon } from "lucide-react";
 import { api, ddmm, type ContaAdmin, type Funil } from "../../lib/api";
 import { igUrl } from "../../lib/ig";
@@ -39,7 +40,8 @@ export default function AdminCriadores() {
   const [erro, setErro] = useState("");
   const [aba, setAba] = useState<"app" | "legado">("app");
   const [filtro, setFiltro] = useState<Etapa | null>(null);
-  const [busca, setBusca] = useState("");
+  const buscaInicial = (useLocation().state as { busca?: string } | null)?.busca ?? "";
+  const [busca, setBusca] = useState(buscaInicial);
 
   useEffect(() => { api.adminCriadores().then(setDados).catch((e) => setErro(e.message)); }, []);
 

@@ -82,7 +82,7 @@ export default function CriarPerfis() {
           <ol className="resumo__passos">
             {RESUMO(s).map((r, k) => <li key={k}><span className="resumo__n">{k + 1}</span><span>{r}</span></li>)}
           </ol>
-          <button className="link-btn" style={{ alignSelf: "center" }} onClick={() => { setVerSlides(true); setI(0); }}><PlayCircle size={16} /> Ver o passo a passo completo</button>
+          <button className="btn btn--ghost resumo__ver" onClick={() => { setVerSlides(true); setI(0); }}><PlayCircle size={18} /> Ver o passo a passo completo</button>
           <Check on={feitos[seg]} onToggle={marcar}>Criei o perfil profissional de {s.nome}</Check>
         </div>
       ) : (

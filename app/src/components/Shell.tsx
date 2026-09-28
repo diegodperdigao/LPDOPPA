@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Bell, BookOpen, Flag, Megaphone, Clapperboard, FilePenLine, House, Receipt, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
+import { Bell, BookOpen, Flag, Search, Megaphone, Clapperboard, FilePenLine, House, Receipt, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
 import { api } from "../lib/api";
 import { useConta } from "../lib/conta";
-import SeletorTema from "./SeletorTema";
+import SeletorTema, { BotaoTema } from "./SeletorTema";
+import Busca from "./Busca";
 import { AvisoFaixas, AvisoPopup } from "./Avisos";
 import { useAvisos } from "../lib/avisos";
 import "./Shell.css";
@@ -89,12 +90,25 @@ function Sidebar({ onNavegar }: { onNavegar?: () => void }) {
 
 export default function Shell({ titulo, acao, children }: { titulo: string; acao?: React.ReactNode; children: React.ReactNode }) {
   const [aberto, setAberto] = useState(false);
-  const { pathname } = useLocation();
+  const [busca, setBusca] = useState(false);
+  const { pathname, state } = useLocation();
+  // Logo depois do onboarding o Início abre o pop-up do ciclo: aviso em pop-up espera a próxima visita.
+  const recemLiberado = !!(state as { liberado?: boolean } | null)?.liberado;
   const { conta } = useConta();
   const { naoLidos } = useAvisos();
   const toque = useRef<number | null>(null);
 
   useEffect(() => { setAberto(false); window.scrollTo(0, 0); }, [pathname]);
+  // Atalhos da busca: Ctrl/Cmd+K ou "/".
+  useEffect(() => {
+    const f = (e: KeyboardEvent) => {
+      const digitando = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target as HTMLElement).tagName);
+      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !digitando)) { e.preventDefault(); setBusca(true); }
+    };
+    window.addEventListener("keydown", f);
+    return () => window.removeEventListener("keydown", f);
+  }, []);
+  const paginas = GRUPOS.filter((g) => !g.admin || conta?.papel === "admin").flatMap((g) => g.itens);
   useEffect(() => {
     document.body.style.overflow = aberto ? "hidden" : "";
     const esc = (e: KeyboardEvent) => e.key === "Escape" && setAberto(false);
@@ -123,6 +137,8 @@ export default function Shell({ titulo, acao, children }: { titulo: string; acao
           <h1 className="topbar__t">{titulo}</h1>
           <div className="topbar__acao row" style={{ gap: 8 }}>
             {acao}
+            <button className="icon-btn" onClick={() => setBusca(true)} aria-label="Pesquisar"><Search size={18} strokeWidth={1.9} /></button>
+            <BotaoTema />
             <NavLink to="/avisos" className="icon-btn sino" aria-label={`Avisos${naoLidos ? `: ${naoLidos} novos` : ""}`}>
               <Bell size={18} strokeWidth={1.9} />
               {naoLidos > 0 && <span className="sino__n">{naoLidos}</span>}
@@ -130,11 +146,12 @@ export default function Shell({ titulo, acao, children }: { titulo: string; acao
             {!acao && <Avatar nome={conta?.nome ?? ""} size={34} />}
           </div>
         </header>
-        <main className="main__body" key={pathname}><AvisoFaixas />{children}</main>
+        <main className="main__body" key={pathname}><AvisoFaixas pagina={pathname} />{children}</main>
         <div className="tabs-space" />
       </div>
 
-      <AvisoPopup />
+      {!recemLiberado && <AvisoPopup />}
+      {busca && <Busca paginas={paginas} onFechar={() => setBusca(false)} />}
       <nav className="tabs" aria-label="Atalhos">
         {ABAS.map(({ to, icon: I, nome }) => (
           <NavLink key={to} to={to} end={to === "/"} className={({ isActive }) => (isActive ? "on" : "")}>

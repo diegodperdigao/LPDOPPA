@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowRight, Check, CircleAlert, Link2, PartyPopper, PenLine, Scale, UserRound } from "lucide-react";
-import { BIO_LINK, BIO_TEXTO, DESTAQUES, RODAPE, RODAPE_ITENS, SEGMENTOS } from "../../content";
+import { ArrowRight, Check, CircleAlert, Download, ImageIcon, Link2, PartyPopper, PenLine, UserRound } from "lucide-react";
+import { BIO_LINK, BIO_TEXTO, DESTAQUE, SEGMENTOS } from "../../content";
 import { api, type Segmento } from "../../lib/api";
 import { useConta } from "../../lib/conta";
 import { Phone } from "../../components/Phone";
@@ -36,7 +36,7 @@ export default function OrientPerfil() {
   const s = SEGMENTOS[seg];
   const user = (seg === "esp" ? conta?.ig_esp : conta?.ig_cas) || s.exemploUser;
   const marca = (k: string) => setFeitos((f) => ({ ...f, [k]: !f[k] }));
-  const faltam = ["bio", "legenda", "destaques"].filter((k) => !feitos[k]).length;
+  const faltam = ["bio", "destaques"].filter((k) => !feitos[k]).length;
 
   async function seguir() {
     setSalvando(true);
@@ -69,7 +69,7 @@ export default function OrientPerfil() {
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }} key={seg} className="ob-body">
-        <Phone tela="perfil" usuario={user} nome={s.exemploNome} bio={BIO_TEXTO} link={BIO_LINK} destaques={DESTAQUES} small />
+        <Phone tela="perfil" usuario={user} nome={s.exemploNome} bio={BIO_TEXTO} link={BIO_LINK} destaques={[DESTAQUE]} small />
       </div>
 
       <div className="stack">
@@ -90,33 +90,33 @@ export default function OrientPerfil() {
           </div>
         </Guia>
 
-        <Guia n={2} titulo="Rodapé legal em toda legenda" feito={!!feitos.legenda} onFeito={() => marca("legenda")}>
-          <div className="pro-alert">
-            <Scale size={18} color="var(--t-yellow)" style={{ flex: "0 0 auto", marginTop: 1 }} />
-            <span>Vídeo sem o rodapé completo <b style={{ display: "inline" }}>não é contabilizado</b>.</span>
+        <Guia n={2} titulo={`Crie o destaque ${DESTAQUE.nome}`} feito={!!feitos.destaques} onFeito={() => marca("destaques")}>
+          <p className="muted" style={{ fontSize: 14 }}>Nos dois perfis. É o único destaque que o perfil precisa ter.</p>
+          <div className="destaque">
+            <div className="destaque__capa" style={DESTAQUE.imagem ? { backgroundImage: `url(${DESTAQUE.imagem})` } : undefined}>{!DESTAQUE.imagem && <ImageIcon size={22} />}</div>
+            <ol className="steps-mini">
+              <li><span>Baixe a imagem e poste como <b>story</b></span></li>
+              <li><span>No story, adicione a figurinha de <b>link</b> com o link abaixo</span></li>
+              <li><span>Salve nos destaques com o nome <b>{DESTAQUE.nome}</b></span></li>
+            </ol>
           </div>
-          <div className="rodape-itens">{RODAPE_ITENS.map((t) => <span key={t} className="chip chip--green"><Check size={12} strokeWidth={2.6} /> {t}</span>)}</div>
-          <div className="copy-box">{RODAPE}</div>
-          <CopyButton texto={RODAPE} label="Copiar rodapé" />
-          <p className="dim">Dica: salve o rodapé nas notas do celular. Use também a hashtag da marca do roteiro (ex.: #kingpanda, #superbet).</p>
-        </Guia>
-
-        <Guia n={3} titulo="Crie os destaques" feito={!!feitos.destaques} onFeito={() => marca("destaques")}>
-          <p className="muted" style={{ fontSize: 14 }}>Poste um story pra cada um e salve como destaque:</p>
-          <div className="row" style={{ gap: 18 }}>
-            {DESTAQUES.map((d) => (
-              <div key={d} className="center" style={{ fontSize: 12.5, fontWeight: 500, width: 72 }}>
-                <div className="hl-circ" />
-                {d}
-              </div>
-            ))}
+          <div className="stack" style={{ gap: 8 }}>
+            {DESTAQUE.imagem
+              ? <a className="copy-btn" href={DESTAQUE.imagem} download><Download size={15} /> Baixar imagem do destaque</a>
+              : <span className="copy-btn" aria-disabled="true" style={{ opacity: .55 }}><Download size={15} /> Imagem do destaque em breve</span>}
+            {DESTAQUE.link ? (
+              <>
+                <div className="copy-box" style={{ color: "var(--t-violet)" }}>{DESTAQUE.link}</div>
+                <CopyButton texto={DESTAQUE.link} label="Copiar link do destaque" />
+              </>
+            ) : <span className="dim" style={{ fontSize: 13 }}>O link do destaque aparece aqui em breve.</span>}
           </div>
         </Guia>
       </div>
 
       <Dock>
         <button className="btn" disabled={faltam > 0 || salvando} onClick={seguir}>
-          {faltam ? `Faltam ${faltam} ${faltam === 1 ? "item" : "itens"}` : <>Perfis prontos, liberar roteiros <ArrowRight size={18} /></>}
+          {faltam ? `Faltam ${faltam} ${faltam === 1 ? "item" : "itens"}` : <>Perfis prontos, continuar <ArrowRight size={18} /></>}
         </button>
       </Dock>
     </Layout>

@@ -19,3 +19,14 @@ export default function SeletorTema() {
     </div>
   );
 }
+
+// Botão do topo: alterna entre claro e escuro (a partir do tema que está na tela).
+export function BotaoTema() {
+  const [tema, setTema] = useTema();
+  const escuro = tema === "dark" || (tema === "auto" && !matchMedia("(prefers-color-scheme: light)").matches);
+  return (
+    <button className="icon-btn" onClick={() => setTema(escuro ? "light" : "dark")} aria-label={escuro ? "Mudar para tema claro" : "Mudar para tema escuro"} title={escuro ? "Tema claro" : "Tema escuro"}>
+      {escuro ? <Sun size={18} strokeWidth={1.9} /> : <Moon size={18} strokeWidth={1.9} />}
+    </button>
+  );
+}

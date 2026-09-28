@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { ArrowRight, CalendarRange, ChevronRight, Clock3, FileSignature, ListChecks, LockOpen } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ArrowRight, CalendarRange, ChevronRight, Clock3, FileSignature, Flag, ListChecks } from "lucide-react";
 import { MISSOES, SEGMENTOS } from "../content";
-import { api, ddmm, hojeSP, type Roteiro } from "../lib/api";
+import { api, ddmm, hojeSP, type Campanha, type Roteiro } from "../lib/api";
+import { campanhaAtual, dataExtenso, marcasTexto } from "../lib/campanha";
+import Portal from "../components/Portal";
 import { missaoFeita, useConta } from "../lib/conta";
 import { useAvisos } from "../lib/avisos";
 import { ultimaContagem, usePainel } from "../lib/painel";
@@ -12,23 +14,58 @@ import { IconTile } from "../components/Icon";
 import { Confetti } from "../components/ui";
 import { DiasGrid, HeroCiclo, Kpis } from "../components/Ciclo";
 
+function InicioCiclo({ onFechar }: { onFechar: () => void }) {
+  const nav = useNavigate();
+  const [c, setC] = useState<Campanha | null | undefined>(undefined);
+  useEffect(() => { api.campanhas().then((l) => setC(campanhaAtual(l))).catch(() => setC(null)); }, []);
+  if (c === undefined) return null;
+  return (
+    <Portal>
+      <div className="modal" onClick={(e) => e.target === e.currentTarget && onFechar()}>
+        <div className="modal__sheet stack ciclo-pop" role="dialog" aria-modal="true">
+          <img src="/mascote.webp" alt="" style={{ width: 96, margin: "0 auto" }} />
+          {c ? (
+            <>
+              <span className="eyebrow center">Tudo pronto!</span>
+              <h2 className="h-display center" style={{ fontSize: 30, textWrap: "balance" }}>Você está iniciando no {c.ciclo ?? "ciclo atual"}</h2>
+              <p className="center muted">
+                Essa campanha vai do dia <b>{dataExtenso(c.inicio)}</b>{c.fim && <> até o dia <b>{dataExtenso(c.fim)}</b></>}.
+                {c.marcas.length > 0 && <> As marcas parceiras são <b>{marcasTexto(c)}</b>.</>}
+              </p>
+            </>
+          ) : (
+            <>
+              <span className="eyebrow center">Tudo pronto!</span>
+              <h2 className="h-display center" style={{ fontSize: 30 }}>Seus roteiros estão liberados</h2>
+            </>
+          )}
+          <button className="btn" onClick={() => { onFechar(); nav("/roteiros"); }}>Ver roteiros de hoje <ArrowRight size={18} /></button>
+          {c && <button className="btn btn--ghost" onClick={() => { onFechar(); nav("/campanha"); }}><Flag size={17} /> Detalhes da campanha</button>}
+        </div>
+      </div>
+    </Portal>
+  );
+}
+
 export default function Inicio() {
   const { conta } = useConta();
   const liberado = (useLocation().state as { liberado?: boolean } | null)?.liberado;
   const { dados, erro } = usePainel();
   const [roteiros, setRoteiros] = useState<Roteiro[] | null>(null);
   const [termo, setTermo] = useState(false);
+  // Acabou o onboarding: abre o pop-up do ciclo/campanha em que a pessoa está entrando.
+  const [boasVindas, setBoasVindas] = useState(!!liberado);
   const { avisos } = useAvisos();
   const temPopup = avisos.some((a) => a.tipo === "popup" && !a.lido);
 
   useEffect(() => { api.roteiros(hojeSP()).then(setRoteiros).catch(() => setRoteiros([])); }, []);
   // O termo abre sozinho só se não houver um aviso em pop-up na frente (um modal por vez).
   useEffect(() => {
-    if (!conta || conta.termo_em || temPopup) return;
+    if (!conta || conta.termo_em || temPopup || liberado) return;
     let visto = false;
     try { visto = sessionStorage.getItem("termo_pop") === "1"; sessionStorage.setItem("termo_pop", "1"); } catch { /* sem storage */ }
     if (visto) return;
-    const t = setTimeout(() => setTermo(true), liberado ? 3500 : 1500);
+    const t = setTimeout(() => setTermo(true), 1500);
     return () => clearTimeout(t);
   }, [conta, liberado, temPopup]);
 
@@ -44,16 +81,6 @@ export default function Inicio() {
   return (
     <Shell titulo="Início">
       {liberado && <Confetti />}
-
-      {liberado && (
-        <div className="card card--glow" style={{ marginBottom: 12 }}>
-          <div className="row">
-            <IconTile icon={LockOpen} tom="green" size={40} />
-            <div style={{ flex: 1 }}><b style={{ fontWeight: 600 }}>Roteiros liberados!</b><div className="dim">Escolha um, copie, grave e poste.</div></div>
-          </div>
-          <Link to="/roteiros" className="btn" style={{ marginTop: 14 }}>Ver roteiros de hoje <ArrowRight size={18} /></Link>
-        </div>
-      )}
 
       {conta && (!conta.termo_em || pendentes.length > 0) && (
         <section className="card" style={{ marginBottom: 12 }}>
@@ -118,6 +145,7 @@ export default function Inicio() {
       </div>
 
       {termo && <TermoModal onFechar={() => setTermo(false)} />}
+      {boasVindas && <InicioCiclo onFechar={() => setBoasVindas(false)} />}
     </Shell>
   );
 }

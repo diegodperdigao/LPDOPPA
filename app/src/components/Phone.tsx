@@ -10,7 +10,7 @@ interface Props {
   nome: string;
   bio?: string;
   link?: string;
-  destaques?: string[];
+  destaques?: { nome: string; imagem?: string | null }[];
   small?: boolean;
   print?: { src: string; alvo?: { x: number; y: number; w: number; h: number } };
 }
@@ -32,7 +32,7 @@ function Perfil({ usuario, nome, bio, link, destaques, pro, children }: Omit<Pro
         {link && <div className="ig-link"><Link2 size={11} strokeWidth={2.2} /> {link.replace(/^https?:\/\//, "")}</div>}
         <div className="ig-btns"><div>Editar perfil</div><div>Compartilhar perfil</div></div>
         {destaques && (
-          <div className="ig-hl">{destaques.map((d) => <div key={d}><i /><span>{d}</span></div>)}</div>
+          <div className="ig-hl">{destaques.map((d) => <div key={d.nome}><i style={d.imagem ? { backgroundImage: `url(${d.imagem})` } : undefined} /><span>{d.nome}</span></div>)}</div>
         )}
         <div className="ig-grid">{Array.from({ length: 6 }, (_, i) => <i key={i} />)}</div>
         {children}

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import Portal from "../../components/Portal";
-import { ArrowLeft, ArrowRight, Check, ImagePlus, Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Film, ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react";
 import { MARCAS, SEGMENTOS } from "../../content";
-import { api, ErroApp, hojeSP, type Roteiro, type RoteiroNovo, type Segmento } from "../../lib/api";
+import { api, ErroApp, hojeSP, type Midia, type Roteiro, type RoteiroNovo, type Segmento } from "../../lib/api";
 import Shell from "../../components/Shell";
 
-const vazio = (data: string, segmento: Segmento): RoteiroNovo => ({ data, segmento, marca: "kingpanda", titulo: "", texto: "", imagem_url: null, ordem: 0, publicado: true });
+const vazio = (data: string, segmento: Segmento): RoteiroNovo => ({ data, segmento, marca: "kingpanda", titulo: "", texto: "", midias: [], legenda: null, instrucoes: null, ordem: 0, publicado: true });
 
 function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar: () => void; onSalvo: () => void }) {
   const [r, setR] = useState<RoteiroNovo>(inicial);
@@ -13,10 +13,14 @@ function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar
   const [erro, setErro] = useState("");
   const set = <K extends keyof RoteiroNovo>(k: K, v: RoteiroNovo[K]) => setR((x) => ({ ...x, [k]: v }));
 
-  async function imagem(f: File | undefined) {
-    if (!f) return;
+  async function enviar(arquivos: FileList | null) {
+    if (!arquivos?.length) return;
     setErro(""); setEnviando(true);
-    try { set("imagem_url", await api.enviarImagem(f)); } catch (x) { setErro(x instanceof ErroApp ? x.message : "Falha no envio da imagem."); } finally { setEnviando(false); }
+    try {
+      const novas: Midia[] = [];
+      for (const f of Array.from(arquivos)) novas.push(await api.enviarMidia(f));
+      setR((x) => ({ ...x, midias: [...x.midias, ...novas] }));
+    } catch (x) { setErro(x instanceof ErroApp ? x.message : "Falha no envio do arquivo."); } finally { setEnviando(false); }
   }
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
@@ -46,12 +50,23 @@ function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar
           <textarea className="textarea" required rows={9} value={r.texto} onChange={(e) => set("texto", e.target.value)} placeholder="Cole o roteiro completo aqui…" />
           <span className="hint">{r.texto.trim().split(/\s+/).filter(Boolean).length} palavras · ~{Math.round(r.texto.trim().split(/\s+/).filter(Boolean).length / 2.6)}s de fala</span>
         </div>
-        <div className="field"><label>Imagem (opcional)</label>
-          {r.imagem_url ? (
-            <div className="img-prev"><img src={r.imagem_url} alt="" /><button type="button" className="copy-btn" onClick={() => set("imagem_url", null)}>Remover</button></div>
-          ) : (
-            <label className="upload"><ImagePlus size={20} strokeWidth={1.8} /> {enviando ? "Enviando…" : "Escolher imagem"}<input type="file" accept="image/*" hidden onChange={(e) => imagem(e.target.files?.[0])} /></label>
+        <div className="field"><label>Legenda do post <span className="dim">(opcional)</span></label>
+          <textarea className="textarea" style={{ minHeight: 90 }} value={r.legenda ?? ""} onChange={(e) => set("legenda", e.target.value || null)} placeholder="Legenda pronta, com hashtags e rodapé" /></div>
+        <div className="field"><label>Instruções de postagem <span className="dim">(opcional)</span></label>
+          <textarea className="textarea" style={{ minHeight: 70 }} value={r.instrucoes ?? ""} onChange={(e) => set("instrucoes", e.target.value || null)} placeholder="Ex.: use a imagem 1 no começo; faça React em cima do vídeo base" /></div>
+        <div className="field"><label>Imagens e vídeos base <span className="dim">(opcional)</span></label>
+          {r.midias.length > 0 && (
+            <div className="midias-adm">
+              {r.midias.map((m, k) => (
+                <div key={m.url} className="midia-adm">
+                  {m.tipo === "imagem" ? <img src={m.url} alt="" /> : <span className="midia-adm__vid"><Film size={18} /></span>}
+                  <span>{m.nome}</span>
+                  <button type="button" className="icon-btn" aria-label="Remover" onClick={() => set("midias", r.midias.filter((_, j) => j !== k))}><X size={15} /></button>
+                </div>
+              ))}
+            </div>
           )}
+          <label className="upload"><ImagePlus size={20} strokeWidth={1.8} /> {enviando ? "Enviando…" : "Adicionar imagens ou vídeos"}<input type="file" accept="image/*,video/*" multiple hidden onChange={(e) => { enviar(e.target.files); e.target.value = ""; }} /></label>
         </div>
         <div className="row" style={{ gap: 16 }}>
           <div className="field" style={{ flex: 1 }}><label>Data</label>
@@ -110,7 +125,7 @@ export default function AdminRoteiros() {
                 <div key={r.id} className={"adm-rot" + (r.publicado ? "" : " off")}>
                   <div style={{ flex: 1, minWidth: 0 }} onClick={() => setEditando(r)} role="button">
                     <b>{r.titulo}</b>
-                    <span>{r.marca ? MARCAS[r.marca] ?? r.marca : ""} {r.publicado ? "" : "· rascunho"} {r.imagem_url ? "· com imagem" : ""}</span>
+                    <span>{r.marca ? MARCAS[r.marca] ?? r.marca : ""} {r.publicado ? "" : "· rascunho"} {r.midias?.length ? `· ${r.midias.length} ${r.midias.length === 1 ? "arquivo" : "arquivos"}` : ""}</span>
                   </div>
                   <button className="icon-btn" onClick={() => setEditando(r)} aria-label="Editar"><Pencil size={16} /></button>
                   <button className="icon-btn" onClick={() => excluir(r)} aria-label="Excluir"><Trash2 size={16} /></button>

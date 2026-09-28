@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { CalendarRange, Check, ChevronDown, Flag, ListChecks, Target, Timer, Wallet } from "lucide-react";
 import { MARCAS } from "../content";
-import { api, BRL, ddmm, hojeSP, type Campanha as TCampanha } from "../lib/api";
+import { api, BRL, ddmm, type Campanha as TCampanha } from "../lib/api";
+import { campanhaAtual } from "../lib/campanha";
 import Shell from "../components/Shell";
 import { IconTile } from "../components/Icon";
 
 const periodo = (c: TCampanha) => (c.fim ? `${ddmm(c.inicio)} a ${ddmm(c.fim)}` : `desde ${ddmm(c.inicio)}`);
-
-// Vale a que já começou e não terminou; senão, a mais recente.
-function atualDe(lista: TCampanha[]) {
-  const hoje = hojeSP();
-  return lista.find((c) => c.inicio <= hoje && (!c.fim || c.fim >= hoje)) ?? lista[0] ?? null;
-}
 
 function Detalhe({ c }: { c: TCampanha }) {
   const numeros = [
@@ -45,7 +40,7 @@ export default function Campanha() {
   const [aberta, setAberta] = useState<string | null>(null);
   useEffect(() => { api.campanhas().then(setLista).catch((e) => { setErro(e.message); setLista([]); }); }, []);
 
-  const atual = lista && atualDe(lista);
+  const atual = lista && campanhaAtual(lista);
   const anteriores = lista?.filter((c) => c !== atual) ?? [];
 
   return (

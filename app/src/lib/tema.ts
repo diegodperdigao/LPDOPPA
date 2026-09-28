@@ -15,8 +15,17 @@ export function aplicarTema(t: Tema) {
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", escuro ? "#080B24" : "#F4F5FB");
 }
 
+// Vários controles de tema na tela (topo e menu) ficam em sincronia por este evento.
+const EVENTO = "doppa-tema";
+
 export function useTema() {
-  const [tema, setTema] = useState<Tema>(lerTema);
+  const [tema, setTemaLocal] = useState<Tema>(lerTema);
+  useEffect(() => {
+    const f = (e: Event) => setTemaLocal((e as CustomEvent<Tema>).detail);
+    window.addEventListener(EVENTO, f);
+    return () => window.removeEventListener(EVENTO, f);
+  }, []);
+  const setTema = (t: Tema) => { setTemaLocal(t); window.dispatchEvent(new CustomEvent(EVENTO, { detail: t })); };
   useEffect(() => {
     aplicarTema(tema);
     try { tema === "auto" ? localStorage.removeItem(CHAVE) : localStorage.setItem(CHAVE, tema); } catch { /* sem storage */ }

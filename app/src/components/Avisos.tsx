@@ -76,10 +76,11 @@ export function CartaoFaixa({ a, onFechar, onCta }: { a: Pick<Aviso, "titulo" | 
   );
 }
 
-export function AvisoFaixas() {
+// Faixas aparecem no Início e na página pra onde o botão delas leva (ex.: NF na Carteira).
+export function AvisoFaixas({ pagina }: { pagina: string }) {
   const { avisos, marcar } = useAvisos();
   const abrir = useAbrirCta();
-  const faixas = avisos.filter((x) => x.tipo === "faixa" && !x.lido);
+  const faixas = avisos.filter((x) => x.tipo === "faixa" && !x.lido && (pagina === "/" || x.cta_url === pagina));
   if (!faixas.length) return null;
   return (
     <div className="stack" style={{ gap: 8, marginBottom: 14 }}>

@@ -27,7 +27,12 @@ export const RODAPE_ITENS = ["#publi", "+18", "Aposte com Responsabilidade", "Ap
 export const RODAPE =
   "#publi | +18 | Aposte com Responsabilidade | Aposta não é Investimento | [TEXTO OFICIAL DO AVISO DO MINISTÉRIO DA FAZENDA]";
 
-export const DESTAQUES = ["Promo", "Como apostar", "Jogo responsável"];
+// Destaque único do perfil: King Panda. ⚠️ Falta a imagem oficial (public/destaque-kingpanda.jpg) e o link.
+export const DESTAQUE: { nome: string; imagem: string | null; link: string | null } = {
+  nome: "King Panda",
+  imagem: null,
+  link: null,
+};
 
 export const PRODUCAO: { icon: LucideIcon; titulo: string; passos: string[] }[] = [
   {
