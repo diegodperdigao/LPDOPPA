@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Briefcase, Smartphone } from "lucide-react";
-import { SEGMENTOS } from "../../content";
+import { PRINTS_IG, SEGMENTOS } from "../../content";
 import type { Segmento } from "../../lib/api";
 import { Phone, type TelaIg } from "../../components/Phone";
 import { IconTile } from "../../components/Icon";
@@ -71,7 +71,7 @@ export default function CriarPerfis() {
           toque.current = null;
         }}
       >
-        <div key={`${seg}-${i}`} className="ob-body"><Phone tela={slide.tela} usuario={s.exemploUser} nome={s.exemploNome} /></div>
+        <div key={`${seg}-${i}`} className="ob-body"><Phone tela={slide.tela} usuario={s.exemploUser} nome={s.exemploNome} print={PRINTS_IG[slide.tela]} /></div>
         <div className="slide-cap">
           <div className="num">{i + 1}</div>
           <b>{slide.titulo(s)}</b>
@@ -87,7 +87,7 @@ export default function CriarPerfis() {
               setFeitos(novo);
               if (!feitos[seg] && seg === "esp" && !novo.cas) setTimeout(() => trocarSeg("cas"), 450);
             }}>
-              Criei o perfil de {s.curto} como profissional
+              Criei o perfil profissional de {s.nome}
             </Check>
           ) : (
             <button className="btn" style={{ minHeight: 50 }} onClick={() => ir(1)}>Próximo <ArrowRight size={17} /></button>

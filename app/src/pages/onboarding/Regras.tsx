@@ -35,7 +35,6 @@ export default function Regras() {
       <div className="ob-head">
         <img src="/mascote.webp" alt="" style={{ width: 112, margin: "0 auto 4px" }} />
         <h1 className="h-display h1">Boas-vindas{primeiroNome ? `, ${primeiroNome}` : ""}!</h1>
-        <p>Aqui na Doppa você posta <b>vídeos diários</b> e ganha por eles. Esse é o caminho:</p>
       </div>
 
       <section className="card">

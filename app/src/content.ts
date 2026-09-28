@@ -3,6 +3,7 @@
 // precisam ser trocados pelos textos oficiais dos fóruns de orientação do Discord.
 import { Ban, Bot, HeartHandshake, ImageIcon, Lightbulb, MessagesSquare, Newspaper, ScrollText, ShieldCheck, Sparkles, Timer, Trophy, Video, type LucideIcon } from "lucide-react";
 import type { Missao } from "./lib/conta";
+import type { TelaIg } from "./components/Phone";
 import type { Tom } from "./components/Icon";
 
 export const SEGMENTOS: Record<"esp" | "cas", { nome: string; curto: string; icon: LucideIcon; tom: Tom; exemploNome: string; exemploUser: string }> = {
@@ -66,3 +67,11 @@ export const CRIADORES_DESTAQUE: { nome: string; ig: string; segmento: "esp" | "
   { nome: "Criador exemplo 2", ig: "exemplo.noticias", segmento: "cas", frase: "Fofoca e notícia com teleprompter, direto ao ponto." },
   { nome: "Criador exemplo 3", ig: "exemplo.bola", segmento: "esp", frase: "Grava na rua, reage aos lances da rodada." },
 ];
+
+// Prints reais do Instagram pros slides de "Crie seus perfis" (arquivos em public/ig/).
+// Enquanto uma tela não tiver print, o app mostra o desenho. "alvo" é o destaque amarelo,
+// em % da imagem (x, y, largura, altura), por cima de onde a pessoa tem que tocar.
+export type PrintIg = { src: string; alvo?: { x: number; y: number; w: number; h: number } };
+export const PRINTS_IG: Partial<Record<TelaIg, PrintIg>> = {
+  // trocar: { src: "/ig/1-trocar.jpg", alvo: { x: 4, y: 78, w: 92, h: 8 } },
+};

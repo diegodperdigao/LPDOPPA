@@ -12,6 +12,7 @@ interface Props {
   link?: string;
   destaques?: string[];
   small?: boolean;
+  print?: { src: string; alvo?: { x: number; y: number; w: number; h: number } };
 }
 
 const I = { size: 15, strokeWidth: 1.9 } as const;
@@ -43,6 +44,19 @@ function Perfil({ usuario, nome, bio, link, destaques, pro, children }: Omit<Pro
 export function Phone(p: Props) {
   const { tela, usuario, nome } = p;
   let conteudo: React.ReactNode;
+
+  // Print real do Instagram, quando tiver: a imagem ocupa a tela do celular e o alvo marca o toque.
+  if (p.print) {
+    const a = p.print.alvo;
+    return (
+      <div className={"phone phone--print" + (p.small ? " phone--sm" : "")} aria-hidden="true">
+        <div className="phone__screen">
+          <img className="phone__print" src={p.print.src} alt="" />
+          {a && <span className="phone__alvo" style={{ left: `${a.x}%`, top: `${a.y}%`, width: `${a.w}%`, height: `${a.h}%` }} />}
+        </div>
+      </div>
+    );
+  }
 
   switch (tela) {
     case "trocar":
