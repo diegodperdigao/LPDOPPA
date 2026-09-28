@@ -8,16 +8,16 @@ import { Dock } from "../../components/ui";
 import Layout from "./Layout";
 
 // Tudo deve ser feito; as seções mostram a ordem de prioridade.
-const COMECO: { icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
-  { icon: Smartphone, tom: "violet", t: "Crie 2 perfis novos no Instagram e vincule aqui", d: "Conta profissional (Criador de conteúdo): um de Esportes e um de Notícias." },
-  { icon: UserRound, tom: "pink", t: "Ajuste os perfis", d: "Bio, link e legenda seguindo as nossas orientações." },
-  { icon: Clapperboard, tom: "yellow", t: "Grave e poste os vídeos do dia!", d: "Os roteiros chegam prontos no app, todos os dias." },
+const COMECO: { icon: LucideIcon; tom: Tom; t: string }[] = [
+  { icon: Smartphone, tom: "violet", t: "Crie 2 perfis profissionais no Instagram e vincule aqui" },
+  { icon: UserRound, tom: "pink", t: "Ajuste os perfis" },
+  { icon: Clapperboard, tom: "yellow", t: "Grave e poste os vídeos do dia!" },
 ];
 
-const IMPORTANTES: { icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
-  { icon: FileSignature, tom: "green", t: "Termo de adesão", d: "Assine depois que começar a postar. É o que libera o seu pagamento." },
-  { icon: Wallet, tom: "blue", t: "Orientações para pagamentos", d: "Ciclos, nota fiscal e quando o dinheiro cai." },
-  { icon: Megaphone, tom: "pink", t: "Detalhes sobre a campanha", d: "Marcas, meta, regras e valores do ciclo." },
+const IMPORTANTES: { icon: LucideIcon; tom: Tom; t: string }[] = [
+  { icon: FileSignature, tom: "green", t: "Termo de adesão" },
+  { icon: Wallet, tom: "blue", t: "Orientações para pagamentos" },
+  { icon: Megaphone, tom: "pink", t: "Detalhes sobre a campanha" },
 ];
 
 export default function Regras() {
@@ -35,16 +35,16 @@ export default function Regras() {
       <div className="ob-head">
         <img src="/mascote.webp" alt="" style={{ width: 112, margin: "0 auto 4px" }} />
         <h1 className="h-display h1">Boas-vindas{primeiroNome ? `, ${primeiroNome}` : ""}!</h1>
-        <p>Aqui na Doppa você posta <b>vídeos diários</b> e ganha por eles. São só alguns passos rápidos, nesta ordem:</p>
+        <p>Aqui na Doppa você posta <b>vídeos diários</b> e ganha por eles. Esse é o caminho:</p>
       </div>
 
       <section className="card">
         <div className="ob-bloco__t"><span className="eyebrow">Pra começar</span></div>
-        <ol className="fluxo">
+        <ol className="fluxo fluxo--curto">
           {COMECO.map((f, i) => (
             <li key={f.t} style={{ animationDelay: `${i * 70}ms` }}>
               <IconTile icon={f.icon} tom={f.tom} size={40} />
-              <div><b>{f.t}</b><span>{f.d}</span></div>
+              <div><b>{f.t}</b></div>
             </li>
           ))}
         </ol>
@@ -68,13 +68,14 @@ export default function Regras() {
           {IMPORTANTES.map((m) => (
             <div key={m.t} className="missao">
               <IconTile icon={m.icon} tom={m.tom} size={34} />
-              <div><b>{m.t}</b><span>{m.d}</span></div>
+              <div><b>{m.t}</b></div>
             </div>
           ))}
         </div>
       </div>
 
       <Dock>
+        <p className="ob-dica">Toque em <b>Começar</b> e a gente te mostra como fazer cada passo.</p>
         <button className="btn" disabled={salvando} onClick={seguir}>Começar <ArrowRight size={18} /></button>
       </Dock>
     </Layout>

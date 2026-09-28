@@ -586,3 +586,8 @@ a.missao:hover, button.missao:hover { background: var(--surface-2); }
 .camp-regras li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; }
 .camp-regras li svg { color: var(--t-green); flex: 0 0 auto; margin-top: 2px; }
 .camp-corpo { white-space: pre-wrap; font-size: 14.5px; line-height: 1.65; color: var(--muted); }
+.fluxo--curto li { align-items: center; padding-bottom: 14px; }
+.fluxo--curto li:not(:last-child)::before { top: 42px; bottom: -2px; }
+.fluxo--curto b { margin-top: 0; }
+.ob-dica { text-align: center; font-size: 13.5px; color: var(--muted); }
+.ob-dica b { color: var(--text); font-weight: 600; }
