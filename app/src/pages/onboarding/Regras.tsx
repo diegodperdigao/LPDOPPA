@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Clapperboard, FileSignature, Smartphone, UserRound, type LucideIcon } from "lucide-react";
+import { ArrowRight, Clapperboard, FileSignature, Megaphone, Smartphone, UserRound, Wallet, type LucideIcon } from "lucide-react";
 import { MISSOES } from "../../content";
 import { api } from "../../lib/api";
 import { useConta } from "../../lib/conta";
@@ -12,6 +12,12 @@ const COMECO: { icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
   { icon: Smartphone, tom: "violet", t: "Crie 2 perfis novos no Instagram e vincule aqui", d: "Conta profissional (Criador de conteúdo): um de Esportes e um de Notícias." },
   { icon: UserRound, tom: "pink", t: "Ajuste os perfis", d: "Bio, link e legenda seguindo as nossas orientações." },
   { icon: Clapperboard, tom: "yellow", t: "Grave e poste os vídeos do dia!", d: "Os roteiros chegam prontos no app, todos os dias." },
+];
+
+const IMPORTANTES: { icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
+  { icon: FileSignature, tom: "green", t: "Termo de adesão", d: "Assine depois que começar a postar. É o que libera o seu pagamento." },
+  { icon: Wallet, tom: "blue", t: "Orientações para pagamentos", d: "Ciclos, nota fiscal e quando o dinheiro cai." },
+  { icon: Megaphone, tom: "pink", t: "Detalhes sobre a campanha", d: "Marcas, regras e prêmios do momento." },
 ];
 
 export default function Regras() {
@@ -57,10 +63,14 @@ export default function Regras() {
       </div>
 
       <div className="ob-bloco">
-        <div className="ob-bloco__t"><span className="eyebrow" style={{ color: "var(--t-green)" }}>Pra receber</span></div>
-        <div className="missao">
-          <IconTile icon={FileSignature} tom="green" size={34} />
-          <div><b>Assine o termo de adesão</b><span>Depois que começar a postar. É o que libera o seu pagamento.</span></div>
+        <div className="ob-bloco__t"><span className="eyebrow" style={{ color: "var(--t-green)" }}>Passos importantes</span></div>
+        <div className="missoes">
+          {IMPORTANTES.map((m) => (
+            <div key={m.t} className="missao">
+              <IconTile icon={m.icon} tom={m.tom} size={34} />
+              <div><b>{m.t}</b><span>{m.d}</span></div>
+            </div>
+          ))}
         </div>
       </div>
 
