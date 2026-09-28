@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Briefcase, Smartphone } from "lucide-react";
+import { ArrowLeft, ArrowRight, Briefcase, PlayCircle, Repeat, Smartphone } from "lucide-react";
 import { PRINTS_IG, SEGMENTOS } from "../../content";
 import type { Segmento } from "../../lib/api";
 import { Phone, type TelaIg } from "../../components/Phone";
@@ -21,18 +21,33 @@ const SLIDES: Slide[] = [
   { tela: "pronto", titulo: () => "Apareceu “Painel profissional”?", texto: (s) => `Então seu perfil de ${s.nome} está certo.`, pro: true },
 ];
 
+const RESUMO = (s: Seg): React.ReactNode[] => [
+  <>Toque no seu @ lá em cima → <b>Adicionar conta do Instagram</b> → <b>Criar nova conta</b></>,
+  <>Escolha um @ de {s.nome}. Ex.: <b>@{s.exemploUser}</b></>,
+  <>Menu → <b>Tipo de conta e ferramentas</b> → <b>Mudar para conta profissional</b></>,
+  <>Escolha <b>Criador de conteúdo</b> e confira se apareceu o <b>Painel profissional</b></>,
+];
+
 export default function CriarPerfis() {
   const nav = useNavigate();
   const [seg, setSeg] = useState<Segmento>("esp");
   const [i, setI] = useState(0);
   const [feitos, setFeitos] = useState<Record<Segmento, boolean>>({ esp: false, cas: false });
+  // O segundo perfil segue o mesmo caminho: mostra um resumo, com opção de abrir os slides.
+  const [verSlides, setVerSlides] = useState(false);
   const toque = useRef<number | null>(null);
   const s = SEGMENTOS[seg];
   const slide = SLIDES[i];
   const ultimo = i === SLIDES.length - 1;
 
-  function trocarSeg(n: Segmento) { setSeg(n); setI(0); }
+  function trocarSeg(n: Segmento) { setSeg(n); setI(0); setVerSlides(false); }
   function ir(d: number) { setI((v) => Math.max(0, Math.min(SLIDES.length - 1, v + d))); }
+  const resumo = seg === "cas" && !verSlides;
+  function marcar() {
+    const novo = { ...feitos, [seg]: !feitos[seg] };
+    setFeitos(novo);
+    if (!feitos[seg] && seg === "esp" && !novo.cas) setTimeout(() => trocarSeg("cas"), 450);
+  }
   const faltam = (["esp", "cas"] as Segmento[]).filter((k) => !feitos[k]).map((k) => SEGMENTOS[k].curto);
 
   return (
@@ -61,39 +76,46 @@ export default function CriarPerfis() {
         })}
       </div>
 
-      <div
-        className="slides"
-        onTouchStart={(e) => { toque.current = e.touches[0].clientX; }}
-        onTouchEnd={(e) => {
-          if (toque.current === null) return;
-          const dx = e.changedTouches[0].clientX - toque.current;
-          if (Math.abs(dx) > 40) ir(dx < 0 ? 1 : -1);
-          toque.current = null;
-        }}
-      >
-        <div key={`${seg}-${i}`} className="ob-body"><Phone tela={slide.tela} usuario={s.exemploUser} nome={s.exemploNome} print={PRINTS_IG[slide.tela]} /></div>
-        <div className="slide-cap">
-          <div className="num">{i + 1}</div>
-          <b>{slide.titulo(s)}</b>
-          <span>{slide.texto(s)}</span>
-          {slide.pro && <div style={{ marginTop: 8 }}><span className="chip chip--yellow"><Briefcase size={12} /> Conta profissional</span></div>}
+      {resumo ? (
+        <div className="resumo ob-body">
+          <div className="resumo__t"><IconTile icon={Repeat} tom="cyan" size={40} /><div><b>Siga o mesmo passo a passo</b><span>É igual ao de Esportes, só muda o @.</span></div></div>
+          <ol className="resumo__passos">
+            {RESUMO(s).map((r, k) => <li key={k}><span className="resumo__n">{k + 1}</span><span>{r}</span></li>)}
+          </ol>
+          <button className="link-btn" style={{ alignSelf: "center" }} onClick={() => { setVerSlides(true); setI(0); }}><PlayCircle size={16} /> Ver o passo a passo completo</button>
+          <Check on={feitos[seg]} onToggle={marcar}>Criei o perfil profissional de {s.nome}</Check>
         </div>
-        <div className="dots">{SLIDES.map((_, k) => <i key={k} className={k === i ? "on" : ""} />)}</div>
-        <div className="slide-nav">
-          <button className="icon-btn" style={{ width: 50, height: 50 }} onClick={() => ir(-1)} disabled={i === 0} aria-label="Voltar"><ArrowLeft size={18} /></button>
-          {ultimo ? (
-            <Check on={feitos[seg]} onToggle={() => {
-              const novo = { ...feitos, [seg]: !feitos[seg] };
-              setFeitos(novo);
-              if (!feitos[seg] && seg === "esp" && !novo.cas) setTimeout(() => trocarSeg("cas"), 450);
-            }}>
-              Criei o perfil profissional de {s.nome}
-            </Check>
-          ) : (
-            <button className="btn" style={{ minHeight: 50 }} onClick={() => ir(1)}>Próximo <ArrowRight size={17} /></button>
-          )}
+      ) : (
+        <div
+          className="slides"
+          onTouchStart={(e) => { toque.current = e.touches[0].clientX; }}
+          onTouchEnd={(e) => {
+            if (toque.current === null) return;
+            const dx = e.changedTouches[0].clientX - toque.current;
+            if (Math.abs(dx) > 40) ir(dx < 0 ? 1 : -1);
+            toque.current = null;
+          }}
+        >
+          <div key={`${seg}-${i}`} className="ob-body"><Phone tela={slide.tela} usuario={s.exemploUser} nome={s.exemploNome} print={PRINTS_IG[slide.tela]} /></div>
+          <div className="slide-cap">
+            <div className="num">{i + 1}</div>
+            <b>{slide.titulo(s)}</b>
+            <span>{slide.texto(s)}</span>
+            {slide.pro && <div style={{ marginTop: 8 }}><span className="chip chip--yellow"><Briefcase size={12} /> Conta profissional</span></div>}
+          </div>
+          <div className="dots">{SLIDES.map((_, k) => <i key={k} className={k === i ? "on" : ""} />)}</div>
+          <div className="slide-nav">
+            <button className="icon-btn" style={{ width: 50, height: 50 }} onClick={() => ir(-1)} disabled={i === 0} aria-label="Voltar"><ArrowLeft size={18} /></button>
+            {ultimo ? (
+              <Check on={feitos[seg]} onToggle={marcar}>
+                Criei o perfil profissional de {s.nome}
+              </Check>
+            ) : (
+              <button className="btn" style={{ minHeight: 50 }} onClick={() => ir(1)}>Próximo <ArrowRight size={17} /></button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <Dock>
         <button className="btn" disabled={faltam.length > 0} onClick={() => nav("/onboarding/vincular")}>

@@ -597,3 +597,13 @@ a.missao:hover, button.missao:hover { background: var(--surface-2); }
 .fluxo--curto b { margin-top: 0; }
 .ob-dica { text-align: center; font-size: 13.5px; color: var(--muted); }
 .ob-dica b { color: var(--text); font-weight: 600; }
+
+/* Resumo do segundo perfil (mesmo passo a passo) */
+.resumo { display: flex; flex-direction: column; gap: 16px; }
+.resumo__t { display: flex; gap: 12px; align-items: center; }
+.resumo__t b { display: block; font-size: 17px; font-weight: 600; }
+.resumo__t span { font-size: 13.5px; color: var(--muted); }
+.resumo__passos { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.resumo__passos li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+.resumo__passos li b { color: var(--text); font-weight: 600; }
+.resumo__n { flex: 0 0 auto; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(110,216,245,.14); color: var(--t-cyan); font-weight: 700; font-size: 12.5px; }
