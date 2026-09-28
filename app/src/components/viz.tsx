@@ -36,12 +36,12 @@ export function Anel({ valor, meta, tamanho = 168 }: { valor: number; meta: numb
           <stop offset="1" stopColor={batida ? "#22C7F0" : "#7B4DFF"} />
         </linearGradient>
       </defs>
-      <circle cx="84" cy="84" r={r} fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="10" />
+      <circle cx="84" cy="84" r={r} fill="none" stroke="var(--surface-3)" strokeWidth="10" />
       <circle cx="84" cy="84" r={r} fill="none" stroke="url(#gAnel)" strokeWidth="10" strokeLinecap="round"
         strokeDasharray={c} strokeDashoffset={c * (1 - p)} transform="rotate(-90 84 84)"
         style={{ transition: "stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)" }} />
-      <text x="84" y="80" textAnchor="middle" fill="#EEF0FB" fontFamily="Anton" fontSize="42">{valor}</text>
-      <text x="84" y="106" textAnchor="middle" fill="#A3A9CF" fontFamily="Poppins" fontSize="12.5">de {meta} vídeos</text>
+      <text x="84" y="80" textAnchor="middle" fill="var(--text)" fontFamily="Anton" fontSize="42">{valor}</text>
+      <text x="84" y="106" textAnchor="middle" fill="var(--muted)" fontFamily="Poppins" fontSize="12.5">de {meta} vídeos</text>
     </svg>
   );
 }

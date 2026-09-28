@@ -74,7 +74,7 @@ export function Carteira() {
               <button className={"checklist__i" + (nf?.status === "aprovada" ? " ok" : "")} onClick={() => !dados.cycle.isCurrent && (!nf || nf.status === "recusada") && setNfAberta(true)}>
                 <span>{nf?.status === "aprovada" ? <Check size={14} strokeWidth={2.8} /> : 3}</span>Nota fiscal do ciclo (MEI)
                 {dados.cycle.isCurrent ? <em style={{ color: "var(--dim)" }}>Após o fechamento</em>
-                  : nf ? <em style={{ color: nf.status === "recusada" ? "#FF93A6" : nf.status === "aprovada" ? "#5CE6A0" : "#FFD95C" }}>{STATUS_NF[nf.status].rot}</em>
+                  : nf ? <em style={{ color: nf.status === "recusada" ? "var(--t-red)" : nf.status === "aprovada" ? "var(--t-green)" : "var(--t-yellow)" }}>{STATUS_NF[nf.status].rot}</em>
                   : <em>Enviar</em>}
               </button>
             </div>

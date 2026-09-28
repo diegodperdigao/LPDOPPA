@@ -67,7 +67,7 @@ export default function OrientPerfil() {
       <div className="stack">
         <Guia n={1} titulo="Bio e link (iguais nos 2 perfis)" feito={!!feitos.bio} onFeito={() => marca("bio")}>
           <div className="pro-alert">
-            <CircleAlert size={18} color="#FFD95C" style={{ flex: "0 0 auto", marginTop: 1 }} />
+            <CircleAlert size={18} color="var(--t-yellow)" style={{ flex: "0 0 auto", marginTop: 1 }} />
             <span>Texto <b style={{ display: "inline" }}>e</b> link exatamente assim, nos dois perfis. Senão os vídeos podem não ser validados.</span>
           </div>
           <div className="stack" style={{ gap: 8 }}>
@@ -77,14 +77,14 @@ export default function OrientPerfil() {
           </div>
           <div className="stack" style={{ gap: 8 }}>
             <span className="row dim"><Link2 size={14} /> Editar perfil → Adicionar link</span>
-            <div className="copy-box" style={{ color: "#A794FF" }}>{BIO_LINK}</div>
+            <div className="copy-box" style={{ color: "var(--t-violet)" }}>{BIO_LINK}</div>
             <CopyButton texto={BIO_LINK} label="Copiar link" />
           </div>
         </Guia>
 
         <Guia n={2} titulo="Rodapé legal em toda legenda" feito={!!feitos.legenda} onFeito={() => marca("legenda")}>
           <div className="pro-alert">
-            <Scale size={18} color="#FFD95C" style={{ flex: "0 0 auto", marginTop: 1 }} />
+            <Scale size={18} color="var(--t-yellow)" style={{ flex: "0 0 auto", marginTop: 1 }} />
             <span>Vídeo sem o rodapé completo <b style={{ display: "inline" }}>não é contabilizado</b>.</span>
           </div>
           <div className="rodape-itens">{RODAPE_ITENS.map((t) => <span key={t} className="chip chip--green"><Check size={12} strokeWidth={2.6} /> {t}</span>)}</div>

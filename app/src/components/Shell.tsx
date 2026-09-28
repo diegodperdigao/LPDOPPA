@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { BookOpen, Clapperboard, FilePenLine, House, Receipt, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
 import { api } from "../lib/api";
 import { useConta } from "../lib/conta";
+import SeletorTema from "./SeletorTema";
 import "./Shell.css";
 
 type Item = { to: string; icon: LucideIcon; nome: string; badge?: string };
@@ -70,6 +71,7 @@ function Sidebar({ onNavegar }: { onNavegar?: () => void }) {
           </div>
         ))}
       </nav>
+      <SeletorTema />
       <button className="side__sair" onClick={async () => { await api.sair(); await recarregar(); nav("/entrar"); }}>
         <LogOut size={18} strokeWidth={1.9} /> Sair
       </button>
