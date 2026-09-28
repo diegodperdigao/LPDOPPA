@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "build:demo": "tsc -b && vite build --mode demo --base ./ --outDir dist-demo && node scripts/demo-paths.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",

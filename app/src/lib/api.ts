@@ -382,7 +382,7 @@ function apiDemo(): Api {
   };
 }
 
-const forcarDemo = new URLSearchParams(location.search).has("demo");
+const forcarDemo = import.meta.env.VITE_DEMO === "1" || new URLSearchParams(location.search).has("demo");
 export const supabase = URL_ && KEY && !forcarDemo ? createClient(URL_, KEY) : null;
 export const api: Api = supabase ? apiSupabase(supabase) : apiDemo();
 

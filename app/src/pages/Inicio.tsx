@@ -4,6 +4,7 @@ import { ArrowRight, CalendarRange, ChevronRight, Clock3, FileSignature, LockOpe
 import { SEGMENTOS } from "../content";
 import { api, ddmm, hojeSP, type Roteiro } from "../lib/api";
 import { useConta } from "../lib/conta";
+import { useAvisos } from "../lib/avisos";
 import { ultimaContagem, usePainel } from "../lib/painel";
 import Shell from "../components/Shell";
 import TermoModal from "../components/TermoModal";
@@ -17,16 +18,19 @@ export default function Inicio() {
   const { dados, erro } = usePainel();
   const [roteiros, setRoteiros] = useState<Roteiro[] | null>(null);
   const [termo, setTermo] = useState(false);
+  const { avisos } = useAvisos();
+  const temPopup = avisos.some((a) => a.tipo === "popup" && !a.lido);
 
   useEffect(() => { api.roteiros(hojeSP()).then(setRoteiros).catch(() => setRoteiros([])); }, []);
+  // O termo abre sozinho só se não houver um aviso em pop-up na frente (um modal por vez).
   useEffect(() => {
-    if (!conta || conta.termo_em) return;
+    if (!conta || conta.termo_em || temPopup) return;
     let visto = false;
     try { visto = sessionStorage.getItem("termo_pop") === "1"; sessionStorage.setItem("termo_pop", "1"); } catch { /* sem storage */ }
     if (visto) return;
     const t = setTimeout(() => setTermo(true), liberado ? 3500 : 1500);
     return () => clearTimeout(t);
-  }, [conta, liberado]);
+  }, [conta, liberado, temPopup]);
 
   const ult = dados ? ultimaContagem(dados) : null;
   const handles = [
