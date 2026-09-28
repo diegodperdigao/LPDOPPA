@@ -6,6 +6,8 @@ import Inicio from "./pages/Inicio";
 import Roteiros from "./pages/Roteiros";
 import { Aprender, Carteira, Comunidade, Perfil, Temporada } from "./pages/Secundarias";
 import AdminRoteiros from "./pages/admin/AdminRoteiros";
+import AdminCriadores from "./pages/admin/AdminCriadores";
+import AdminConfig from "./pages/admin/AdminConfig";
 import Regras from "./pages/onboarding/Regras";
 import CriarPerfis from "./pages/onboarding/CriarPerfis";
 import Vincular from "./pages/onboarding/Vincular";
@@ -70,6 +72,8 @@ export default function App() {
         <Route path="/comunidade" element={p(<Comunidade />)} />
         <Route path="/perfil" element={p(<Perfil />)} />
         <Route path="/admin/roteiros" element={p(<AdminRoteiros />, true)} />
+        <Route path="/admin/criadores" element={p(<AdminCriadores />, true)} />
+        <Route path="/admin/config" element={p(<AdminConfig />, true)} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

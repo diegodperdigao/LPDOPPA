@@ -24,7 +24,9 @@ const GRUPOS: Grupo[] = [
     { to: "/perfil", ico: "👤", nome: "Meus perfis" },
   ] },
   { titulo: "Admin", admin: true, itens: [
+    { to: "/admin/criadores", ico: "👥", nome: "Criadores e funil" },
     { to: "/admin/roteiros", ico: "📝", nome: "Publicar roteiros" },
+    { to: "/admin/config", ico: "⚙️", nome: "Configurações" },
   ] },
 ];
 

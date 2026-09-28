@@ -52,6 +52,15 @@ export interface Painel {
   premiosTotal: number;
 }
 
+export interface ContaAdmin {
+  id: string; nome: string | null; email: string; telefone: string | null; btag: string | null; papel: string; criado_em: string;
+  regras_em: string | null; perfis_em: string | null; grupo_em: string | null; orient_perfil_em: string | null;
+  orient_producao_em: string | null; termo_em: string | null;
+  ig_esp: string | null; ig_cas: string | null; status: string | null; videos_7d: number; ultimo_video: string | null;
+}
+export interface Legado { id: string; nome: string; ig_esp: string | null; ig_cas: string | null; status: string; videos_7d: number; ultimo_video: string | null }
+export interface Funil { contas: ContaAdmin[]; legado: Legado[] }
+
 export interface Api {
   modo: "demo" | "supabase";
   conta(): Promise<Conta | null>;
@@ -67,6 +76,9 @@ export interface Api {
   salvarRoteiro(r: RoteiroNovo): Promise<void>;
   excluirRoteiro(id: string): Promise<void>;
   enviarImagem(arquivo: File): Promise<string>;
+  adminCriadores(): Promise<Funil>;
+  adminConfig(): Promise<Record<string, string>>;
+  adminConfigSalvar(chave: string, valor: string): Promise<void>;
 }
 
 export class ErroApp extends Error {}
@@ -149,6 +161,9 @@ function apiSupabase(sb: SupabaseClient): Api {
       if (error) throw new ErroApp(error.message);
       return sb.storage.from("roteiros").getPublicUrl(caminho).data.publicUrl;
     },
+    async adminCriadores() { return rpc<Funil>("app_admin_criadores"); },
+    async adminConfig() { return rpc<Record<string, string>>("app_admin_config"); },
+    async adminConfigSalvar(chave, valor) { await rpc("app_admin_config_salvar", { p_chave: chave, p_valor: valor }); },
   };
 }
 
@@ -246,6 +261,21 @@ function apiDemo(): Api {
     async enviarImagem(arquivo) {
       return await new Promise<string>((ok) => { const f = new FileReader(); f.onload = () => ok(String(f.result)); f.readAsDataURL(arquivo); });
     },
+    async adminCriadores() {
+      const d = (n: number) => new Date(Date.now() - n * 864e5).toISOString();
+      const base = { btag: null, papel: "criador", telefone: "11999990000", status: "ativo", ig_esp: null, ig_cas: null, regras_em: null, perfis_em: null, grupo_em: null, orient_perfil_em: null, orient_producao_em: null, termo_em: null, videos_7d: 0, ultimo_video: null };
+      return {
+        contas: [
+          { ...base, id: "a", nome: "Ana Souza", email: "ana@x.com", criado_em: d(0) },
+          { ...base, id: "b", nome: "Bruno Lima", email: "bruno@x.com", criado_em: d(1), regras_em: d(1) },
+          { ...base, id: "c", nome: "Carla Dias", email: "carla@x.com", criado_em: d(2), regras_em: d(2), perfis_em: d(2), ig_esp: "carla_fut", ig_cas: "carla.news" },
+          { ...base, id: "e", nome: "Eduarda Faria", email: "edu@x.com", criado_em: d(5), regras_em: d(5), perfis_em: d(5), grupo_em: d(5), orient_perfil_em: d(5), orient_producao_em: d(5), termo_em: d(4), ig_esp: "edu_bet", ig_cas: "edu.news", videos_7d: 190, ultimo_video: d(1).slice(0, 10) },
+        ],
+        legado: [{ id: "l1", nome: "Criador Antigo", ig_esp: "antigo_fut", ig_cas: "antigo.news", status: "ativo", videos_7d: 120, ultimo_video: d(1).slice(0, 10) }],
+      };
+    },
+    async adminConfig() { return { grupo_whatsapp: ler()?.grupo_link ?? "" }; },
+    async adminConfigSalvar(chave, valor) { if (chave === "grupo_whatsapp") mudar({ grupo_link: valor }); },
   };
 }
 
