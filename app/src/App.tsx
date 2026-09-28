@@ -2,6 +2,9 @@ import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { api } from "./lib/api";
 import { DoppaEye } from "./components/Icon";
 import { passoAtual, useConta } from "./lib/conta";
+import { AvisosProvider } from "./lib/avisos";
+import Mural from "./pages/Mural";
+import AdminAvisos from "./pages/admin/AdminAvisos";
 import Entrar from "./pages/Entrar";
 import Inicio from "./pages/Inicio";
 import Roteiros from "./pages/Roteiros";
@@ -63,6 +66,7 @@ export default function App() {
   return (
     <>
       {api.modo === "demo" && <div className="demo-flag">Modo demonstração: os dados ficam só neste navegador</div>}
+      <AvisosProvider>
       <Routes>
         <Route path="/entrar" element={conta ? <Navigate to="/" replace /> : <Entrar />} />
         <Route path="/onboarding/:passo?" element={<Onboarding />} />
@@ -73,12 +77,15 @@ export default function App() {
         <Route path="/aprender" element={p(<Aprender />)} />
         <Route path="/comunidade" element={p(<Comunidade />)} />
         <Route path="/perfil" element={p(<Perfil />)} />
+        <Route path="/avisos" element={p(<Mural />)} />
+        <Route path="/admin/avisos" element={p(<AdminAvisos />, true)} />
         <Route path="/admin/roteiros" element={p(<AdminRoteiros />, true)} />
         <Route path="/admin/criadores" element={p(<AdminCriadores />, true)} />
         <Route path="/admin/config" element={p(<AdminConfig />, true)} />
         <Route path="/admin/notas" element={p(<AdminNotas />, true)} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </AvisosProvider>
     </>
   );
 }

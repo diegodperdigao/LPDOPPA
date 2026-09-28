@@ -66,6 +66,13 @@ export interface NotaFiscal { id: string; ciclo_start: string; ciclo_end: string
 export interface NotaAdmin extends NotaFiscal { criador_id: string; nome: string; ig_esp: string | null; email: string | null; telefone: string | null }
 export interface EnvioNf { ciclo_start: string; ciclo_end: string; numero: string; valor: number; arquivo: File }
 
+export type TipoAviso = "popup" | "faixa" | "mural";
+export type TomAviso = "info" | "sucesso" | "alerta" | "urgente";
+export type PublicoAviso = "todos" | "sem_termo" | "onboarding" | "sem_video_7d";
+export interface Aviso { id: string; titulo: string; corpo: string; tipo: TipoAviso; tom: TomAviso; cta_texto: string | null; cta_url: string | null; inicio: string; lido: boolean }
+export interface AvisoAdmin extends Omit<Aviso, "lido"> { publico: PublicoAviso; fim: string | null; ativo: boolean; criado_em: string; alcance: number; vistos: number; cliques: number }
+export type AvisoNovo = { id?: string; titulo: string; corpo: string; tipo: TipoAviso; tom: TomAviso; publico: PublicoAviso; cta_texto: string | null; cta_url: string | null; inicio: string; fim: string | null; ativo: boolean };
+
 export interface Api {
   modo: "demo" | "supabase";
   conta(): Promise<Conta | null>;
@@ -87,6 +94,11 @@ export interface Api {
   nfUrl(path: string): Promise<string>;
   adminNfs(ciclo?: string): Promise<NotaAdmin[]>;
   adminNfRevisar(id: string, status: "aprovada" | "recusada", motivo?: string): Promise<void>;
+  meusAvisos(): Promise<Aviso[]>;
+  marcarAviso(id: string, clicou?: boolean): Promise<void>;
+  adminAvisos(): Promise<AvisoAdmin[]>;
+  salvarAviso(a: AvisoNovo): Promise<void>;
+  excluirAviso(id: string): Promise<void>;
   adminCriadores(): Promise<Funil>;
   adminConfig(): Promise<Record<string, string>>;
   adminConfigSalvar(chave: string, valor: string): Promise<void>;
@@ -194,6 +206,18 @@ function apiSupabase(sb: SupabaseClient): Api {
     },
     async adminNfs(ciclo) { return rpc<NotaAdmin[]>("app_admin_nfs", ciclo ? { p_ciclo_start: ciclo } : {}); },
     async adminNfRevisar(id, status, motivo) { await rpc("app_admin_nf_revisar", { p_id: id, p_status: status, p_motivo: motivo ?? null }); },
+    async meusAvisos() { return rpc<Aviso[]>("app_meus_avisos"); },
+    async marcarAviso(id, clicou) { await rpc("app_marcar_aviso", { p_id: id, p_clicou: !!clicou }); },
+    async adminAvisos() { return rpc<AvisoAdmin[]>("app_admin_avisos"); },
+    async salvarAviso(a) {
+      const { id, ...campos } = a;
+      const { error } = id ? await sb.from("avisos").update(campos).eq("id", id) : await sb.from("avisos").insert(campos);
+      if (error) throw new ErroApp(error.message);
+    },
+    async excluirAviso(id) {
+      const { error } = await sb.from("avisos").delete().eq("id", id);
+      if (error) throw new ErroApp(error.message);
+    },
     async adminCriadores() { return rpc<Funil>("app_admin_criadores"); },
     async adminConfig() { return rpc<Record<string, string>>("app_admin_config"); },
     async adminConfigSalvar(chave, valor) { await rpc("app_admin_config_salvar", { p_chave: chave, p_valor: valor }); },
@@ -206,6 +230,16 @@ function apiSupabase(sb: SupabaseClient): Api {
 const DEMO_KEY = "doppa_demo_conta";
 const DEMO_ROT = "doppa_demo_roteiros";
 const DEMO_NF = "doppa_demo_nfs";
+const DEMO_AVISOS = "doppa_demo_avisos";
+const DEMO_LIDOS = "doppa_demo_avisos_lidos";
+const avisosExemplo = (): AvisoAdmin[] => {
+  const ontem = new Date(Date.now() - 864e5).toISOString();
+  return [
+    { id: "a1", titulo: "Ciclo 4 começou!", corpo: "Novas campanhas de King Panda e Superbet no ar. A meta continua 30 vídeos por dia e os roteiros saem todo dia de manhã.", tipo: "popup", tom: "sucesso", publico: "todos", cta_texto: "Ver roteiros", cta_url: "/roteiros", inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 41, cliques: 18 },
+    { id: "a2", titulo: "NF do ciclo 3 até 28/09", corpo: "Envie sua nota fiscal pela Carteira pra receber sem atraso.", tipo: "faixa", tom: "alerta", publico: "todos", cta_texto: "Enviar NF", cta_url: "/carteira", inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 22, cliques: 9 },
+    { id: "a3", titulo: "Live de dicas na quinta às 19h", corpo: "Vamos mostrar os vídeos que mais performaram na semana e responder dúvidas ao vivo.", tipo: "mural", tom: "info", publico: "todos", cta_texto: null, cta_url: null, inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 12, cliques: 0 },
+  ];
+};
 
 function apiDemo(): Api {
   const lerJ = <T,>(k: string, pad: T): T => { try { return JSON.parse(localStorage.getItem(k) || "null") ?? pad; } catch { return pad; } };
@@ -263,7 +297,9 @@ function apiDemo(): Api {
       const cycles = [2, 1, 0].map((k) => { const { i, f } = bounds(k); return { start: iso(i), end: iso(f), label: `${dm(iso(i))} — ${dm(iso(f))}`, current: k === 0 }; });
       const alvo = cycles.find((c) => c.start === ciclo) ?? cycles[2];
       const ini = new Date(alvo.start + "T12:00:00"), fim = new Date(alvo.end + "T12:00:00");
-      const ate = alvo.current ? hoje : fim;
+      // a contagem sai no dia seguinte: no ciclo atual, os dias vão só até ontem
+      const ontem = new Date(hoje); ontem.setDate(ontem.getDate() - 1);
+      const ate = alvo.current ? ontem : fim;
       const days: Dia[] = [];
       let seed = 7 + ini.getMonth();
       for (const d = new Date(ini); d <= ate; d.setDate(d.getDate() + 1)) {
@@ -313,6 +349,21 @@ function apiDemo(): Api {
     async adminNfRevisar(id, status, motivo) {
       gravarJ(DEMO_NF, lerJ<NotaFiscal[]>(DEMO_NF, []).map((n) => (n.id === id ? { ...n, status, motivo: status === "recusada" ? motivo ?? null : null } : n)));
     },
+    async meusAvisos() {
+      const lidos = lerJ<Record<string, boolean>>(DEMO_LIDOS, {});
+      const agoraMs = Date.now();
+      return lerJ<AvisoAdmin[]>(DEMO_AVISOS, avisosExemplo())
+        .filter((a) => a.ativo && new Date(a.inicio).getTime() <= agoraMs && (!a.fim || new Date(a.fim).getTime() > agoraMs))
+        .map((a) => ({ id: a.id, titulo: a.titulo, corpo: a.corpo, tipo: a.tipo, tom: a.tom, cta_texto: a.cta_texto, cta_url: a.cta_url, inicio: a.inicio, lido: !!lidos[a.id] }));
+    },
+    async marcarAviso(id) { gravarJ(DEMO_LIDOS, { ...lerJ<Record<string, boolean>>(DEMO_LIDOS, {}), [id]: true }); },
+    async adminAvisos() { return lerJ<AvisoAdmin[]>(DEMO_AVISOS, avisosExemplo()); },
+    async salvarAviso(a) {
+      const lista = lerJ<AvisoAdmin[]>(DEMO_AVISOS, avisosExemplo());
+      if (a.id) gravarJ(DEMO_AVISOS, lista.map((x) => (x.id === a.id ? { ...x, ...a } as AvisoAdmin : x)));
+      else gravarJ(DEMO_AVISOS, [{ ...a, id: String(Date.now()), criado_em: agora(), alcance: 1, vistos: 0, cliques: 0 } as AvisoAdmin, ...lista]);
+    },
+    async excluirAviso(id) { gravarJ(DEMO_AVISOS, lerJ<AvisoAdmin[]>(DEMO_AVISOS, avisosExemplo()).filter((x) => x.id !== id)); },
     async adminCriadores() {
       const d = (n: number) => new Date(Date.now() - n * 864e5).toISOString();
       const base = { btag: null, papel: "criador", telefone: "11999990000", status: "ativo", ig_esp: null, ig_cas: null, regras_em: null, perfis_em: null, grupo_em: null, orient_perfil_em: null, orient_producao_em: null, termo_em: null, videos_7d: 0, ultimo_video: null };

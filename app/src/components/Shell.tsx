@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Clapperboard, FilePenLine, House, Receipt, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
+import { Bell, BookOpen, Megaphone, Clapperboard, FilePenLine, House, Receipt, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
 import { api } from "../lib/api";
 import { useConta } from "../lib/conta";
 import SeletorTema from "./SeletorTema";
+import { AvisoFaixas, AvisoPopup } from "./Avisos";
+import { useAvisos } from "../lib/avisos";
 import "./Shell.css";
 
 type Item = { to: string; icon: LucideIcon; nome: string; badge?: string };
@@ -20,12 +22,14 @@ const GRUPOS: Grupo[] = [
     { to: "/temporada", icon: Trophy, nome: "Temporada", badge: "Em breve" },
   ] },
   { titulo: "Comunidade", itens: [
+    { to: "/avisos", icon: Bell, nome: "Avisos" },
     { to: "/comunidade", icon: MessagesSquare, nome: "Grupo e suporte" },
   ] },
   { titulo: "Conta", itens: [
     { to: "/perfil", icon: UserRound, nome: "Meus perfis" },
   ] },
   { titulo: "Admin", admin: true, itens: [
+    { to: "/admin/avisos", icon: Megaphone, nome: "Enviar avisos" },
     { to: "/admin/criadores", icon: Users, nome: "Criadores" },
     { to: "/admin/roteiros", icon: FilePenLine, nome: "Publicar roteiros" },
     { to: "/admin/notas", icon: Receipt, nome: "Notas fiscais" },
@@ -45,6 +49,7 @@ export function Avatar({ nome, size = 36 }: { nome: string; size?: number }) {
 
 function Sidebar({ onNavegar }: { onNavegar?: () => void }) {
   const { conta, recarregar } = useConta();
+  const { naoLidos } = useAvisos();
   const nav = useNavigate();
   const admin = conta?.papel === "admin";
   return (
@@ -66,6 +71,7 @@ function Sidebar({ onNavegar }: { onNavegar?: () => void }) {
                 <I size={19} strokeWidth={1.9} />
                 <span style={{ flex: 1 }}>{nome}</span>
                 {badge && <span className="side__badge">{badge}</span>}
+                {to === "/avisos" && naoLidos > 0 && <span className="count" style={{ background: "var(--red)", color: "#fff" }}>{naoLidos}</span>}
               </NavLink>
             ))}
           </div>
@@ -83,6 +89,7 @@ export default function Shell({ titulo, acao, children }: { titulo: string; acao
   const [aberto, setAberto] = useState(false);
   const { pathname } = useLocation();
   const { conta } = useConta();
+  const { naoLidos } = useAvisos();
   const toque = useRef<number | null>(null);
 
   useEffect(() => { setAberto(false); window.scrollTo(0, 0); }, [pathname]);
@@ -112,12 +119,20 @@ export default function Shell({ titulo, acao, children }: { titulo: string; acao
         <header className="topbar">
           <button className="topbar__menu" onClick={() => setAberto(true)} aria-label="Abrir menu"><Menu size={20} strokeWidth={1.9} /></button>
           <h1 className="topbar__t">{titulo}</h1>
-          <div className="topbar__acao">{acao ?? <Avatar nome={conta?.nome ?? ""} size={34} />}</div>
+          <div className="topbar__acao row" style={{ gap: 8 }}>
+            {acao}
+            <NavLink to="/avisos" className="icon-btn sino" aria-label={`Avisos${naoLidos ? `: ${naoLidos} novos` : ""}`}>
+              <Bell size={18} strokeWidth={1.9} />
+              {naoLidos > 0 && <span className="sino__n">{naoLidos}</span>}
+            </NavLink>
+            {!acao && <Avatar nome={conta?.nome ?? ""} size={34} />}
+          </div>
         </header>
-        <main className="main__body" key={pathname}>{children}</main>
+        <main className="main__body" key={pathname}><AvisoFaixas />{children}</main>
         <div className="tabs-space" />
       </div>
 
+      <AvisoPopup />
       <nav className="tabs" aria-label="Atalhos">
         {ABAS.map(({ to, icon: I, nome }) => (
           <NavLink key={to} to={to} end={to === "/"} className={({ isActive }) => (isActive ? "on" : "")}>
