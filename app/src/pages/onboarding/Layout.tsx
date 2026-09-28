@@ -17,7 +17,7 @@ export default function Layout({ passo, children }: { passo: Passo; children: Re
       <header className="ob-top">
         <div className="ob-top__row">
           <img className="ob-logo" src="/doppa-logo.webp" alt="DOPPA" />
-          <span className="ob-step">Passo {i + 1} de {PASSOS.length} · {NOMES[passo]}</span>
+          <span className="ob-step">{i + 1} de {PASSOS.length} · {NOMES[passo]}</span>
         </div>
         <div className="progress" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
           <i style={{ width: `${pct}%` }} />
@@ -25,5 +25,16 @@ export default function Layout({ passo, children }: { passo: Passo; children: Re
       </header>
       <div className="ob-body" key={passo}>{children}</div>
     </main>
+  );
+}
+
+// Cabeçalho padrão dos passos: ícone, título e subtítulo.
+export function Cabeca({ icone, titulo, children }: { icone: React.ReactNode; titulo: React.ReactNode; children?: React.ReactNode }) {
+  return (
+    <div className="ob-head">
+      {icone}
+      <h1 className="h-display h1">{titulo}</h1>
+      {children && <p>{children}</p>}
+    </div>
   );
 }

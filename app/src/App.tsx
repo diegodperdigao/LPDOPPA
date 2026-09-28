@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { api } from "./lib/api";
+import { DoppaEye } from "./components/Icon";
 import { passoAtual, useConta } from "./lib/conta";
 import Entrar from "./pages/Entrar";
 import Inicio from "./pages/Inicio";
@@ -55,12 +56,12 @@ function Protegida({ children, admin }: { children: React.ReactNode; admin?: boo
 export default function App() {
   const { conta, carregando } = useConta();
   if (carregando) {
-    return <div style={{ minHeight: "100dvh", display: "grid", placeItems: "center" }}><img src="/doppa-eye.png" alt="" width={64} style={{ animation: "bob 1.4s infinite" }} /></div>;
+    return <div className="loading"><DoppaEye size={56} /></div>;
   }
   const p = (el: React.ReactNode, admin?: boolean) => <Protegida admin={admin}>{el}</Protegida>;
   return (
     <>
-      {api.modo === "demo" && <div className="demo-flag">MODO DEMO · dados só neste navegador</div>}
+      {api.modo === "demo" && <div className="demo-flag">Modo demonstração: os dados ficam só neste navegador</div>}
       <Routes>
         <Route path="/entrar" element={conta ? <Navigate to="/" replace /> : <Entrar />} />
         <Route path="/onboarding/:passo?" element={<Onboarding />} />

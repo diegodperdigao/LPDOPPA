@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { SEGMENTOS } from "../../content";
+import { ArrowLeft, ArrowRight, Check, ImagePlus, Pencil, Plus, Trash2 } from "lucide-react";
+import { MARCAS, SEGMENTOS } from "../../content";
 import { api, ErroApp, hojeSP, type Roteiro, type RoteiroNovo, type Segmento } from "../../lib/api";
 import Shell from "../../components/Shell";
-import { MARCAS } from "../Roteiros";
 
 const vazio = (data: string, segmento: Segmento): RoteiroNovo => ({ data, segmento, marca: "kingpanda", titulo: "", texto: "", imagem_url: null, ordem: 0, publicado: true });
 
@@ -30,7 +30,7 @@ function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar
         <h2 className="h-display h2">{r.id ? "Editar roteiro" : "Novo roteiro"}</h2>
         <div className="seg-tabs">
           {(["esp", "cas"] as Segmento[]).map((k) => (
-            <button type="button" key={k} className={r.segmento === k ? "on" : ""} onClick={() => set("segmento", k)}>{SEGMENTOS[k].emoji} {SEGMENTOS[k].curto}</button>
+            <button type="button" key={k} className={r.segmento === k ? "on" : ""} onClick={() => set("segmento", k)}>{(() => { const S = SEGMENTOS[k]; return <><S.icon size={16} strokeWidth={1.9} /> {S.curto}</>; })()}</button>
           ))}
         </div>
         <div className="field"><label>Marca</label>
@@ -48,7 +48,7 @@ function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar
           {r.imagem_url ? (
             <div className="img-prev"><img src={r.imagem_url} alt="" /><button type="button" className="copy-btn" onClick={() => set("imagem_url", null)}>Remover</button></div>
           ) : (
-            <label className="upload">📷 {enviando ? "Enviando…" : "Escolher imagem"}<input type="file" accept="image/*" hidden onChange={(e) => imagem(e.target.files?.[0])} /></label>
+            <label className="upload"><ImagePlus size={20} strokeWidth={1.8} /> {enviando ? "Enviando…" : "Escolher imagem"}<input type="file" accept="image/*" hidden onChange={(e) => imagem(e.target.files?.[0])} /></label>
           )}
         </div>
         <div className="row" style={{ gap: 16 }}>
@@ -58,7 +58,7 @@ function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar
             <div className="input-wrap"><input type="number" value={r.ordem} onChange={(e) => set("ordem", Number(e.target.value) || 0)} /></div></div>
         </div>
         <button type="button" className={"check" + (r.publicado ? " on" : "")} onClick={() => set("publicado", !r.publicado)}>
-          <span className="check__box">{r.publicado ? "✓" : ""}</span><span>Publicado (visível pros criadores)</span>
+          <span className="check__box"><Check size={15} strokeWidth={3} /></span><span>Publicado (visível pros criadores)</span>
         </button>
         {erro && <div className="alert">{erro}</div>}
         <button className="btn" disabled={enviando}>{enviando ? "Salvando…" : "Salvar roteiro"}</button>
@@ -85,11 +85,11 @@ export default function AdminRoteiros() {
   const mudarDia = (d: number) => { const x = new Date(data + "T12:00:00"); x.setDate(x.getDate() + d); setData(x.toISOString().slice(0, 10)); };
 
   return (
-    <Shell titulo="Publicar roteiros" acao={<button className="btn btn--sm" onClick={() => setEditando(vazio(data, "esp"))}>＋ Novo</button>}>
+    <Shell titulo="Publicar roteiros" acao={<button className="btn btn--sm" onClick={() => setEditando(vazio(data, "esp"))}><Plus size={17} /> Novo</button>}>
       <div className="daybar">
-        <button className="copy-btn" onClick={() => mudarDia(-1)} aria-label="Dia anterior">←</button>
+        <button className="icon-btn" onClick={() => mudarDia(-1)} aria-label="Dia anterior"><ArrowLeft size={17} /></button>
         <div className="input-wrap" style={{ flex: 1, minHeight: 46 }}><input type="date" value={data} onChange={(e) => setData(e.target.value)} /></div>
-        <button className="copy-btn" onClick={() => mudarDia(1)} aria-label="Próximo dia">→</button>
+        <button className="icon-btn" onClick={() => mudarDia(1)} aria-label="Próximo dia"><ArrowRight size={17} /></button>
       </div>
       {erro && <div className="alert">{erro}</div>}
       <div className="grid-2" style={{ marginTop: 14 }}>
@@ -98,8 +98,8 @@ export default function AdminRoteiros() {
           return (
             <section key={seg} className="card stack">
               <div className="row" style={{ justifyContent: "space-between" }}>
-                <b>{SEGMENTOS[seg].emoji} {SEGMENTOS[seg].nome} <span className="count">{itens.length}</span></b>
-                <button className="copy-btn" onClick={() => setEditando(vazio(data, seg))}>＋</button>
+                <span className="card__t">{(() => { const S = SEGMENTOS[seg]; return <S.icon size={17} />; })()} {SEGMENTOS[seg].nome} <span className="count">{itens.length}</span></span>
+                <button className="icon-btn" onClick={() => setEditando(vazio(data, seg))} aria-label="Novo roteiro"><Plus size={17} /></button>
               </div>
               {lista === null && <div className="skel" style={{ height: 64, borderRadius: 14 }} />}
               {lista !== null && itens.length === 0 && <span className="dim">Nenhum roteiro neste dia.</span>}
@@ -107,10 +107,10 @@ export default function AdminRoteiros() {
                 <div key={r.id} className={"adm-rot" + (r.publicado ? "" : " off")}>
                   <div style={{ flex: 1, minWidth: 0 }} onClick={() => setEditando(r)} role="button">
                     <b>{r.titulo}</b>
-                    <span>{r.marca ? MARCAS[r.marca] ?? r.marca : ""} {r.publicado ? "" : "· rascunho"} {r.imagem_url ? "· 📷" : ""}</span>
+                    <span>{r.marca ? MARCAS[r.marca] ?? r.marca : ""} {r.publicado ? "" : "· rascunho"} {r.imagem_url ? "· com imagem" : ""}</span>
                   </div>
-                  <button className="copy-btn" onClick={() => setEditando(r)} aria-label="Editar">✏️</button>
-                  <button className="copy-btn" onClick={() => excluir(r)} aria-label="Excluir">🗑️</button>
+                  <button className="icon-btn" onClick={() => setEditando(r)} aria-label="Editar"><Pencil size={16} /></button>
+                  <button className="icon-btn" onClick={() => excluir(r)} aria-label="Excluir"><Trash2 size={16} /></button>
                 </div>
               ))}
             </section>

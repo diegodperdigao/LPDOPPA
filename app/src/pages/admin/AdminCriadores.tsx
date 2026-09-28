@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
+import { CalendarClock, DoorOpen, Film, Flame, Moon, NotebookPen, Search, Smartphone, Tag, BookOpen, MessagesSquare, FileSignature, type LucideIcon } from "lucide-react";
 import { api, ddmm, type ContaAdmin, type Funil } from "../../lib/api";
 import { igUrl } from "../../lib/ig";
-import Shell from "../../components/Shell";
+import Shell, { Avatar } from "../../components/Shell";
 import { Contador } from "../../components/viz";
+import { IconTile, InstagramLogo, WhatsAppLogo, type Tom } from "../../components/Icon";
 
 type Etapa = "regras" | "perfis" | "grupo" | "orient" | "produzir" | "ativo";
 
-const ETAPAS: { k: Etapa; nome: string; ico: string; msg: (n: string) => string }[] = [
-  { k: "regras", nome: "Não começou", ico: "🚪", msg: (n) => `Oi ${n}! Vi que você criou sua conta na Doppa mas ainda não começou o passo a passo. Leva 5 minutinhos: https://app.doppa.com.br` },
-  { k: "perfis", nome: "Sem perfis vinculados", ico: "📱", msg: (n) => `Oi ${n}! Falta só criar e vincular seus 2 perfis profissionais na Doppa pra você começar. Precisa de ajuda? https://app.doppa.com.br` },
-  { k: "grupo", nome: "Fora do grupo", ico: "💬", msg: (n) => `Oi ${n}! Seus perfis já estão vinculados 🎉 Entra no grupo dos criadores pra receber os roteiros: https://app.doppa.com.br` },
-  { k: "orient", nome: "Faltam orientações", ico: "📚", msg: (n) => `Oi ${n}! Falta pouco: termina as orientações de perfil e produção no app que seus roteiros liberam: https://app.doppa.com.br` },
-  { k: "produzir", nome: "Pronto, sem vídeo (7d)", ico: "😴", msg: (n) => `Oi ${n}! Seus roteiros estão liberados no app e ainda não vimos vídeos seus essa semana. Bora gravar o primeiro? https://app.doppa.com.br` },
-  { k: "ativo", nome: "Produzindo", ico: "🔥", msg: (n) => `Oi ${n}! Mandando bem nos vídeos 🔥` },
+const ETAPAS: { k: Etapa; nome: string; icon: LucideIcon; tom: Tom; msg: (n: string) => string }[] = [
+  { k: "regras", nome: "Não começou", icon: DoorOpen, tom: "neutral", msg: (n) => `Oi ${n}! Vi que você criou sua conta na Doppa mas ainda não começou o passo a passo. Leva 5 minutinhos: https://app.doppa.com.br` },
+  { k: "perfis", nome: "Sem perfis vinculados", icon: Smartphone, tom: "blue", msg: (n) => `Oi ${n}! Falta só criar e vincular seus 2 perfis profissionais na Doppa pra você começar. Precisa de ajuda? https://app.doppa.com.br` },
+  { k: "grupo", nome: "Fora do grupo", icon: MessagesSquare, tom: "cyan", msg: (n) => `Oi ${n}! Seus perfis já estão vinculados! Entra no grupo dos criadores pra receber os roteiros: https://app.doppa.com.br` },
+  { k: "orient", nome: "Faltam orientações", icon: BookOpen, tom: "violet", msg: (n) => `Oi ${n}! Falta pouco: termina as orientações de perfil e produção no app que seus roteiros liberam: https://app.doppa.com.br` },
+  { k: "produzir", nome: "Pronto, sem vídeo (7d)", icon: Moon, tom: "red", msg: (n) => `Oi ${n}! Seus roteiros estão liberados no app e ainda não vimos vídeos seus essa semana. Bora gravar o primeiro? https://app.doppa.com.br` },
+  { k: "ativo", nome: "Produzindo", icon: Flame, tom: "green", msg: (n) => `Oi ${n}! Mandando bem nos vídeos!` },
 ];
 
 function etapaDe(c: ContaAdmin): Etapa {
@@ -60,20 +62,20 @@ export default function AdminCriadores() {
   return (
     <Shell titulo="Criadores">
       <div className="seg-tabs" style={{ marginBottom: 16 }}>
-        <button className={aba === "app" ? "on" : ""} onClick={() => setAba("app")}>📲 No app <span className="count">{contas.length}</span></button>
-        <button className={aba === "legado" ? "on" : ""} onClick={() => setAba("legado")}>🗂️ Só na carteira <span className="count">{dados?.legado.length ?? 0}</span></button>
+        <button className={aba === "app" ? "on" : ""} onClick={() => setAba("app")}><Smartphone size={16} /> No app <span className="count">{contas.length}</span></button>
+        <button className={aba === "legado" ? "on" : ""} onClick={() => setAba("legado")}><NotebookPen size={16} /> Só na carteira <span className="count">{dados?.legado.length ?? 0}</span></button>
       </div>
       {erro && <div className="alert">{erro}</div>}
 
       {aba === "app" && (
         <section className="card funil">
-          <div className="row" style={{ justifyContent: "space-between" }}><b>🧭 Funil do onboarding</b>{filtro && <button className="link-btn" style={{ padding: 0 }} onClick={() => setFiltro(null)}>limpar filtro ✕</button>}</div>
+          <div className="row" style={{ justifyContent: "space-between" }}><span className="card__t">Funil do onboarding</span>{filtro && <button className="link-btn" style={{ padding: 0 }} onClick={() => setFiltro(null)}>Limpar filtro</button>}</div>
           {ETAPAS.map((e, i) => {
             const n = porEtapa.get(e.k) ?? 0, passou = chegaram(i);
             const pct = contas.length ? (passou / contas.length) * 100 : 0;
             return (
               <button key={e.k} className={"funil__i" + (filtro === e.k ? " on" : "")} onClick={() => setFiltro(filtro === e.k ? null : e.k)}>
-                <span className="funil__ico">{e.ico}</span>
+                <IconTile icon={e.icon} tom={e.tom} size={36} />
                 <span className="funil__txt"><b>{e.nome}</b><span className="funil__bar"><i style={{ width: `${pct}%`, animationDelay: `${i * 80}ms` }} /></span></span>
                 <span className="funil__n"><Contador valor={n} /></span>
               </button>
@@ -83,7 +85,7 @@ export default function AdminCriadores() {
       )}
 
       <div className="input-wrap" style={{ margin: "16px 0 12px" }}>
-        <span className="at">🔎</span>
+        <span className="at"><Search size={17} /></span>
         <input placeholder="Buscar por nome, e-mail ou @" value={busca} onChange={(e) => setBusca(e.target.value)} />
       </div>
 
@@ -91,7 +93,7 @@ export default function AdminCriadores() {
 
       {aba === "app" && dados && (
         <div className="adm-grid">
-          {lista.length === 0 && <div className="empty"><div>🫥</div>Ninguém por aqui.</div>}
+          {lista.length === 0 && <div className="empty">Ninguém por aqui.</div>}
           {lista.map((c, i) => {
             const et = ETAPAS.find((e) => e.k === etapaDe(c))!;
             const nome = (c.nome || c.email).split(" ")[0];
@@ -99,23 +101,23 @@ export default function AdminCriadores() {
             return (
               <article key={c.id} className="pessoa" style={{ animation: `rise .4s ${Math.min(i, 12) * 40}ms both` }}>
                 <div className="pessoa__top">
-                  <div className="avatar">{(c.nome || c.email).charAt(0).toUpperCase()}</div>
+                  <Avatar nome={c.nome || c.email} size={38} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <b>{c.nome || "Sem nome"} {c.papel === "admin" && <span className="chip">admin</span>}</b>
                     <span>{c.email}</span>
                   </div>
-                  <span className={"chip" + (et.k === "ativo" ? " chip--green" : et.k === "produzir" ? " chip--red" : " chip--yellow")}>{et.ico} {et.nome}</span>
+                  <span className={"chip" + (et.k === "ativo" ? " chip--green" : et.k === "produzir" ? " chip--red" : " chip--yellow")}>{et.nome}</span>
                 </div>
                 <div className="pessoa__meta">
-                  {c.ig_esp && <a href={igUrl(c.ig_esp)} target="_blank" rel="noopener">⚽ @{c.ig_esp}</a>}
-                  {c.ig_cas && <a href={igUrl(c.ig_cas)} target="_blank" rel="noopener">📰 @{c.ig_cas}</a>}
-                  <span>🎬 {c.videos_7d} vídeos/7d</span>
+                  {c.ig_esp && <a href={igUrl(c.ig_esp)} target="_blank" rel="noopener"><InstagramLogo size={13} /> @{c.ig_esp}</a>}
+                  {c.ig_cas && <a href={igUrl(c.ig_cas)} target="_blank" rel="noopener"><InstagramLogo size={13} /> @{c.ig_cas}</a>}
+                  <span><Film size={13} /> {c.videos_7d} vídeos em 7 dias</span>
                   {c.ultimo_video && <span>último {ddmm(c.ultimo_video)}</span>}
-                  <span>{c.termo_em ? "📝 termo ok" : "📝 sem termo"}</span>
-                  {c.btag && <span>🏷️ {c.btag}</span>}
-                  <span className="dim">etapa {desde(c)}</span>
+                  <span><FileSignature size={13} /> {c.termo_em ? "termo assinado" : "sem termo"}</span>
+                  {c.btag && <span><Tag size={13} /> {c.btag}</span>}
+                  <span><CalendarClock size={13} /> etapa {desde(c)}</span>
                 </div>
-                {link && et.k !== "ativo" && <a className="btn btn--sm btn--green" href={link} target="_blank" rel="noopener">💬 Chamar no WhatsApp</a>}
+                {link && et.k !== "ativo" && <a className="btn btn--sm btn--ghost" href={link} target="_blank" rel="noopener"><WhatsAppLogo size={16} color="#25D366" /> Chamar no WhatsApp</a>}
               </article>
             );
           })}
@@ -129,13 +131,13 @@ export default function AdminCriadores() {
             {legado.map((l) => (
               <article key={l.id} className="pessoa">
                 <div className="pessoa__top">
-                  <div className="avatar" style={{ background: "var(--surface-2)" }}>{l.nome.charAt(0).toUpperCase()}</div>
+                  <Avatar nome={l.nome} size={38} />
                   <div style={{ flex: 1, minWidth: 0 }}><b>{l.nome}</b><span>{l.status}</span></div>
-                  <span className={"chip" + (l.videos_7d > 0 ? " chip--green" : "")}>🎬 {l.videos_7d}/7d</span>
+                  <span className={"chip" + (l.videos_7d > 0 ? " chip--green" : "")}>{l.videos_7d} vídeos/7d</span>
                 </div>
                 <div className="pessoa__meta">
-                  {l.ig_esp && <a href={igUrl(l.ig_esp)} target="_blank" rel="noopener">⚽ @{l.ig_esp}</a>}
-                  {l.ig_cas && <a href={igUrl(l.ig_cas)} target="_blank" rel="noopener">📰 @{l.ig_cas}</a>}
+                  {l.ig_esp && <a href={igUrl(l.ig_esp)} target="_blank" rel="noopener"><InstagramLogo size={13} /> @{l.ig_esp}</a>}
+                  {l.ig_cas && <a href={igUrl(l.ig_cas)} target="_blank" rel="noopener"><InstagramLogo size={13} /> @{l.ig_cas}</a>}
                   {l.ultimo_video && <span>último vídeo {ddmm(l.ultimo_video)}</span>}
                 </div>
               </article>

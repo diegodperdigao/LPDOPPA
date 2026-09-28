@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Check, ChevronDown, Clapperboard, LockOpen } from "lucide-react";
 import { PRODUCAO } from "../../content";
 import { api } from "../../lib/api";
 import { useConta } from "../../lib/conta";
+import { IconTile } from "../../components/Icon";
 import { Dock } from "../../components/ui";
-import Layout from "./Layout";
+import Layout, { Cabeca } from "./Layout";
 
 export default function OrientProducao() {
   const { recarregar } = useConta();
@@ -30,35 +32,36 @@ export default function OrientProducao() {
 
   return (
     <Layout passo="producao">
-      <div className="center">
-        <div className="hero-ico">🎬</div>
-        <h1 className="h-display h1">Como <span className="grad-text">gravar</span></h1>
-        <p className="muted" style={{ margin: "8px 0 20px" }}>4 dicas pra gravar mais rápido e melhor. Toque em cada uma.</p>
-      </div>
+      <Cabeca icone={<IconTile icon={Clapperboard} size={52} />} titulo="Como gravar">
+        {PRODUCAO.length} dicas pra gravar mais rápido e melhor. Toque em cada uma.
+      </Cabeca>
 
       <div className="stack">
-        {PRODUCAO.map((d, i) => (
-          <section key={d.titulo} className={"guide" + (vistos.has(i) ? " done" : "")}>
-            <button className="guide__head" style={{ width: "100%", textAlign: "left" }} onClick={() => abrir(i)} aria-expanded={aberto === i}>
-              <div className="guide__num" style={{ fontSize: 20 }}>{vistos.has(i) && aberto !== i ? "✓" : d.icone}</div>
-              <b style={{ flex: 1 }}>{d.titulo}</b>
-              <span className="muted">{aberto === i ? "▴" : "▾"}</span>
-            </button>
-            {aberto === i && (
-              <div className="guide__body ob-body">
-                <ol className="steps-mini">{d.passos.map((p) => <li key={p}>{p}</li>)}</ol>
-                {i < PRODUCAO.length - 1 && (
-                  <button className="btn btn--sm btn--ghost" style={{ alignSelf: "flex-start" }} onClick={() => abrir(i + 1)}>Próxima dica →</button>
-                )}
-              </div>
-            )}
-          </section>
-        ))}
+        {PRODUCAO.map((d, i) => {
+          const visto = vistos.has(i) && aberto !== i;
+          return (
+            <section key={d.titulo} className={"guide" + (vistos.has(i) ? " done" : "")}>
+              <button className="guide__head" onClick={() => abrir(i)} aria-expanded={aberto === i}>
+                {visto ? <span className="guide__num"><Check size={16} strokeWidth={2.6} /></span> : <IconTile icon={d.icon} size={30} />}
+                <b>{d.titulo}</b>
+                <ChevronDown size={18} style={{ transform: aberto === i ? "rotate(180deg)" : "none", transition: "transform .2s" }} />
+              </button>
+              {aberto === i && (
+                <div className="guide__body ob-body">
+                  <ol className="steps-mini">{d.passos.map((p) => <li key={p}>{p}</li>)}</ol>
+                  {i < PRODUCAO.length - 1 && (
+                    <button className="btn btn--sm btn--ghost" onClick={() => abrir(i + 1)}>Próxima dica</button>
+                  )}
+                </div>
+              )}
+            </section>
+          );
+        })}
       </div>
 
       <Dock>
-        <button className="btn btn--green" disabled={!tudo || salvando} onClick={seguir}>
-          {tudo ? "Liberar meus roteiros 🔓" : `Veja as ${PRODUCAO.length} dicas (${vistos.size}/${PRODUCAO.length})`}
+        <button className="btn" disabled={!tudo || salvando} onClick={seguir}>
+          {tudo ? <><LockOpen size={18} /> Liberar meus roteiros</> : `Veja as ${PRODUCAO.length} dicas (${vistos.size}/${PRODUCAO.length})`}
         </button>
       </Dock>
     </Layout>

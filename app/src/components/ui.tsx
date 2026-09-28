@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Check as CheckIcon, Copy } from "lucide-react";
 
 export function CopyButton({ texto, label = "Copiar" }: { texto: string; label?: string }) {
   const [ok, setOk] = useState(false);
@@ -15,7 +16,8 @@ export function CopyButton({ texto, label = "Copiar" }: { texto: string; label?:
   }
   return (
     <button type="button" className={"copy-btn" + (ok ? " done" : "")} onClick={copiar}>
-      {ok ? "✓ Copiado!" : `📋 ${label}`}
+      {ok ? <CheckIcon size={16} strokeWidth={2.2} /> : <Copy size={16} strokeWidth={1.9} />}
+      {ok ? "Copiado" : label}
     </button>
   );
 }
@@ -23,7 +25,7 @@ export function CopyButton({ texto, label = "Copiar" }: { texto: string; label?:
 export function Check({ on, onToggle, children }: { on: boolean; onToggle: () => void; children: React.ReactNode }) {
   return (
     <button type="button" className={"check" + (on ? " on" : "")} onClick={onToggle} aria-pressed={on}>
-      <span className="check__box">{on ? "✓" : ""}</span>
+      <span className="check__box"><CheckIcon size={15} strokeWidth={3} /></span>
       <span>{children}</span>
     </button>
   );
@@ -31,8 +33,8 @@ export function Check({ on, onToggle, children }: { on: boolean; onToggle: () =>
 
 export function Confetti() {
   const pecas = useMemo(() => {
-    const cores = ["#1E3AFF", "#6B3DFF", "#00D1FF", "#22D46E", "#FFD300", "#E040FB"];
-    return Array.from({ length: 70 }, (_, i) => ({
+    const cores = ["#3D5AFE", "#7B5CFF", "#22C7F0", "#2BD881", "#FFCF33"];
+    return Array.from({ length: 60 }, (_, i) => ({
       left: Math.random() * 100,
       delay: Math.random() * 0.8,
       dur: 2.2 + Math.random() * 1.8,

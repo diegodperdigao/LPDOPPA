@@ -1,9 +1,17 @@
 import { useState } from "react";
+import { ArrowRight, ScrollText, Smartphone, Wallet } from "lucide-react";
 import { REGRAS } from "../../content";
 import { api } from "../../lib/api";
 import { useConta } from "../../lib/conta";
+import { IconTile } from "../../components/Icon";
 import { Check, Dock } from "../../components/ui";
 import Layout from "./Layout";
+
+const PILARES = [
+  { icon: Smartphone, t: "2 perfis novos" },
+  { icon: ScrollText, t: "Roteiro pronto" },
+  { icon: Wallet, t: "Pago por vídeo" },
+];
 
 export default function Regras() {
   const { conta, recarregar } = useConta();
@@ -18,27 +26,23 @@ export default function Regras() {
 
   return (
     <Layout passo="regras">
-      <div className="center">
-        <img src="/mascote.webp" alt="" style={{ width: 150, margin: "4px auto 0" }} />
-        <h1 className="h-display h1">Bem-vindo{primeiroNome ? `, ${primeiroNome}` : ""}! <span className="grad-text">👀</span></h1>
-        <p className="muted" style={{ margin: "8px 0 22px" }}>
-          Em <b style={{ color: "var(--text)" }}>6 passos rápidos</b> você sai daqui pronto pra gravar seu primeiro vídeo.
-        </p>
+      <div className="ob-head">
+        <img src="/mascote.webp" alt="" style={{ width: 112, margin: "0 auto 4px" }} />
+        <h1 className="h-display h1">Bem-vindo{primeiroNome ? `, ${primeiroNome}` : ""}!</h1>
+        <p>Em <b>6 passos rápidos</b> você sai daqui pronto pra gravar seu primeiro vídeo.</p>
       </div>
 
-      <div className="card stack" style={{ marginBottom: 18 }}>
-        <div className="row" style={{ justifyContent: "space-around", textAlign: "center" }}>
-          {[["📱", "2 perfis"], ["🎬", "Roteiro pronto"], ["💸", "Pago por vídeo"]].map(([i, t]) => (
-            <div key={t}><div style={{ fontSize: 34 }}>{i}</div><div style={{ fontSize: 13, fontWeight: 600 }}>{t}</div></div>
-          ))}
-        </div>
+      <div className="pilares">
+        {PILARES.map(({ icon: I, t }) => (
+          <div key={t}><IconTile icon={I} tom="violet" size={40} /><span>{t}</span></div>
+        ))}
       </div>
 
-      <h2 className="h-display h2" style={{ marginBottom: 12 }}>As regras do jogo</h2>
+      <div className="eyebrow" style={{ margin: "26px 0 10px" }}>As regras do jogo</div>
       <div className="ico-list">
         {REGRAS.map((r) => (
           <div className="ico-item" key={r.titulo}>
-            <div className="ico-item__ico">{r.icone}</div>
+            <IconTile icon={r.icon} tom={r.tom} size={38} />
             <div><b>{r.titulo}</b><span>{r.texto}</span></div>
           </div>
         ))}
@@ -46,7 +50,7 @@ export default function Regras() {
 
       <Dock>
         <Check on={aceito} onToggle={() => setAceito(!aceito)}>Tenho 18 anos ou mais e aceito as regras</Check>
-        <button className="btn" disabled={!aceito || salvando} onClick={seguir}>Bora começar →</button>
+        <button className="btn" disabled={!aceito || salvando} onClick={seguir}>Começar <ArrowRight size={18} /></button>
       </Dock>
     </Layout>
   );

@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  ArrowUpRight, Award, CalendarDays, Check, ChevronDown, Crown, FileSignature, Gift, Handshake, LifeBuoy, Link2, ListChecks,
+  Mail, Scale, Smartphone, Swords, Target, Trophy, UserRound,
+} from "lucide-react";
 import { BIO_LINK, BIO_TEXTO, PRODUCAO, RODAPE, SEGMENTOS, WHATSAPP_SUPORTE } from "../content";
 import { BRL, ddmm } from "../lib/api";
 import { useConta } from "../lib/conta";
@@ -7,6 +11,7 @@ import { igUrl } from "../lib/ig";
 import { usePainel } from "../lib/painel";
 import Shell from "../components/Shell";
 import TermoModal from "../components/TermoModal";
+import { IconTile, WhatsAppLogo } from "../components/Icon";
 import { CopyButton } from "../components/ui";
 import { Calendario, Contador } from "../components/viz";
 
@@ -37,56 +42,56 @@ export function Carteira() {
 
           <section className={"wallet-hero" + (pago ? " pago" : "")}>
             <div className="wallet-hero__top">
-              <span>Ciclo {dados.cycle.label}</span>
-              {pago ? <span className="chip chip--green">✓ Pago{dados.pagamento?.pago_em ? ` em ${ddmm(dados.pagamento.pago_em)}` : ""}</span>
-                : dados.cycle.isCurrent ? <span className="chip">em andamento</span> : <span className="chip chip--yellow">aguardando pagamento</span>}
+              <span className="row" style={{ gap: 6 }}><CalendarDays size={14} /> Ciclo {dados.cycle.label}</span>
+              {pago ? <span className="chip chip--green"><Check size={12} strokeWidth={2.6} /> Pago{dados.pagamento?.pago_em ? ` em ${ddmm(dados.pagamento.pago_em)}` : ""}</span>
+                : dados.cycle.isCurrent ? <span className="chip">Em andamento</span> : <span className="chip chip--yellow">Aguardando pagamento</span>}
             </div>
             {pago ? (
               <><div className="wallet-hero__lab">Pago neste ciclo</div><div className="wallet-hero__val"><Contador valor={dados.pagamento!.valor} formato={BRL} /></div></>
             ) : dados.cycle.isCurrent && dados.incentivo.diasRestantes > 0 ? (
-              <><div className="wallet-hero__lab">Complete os {dados.incentivo.diasRestantes} dias que faltam e receba até</div><div className="wallet-hero__val">+<Contador valor={dados.incentivo.potencial} formato={BRL} /></div></>
+              <><div className="wallet-hero__lab">Complete os {dados.incentivo.diasRestantes} dias que faltam e receba até</div><div className="wallet-hero__val"><Contador valor={dados.incentivo.potencial} formato={BRL} /></div></>
             ) : (
               <><div className="wallet-hero__lab">Vídeos válidos no ciclo</div><div className="wallet-hero__val"><Contador valor={dados.my.total} /></div></>
             )}
             <div className="wallet-hero__row">
-              <div><b><Contador valor={dados.my.totalEsp} /></b><span>⚽ Esportes</span></div>
-              <div><b><Contador valor={dados.my.totalCas} /></b><span>📰 Notícias</span></div>
-              <div><b><Contador valor={dados.my.perfect} /></b><span>✅ Dias perfeitos</span></div>
+              <div><b><Contador valor={dados.my.totalEsp} /></b><span><SEGMENTOS.esp.icon size={13} /> Esportes</span></div>
+              <div><b><Contador valor={dados.my.totalCas} /></b><span><SEGMENTOS.cas.icon size={13} /> Notícias</span></div>
+              <div><b><Contador valor={dados.my.perfect} /></b><span><Target size={13} /> Dias perfeitos</span></div>
             </div>
           </section>
 
-          <section className="card" style={{ marginTop: 16 }}>
-            <b>🧾 Checklist pra receber</b>
+          <section className="card" style={{ marginTop: 12 }}>
+            <span className="card__t"><ListChecks size={17} /> Checklist pra receber</span>
             <div className="checklist">
-              <div className={"checklist__i" + (dados.atingiuMinimo ? " ok" : "")}><span>{dados.atingiuMinimo ? "✓" : "1"}</span>Atingir o mínimo de R$ 150 no ciclo</div>
+              <div className={"checklist__i" + (dados.atingiuMinimo ? " ok" : "")}><span>{dados.atingiuMinimo ? <Check size={14} strokeWidth={2.8} /> : 1}</span>Atingir o mínimo de R$ 150 no ciclo</div>
               <button className={"checklist__i" + (conta?.termo_em ? " ok" : "")} onClick={() => !conta?.termo_em && setTermo(true)}>
-                <span>{conta?.termo_em ? "✓" : "2"}</span>Termo de adesão assinado {!conta?.termo_em && <em>assinar →</em>}
+                <span>{conta?.termo_em ? <Check size={14} strokeWidth={2.8} /> : 2}</span>Termo de adesão assinado {!conta?.termo_em && <em>Assinar</em>}
               </button>
-              <div className="checklist__i"><span>3</span>Nota fiscal do ciclo (MEI) <em className="dim">em breve aqui</em></div>
+              <div className="checklist__i"><span>3</span>Nota fiscal do ciclo (MEI) <em className="dim" style={{ color: "var(--dim)" }}>Em breve</em></div>
             </div>
           </section>
 
-          <section className="card" style={{ marginTop: 16 }}>
-            <div className="row" style={{ justifyContent: "space-between" }}><b>📅 Seus dias</b><span className="dim">meta {dados.params.meta}/dia</span></div>
+          <section className="card" style={{ marginTop: 12 }}>
+            <div className="row between"><span className="card__t"><CalendarDays size={17} /> Seus dias</span><span className="dim">meta {dados.params.meta}/dia</span></div>
             <Calendario dias={dados.my.days} meta={dados.params.meta} />
-            <div className="cal-leg"><span><i className="ok" />bateu a meta</span><span><i className="meio" />metade+</span><span><i className="pouco" />começou</span><span><i className="zero" />sem vídeo</span></div>
+            <div className="cal-leg"><span><i className="ok" />Bateu a meta</span><span><i className="meio" />Metade ou mais</span><span><i className="pouco" />Começou</span><span><i className="zero" />Sem vídeo</span></div>
           </section>
 
           {(dados.premios.length > 0 || dados.mgmItens.length > 0) && (
-            <div className="grid-2" style={{ marginTop: 16 }}>
+            <div className="grid-2" style={{ marginTop: 12 }}>
               {dados.premios.length > 0 && (
                 <section className="card">
-                  <div className="row" style={{ justifyContent: "space-between" }}><b>🎁 Prêmios</b><b className="money">{BRL(dados.premiosTotal)}</b></div>
+                  <div className="row between"><span className="card__t"><Gift size={17} /> Prêmios</span><span className="money">{BRL(dados.premiosTotal)}</span></div>
                   <div className="lista">{dados.premios.map((p, i) => (
-                    <div key={i} className="lista__i"><span><b>{p.origem}</b>{p.descricao && <small>{p.descricao}</small>}</span><span className="money">{BRL(p.valor)}</span></div>
+                    <div key={i} className="lista__i"><span>{p.origem}{p.descricao && <small>{p.descricao}</small>}</span><span className="money">{BRL(p.valor)}</span></div>
                   ))}</div>
                 </section>
               )}
               {dados.mgmItens.length > 0 && (
                 <section className="card">
-                  <div className="row" style={{ justifyContent: "space-between" }}><b>🤝 Indicações</b><b className="money">{BRL(dados.mgmTotal)}</b></div>
+                  <div className="row between"><span className="card__t"><Handshake size={17} /> Indicações</span><span className="money">{BRL(dados.mgmTotal)}</span></div>
                   <div className="lista">{dados.mgmItens.map((m, i) => (
-                    <div key={i} className="lista__i"><span><b>{m.nome}</b><small>{m.videos} vídeos · {m.pago ? "pago" : "a receber"}</small></span><span className="money">{BRL(m.valor)}</span></div>
+                    <div key={i} className="lista__i"><span>{m.nome}<small>{m.videos} vídeos · {m.pago ? "pago" : "a receber"}</small></span><span className="money">{BRL(m.valor)}</span></div>
                   ))}</div>
                 </section>
               )}
@@ -94,7 +99,7 @@ export function Carteira() {
           )}
         </>
       )}
-      {!dados && !semCarteira && !erro && <div className="stack">{[220, 140, 260].map((h, i) => <div key={i} className="skel" style={{ height: h, borderRadius: 26 }} />)}</div>}
+      {!dados && !semCarteira && !erro && <div className="stack">{[220, 140, 260].map((h, i) => <div key={i} className="skel" style={{ height: h, borderRadius: 18 }} />)}</div>}
       {termo && <TermoModal onFechar={() => setTermo(false)} />}
     </Shell>
   );
@@ -103,23 +108,22 @@ export function Carteira() {
 // ---------------------------------------------------------------- Temporada
 export function Temporada() {
   const itens = [
-    { ico: "🎯", t: "Missões", d: "Dia perfeito, semana perfeita, 350 views num vídeo… com progresso automático." },
-    { ico: "⚔️", t: "Equipes", d: "Pedra, Papel e Tesoura com placar ao vivo, sem parcial manual." },
-    { ico: "🏅", t: "Conquistas", d: "Selos que ficam no seu perfil pra sempre." },
-    { ico: "👑", t: "Hall da fama", d: "Fenômeno, Imparável, Constante… calculado pelos seus números." },
+    { icon: Target, tom: "violet" as const, t: "Missões", d: "Dia perfeito, semana perfeita, 350 views num vídeo, com progresso automático." },
+    { icon: Swords, tom: "red" as const, t: "Equipes", d: "Pedra, Papel e Tesoura com placar ao vivo, sem parcial manual." },
+    { icon: Award, tom: "cyan" as const, t: "Conquistas", d: "Selos que ficam no seu perfil pra sempre." },
+    { icon: Crown, tom: "yellow" as const, t: "Hall da fama", d: "Fenômeno, Imparável, Constante: calculado pelos seus números." },
   ];
   return (
     <Shell titulo="Temporada">
       <section className="teaser">
-        <div className="teaser__glow" />
-        <div style={{ fontSize: 64 }}>🏆</div>
-        <h2 className="h-display h1">Temporada <span className="grad-text">em breve</span></h2>
+        <IconTile icon={Trophy} tom="yellow" size={56} />
+        <h2 className="h-display h1">Temporada em breve</h2>
         <p className="muted">Tudo que hoje é anunciado à mão vai virar jogo aqui dentro.</p>
       </section>
-      <div className="grid-2" style={{ marginTop: 16 }}>
+      <div className="grid-2" style={{ marginTop: 12 }}>
         {itens.map((i, k) => (
-          <div key={i.t} className="ico-item" style={{ animation: `rise .5s ${k * 80}ms both` }}>
-            <div className="ico-item__ico">{i.ico}</div><div><b>{i.t}</b><span>{i.d}</span></div>
+          <div key={i.t} className="ico-item" style={{ animation: `rise .45s ${k * 70}ms both` }}>
+            <IconTile icon={i.icon} tom={i.tom} size={38} /><div><b>{i.t}</b><span>{i.d}</span></div>
           </div>
         ))}
       </div>
@@ -134,29 +138,30 @@ export function Aprender() {
     <Shell titulo="Aprender">
       <div className="grid-2">
         <section className="card stack">
-          <b>👤 Bio (igual nos 2 perfis)</b>
+          <span className="card__t"><UserRound size={17} /> Bio (igual nos 2 perfis)</span>
           <div className="copy-box">{BIO_TEXTO}</div>
-          <div className="row" style={{ flexWrap: "wrap" }}><CopyButton texto={BIO_TEXTO} label="Texto" /><CopyButton texto={BIO_LINK} label="Link" /></div>
+          <div className="row" style={{ flexWrap: "wrap", gap: 8 }}><CopyButton texto={BIO_TEXTO} label="Texto" /><CopyButton texto={BIO_LINK} label="Link" /></div>
         </section>
         <section className="card stack">
-          <b>⚖️ Rodapé legal</b>
+          <span className="card__t"><Scale size={17} /> Rodapé legal</span>
           <div className="copy-box" style={{ fontSize: 13 }}>{RODAPE}</div>
           <CopyButton texto={RODAPE} label="Copiar rodapé" />
         </section>
       </div>
-      <h3 className="h-display h2" style={{ margin: "22px 0 12px" }}>Como gravar</h3>
+      <div className="sec-t"><h3>Como gravar</h3></div>
       <div className="stack">
         {PRODUCAO.map((d, i) => (
           <section key={d.titulo} className="guide">
-            <button className="guide__head" style={{ width: "100%", textAlign: "left" }} onClick={() => setAberto(aberto === i ? null : i)} aria-expanded={aberto === i}>
-              <div className="guide__num" style={{ fontSize: 20 }}>{d.icone}</div>
-              <b style={{ flex: 1 }}>{d.titulo}</b><span className="muted">{aberto === i ? "▴" : "▾"}</span>
+            <button className="guide__head" onClick={() => setAberto(aberto === i ? null : i)} aria-expanded={aberto === i}>
+              <IconTile icon={d.icon} size={30} />
+              <b>{d.titulo}</b>
+              <ChevronDown size={18} style={{ transform: aberto === i ? "rotate(180deg)" : "none", transition: "transform .2s" }} />
             </button>
             {aberto === i && <div className="guide__body ob-body"><ol className="steps-mini">{d.passos.map((p) => <li key={p}>{p}</li>)}</ol></div>}
           </section>
         ))}
       </div>
-      <Link className="btn btn--ghost" to="/onboarding/criar" style={{ marginTop: 16 }}>📱 Rever como criar os perfis</Link>
+      <Link className="btn btn--ghost" to="/onboarding/criar" style={{ marginTop: 16 }}><Smartphone size={18} /> Rever como criar os perfis</Link>
     </Shell>
   );
 }
@@ -164,20 +169,23 @@ export function Aprender() {
 // ---------------------------------------------------------------- Comunidade
 export function Comunidade() {
   const { conta } = useConta();
+  const texto = `Oi! Sou ${conta?.nome ?? ""} (${conta?.ig_esp ? "@" + conta.ig_esp : conta?.email}) e preciso de ajuda com `;
   return (
     <Shell titulo="Comunidade">
-      {conta?.grupo_link ? (
-        <a className="wpp-card" href={conta.grupo_link} target="_blank" rel="noopener">
-          <span className="wpp-card__ico">💬</span>
-          <span style={{ flex: 1 }}><b>Grupo DOPPA · Criadores</b><span>Avisos de roteiro, desafios e tira-dúvidas</span></span>
-          <span style={{ fontSize: 22 }}>↗</span>
+      <div className="stack">
+        {conta?.grupo_link ? (
+          <a className="wpp-card" href={conta.grupo_link} target="_blank" rel="noopener">
+            <span className="wpp-card__ico"><WhatsAppLogo size={26} /></span>
+            <span style={{ flex: 1 }}><b>Grupo DOPPA · Criadores</b><span>Avisos de roteiro, desafios e tira-dúvidas</span></span>
+            <ArrowUpRight size={20} />
+          </a>
+        ) : <div className="card muted center">O link do grupo ainda não foi configurado.</div>}
+        <a className="wpp-card wpp-card--alt" href={`${WHATSAPP_SUPORTE}?text=${encodeURIComponent(texto)}`} target="_blank" rel="noopener">
+          <span className="wpp-card__ico"><LifeBuoy size={22} strokeWidth={1.9} /></span>
+          <span style={{ flex: 1 }}><b>Falar com o suporte</b><span>Resposta no WhatsApp do time</span></span>
+          <ArrowUpRight size={20} />
         </a>
-      ) : <div className="card muted center">O link do grupo ainda não foi configurado.</div>}
-      <a className="wpp-card wpp-card--alt" href={`${WHATSAPP_SUPORTE}?text=${encodeURIComponent(`Oi! Sou ${conta?.nome ?? ""} (${conta?.ig_esp ? "@" + conta.ig_esp : conta?.email}) e preciso de ajuda com `)}`} target="_blank" rel="noopener" style={{ marginTop: 12 }}>
-        <span className="wpp-card__ico">🆘</span>
-        <span style={{ flex: 1 }}><b>Falar com o suporte</b><span>Resposta no WhatsApp do time</span></span>
-        <span style={{ fontSize: 22 }}>↗</span>
-      </a>
+      </div>
     </Shell>
   );
 }
@@ -191,28 +199,28 @@ export function Perfil() {
       <div className="grid-2">
         {(["esp", "cas"] as const).map((k) => {
           const h = k === "esp" ? conta?.ig_esp : conta?.ig_cas;
+          const S = SEGMENTOS[k];
           return (
             <div className="ig-card" key={k}>
-              <div className="ig-card__av"><span>{SEGMENTOS[k].emoji}</span></div>
+              <div className="ig-card__av"><span><S.icon size={20} strokeWidth={1.8} /></span></div>
               <div style={{ minWidth: 0 }}>
-                <span className="dim">{SEGMENTOS[k].nome}</span>
-                {h ? <a href={igUrl(h)} target="_blank" rel="noopener"><b>@{h}</b></a> : <b className="dim">não vinculado</b>}
+                <span className="dim">{S.nome}</span>
+                {h ? <a href={igUrl(h)} target="_blank" rel="noopener"><b>@{h}</b></a> : <b className="dim">Não vinculado</b>}
               </div>
             </div>
           );
         })}
       </div>
-      <Link className="btn btn--ghost" to="/onboarding/vincular" style={{ marginTop: 12 }}>🔗 Trocar perfis</Link>
+      <Link className="btn btn--ghost" to="/onboarding/vincular" style={{ marginTop: 12 }}><Link2 size={18} /> Trocar perfis</Link>
 
-      <section className="card stack" style={{ marginTop: 16 }}>
-        <b>📝 Termo de adesão</b>
+      <section className="card row between" style={{ marginTop: 12 }}>
+        <span className="card__t"><FileSignature size={17} /> Termo de adesão</span>
         {conta?.termo_em
-          ? <span className="chip chip--green" style={{ alignSelf: "flex-start" }}>✓ Assinado em {ddmm(conta.termo_em.slice(0, 10))}</span>
-          : <button className="btn btn--sm" style={{ alignSelf: "flex-start" }} onClick={() => setTermo(true)}>Assinar agora</button>}
+          ? <span className="chip chip--green"><Check size={12} strokeWidth={2.6} /> Assinado em {ddmm(conta.termo_em.slice(0, 10))}</span>
+          : <button className="btn btn--sm" onClick={() => setTermo(true)}>Assinar agora</button>}
       </section>
-      <section className="card stack" style={{ marginTop: 16 }}>
-        <b>✉️ Conta</b>
-        <span className="muted">{conta?.email}</span>
+      <section className="card row" style={{ marginTop: 12 }}>
+        <span className="card__t" style={{ flex: 1 }}><Mail size={17} /> {conta?.email}</span>
       </section>
       {termo && <TermoModal onFechar={() => setTermo(false)} />}
     </Shell>

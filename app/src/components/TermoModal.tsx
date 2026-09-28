@@ -2,6 +2,8 @@ import { useState } from "react";
 import { TERMO_URL, TERMO_VERSAO } from "../content";
 import { api, ErroApp } from "../lib/api";
 import { useConta } from "../lib/conta";
+import { CircleCheck, ExternalLink, FileSignature } from "lucide-react";
+import { IconTile } from "./Icon";
 import { Check, Confetti } from "./ui";
 
 const soDigitos = (s: string) => s.replace(/\D/g, "");
@@ -39,7 +41,7 @@ export default function TermoModal({ onFechar }: { onFechar: () => void }) {
         {ok ? (
           <div className="center stack" style={{ padding: "10px 0" }}>
             <Confetti />
-            <div style={{ fontSize: 56 }}>✍️</div>
+            <IconTile icon={CircleCheck} tom="green" size={56} className="center-x" />
             <h2 className="h-display h2" id="termo-t">Termo assinado!</h2>
             <p className="muted">Pronto: seus pagamentos estão liberados. Você recebe uma cópia por e-mail.</p>
             <button className="btn" onClick={onFechar}>Voltar aos roteiros</button>
@@ -47,7 +49,7 @@ export default function TermoModal({ onFechar }: { onFechar: () => void }) {
         ) : (
           <form className="stack" onSubmit={assinar}>
             <div className="center">
-              <div style={{ fontSize: 44 }}>📝</div>
+              <IconTile icon={FileSignature} tom="violet" size={52} className="center-x" />
               <h2 className="h-display h2" id="termo-t">Termo de adesão</h2>
               <p className="muted" style={{ fontSize: 14 }}>Obrigatório pra <b style={{ color: "var(--text)" }}>receber seus pagamentos</b>. Leva 1 minuto.</p>
             </div>
@@ -57,7 +59,7 @@ export default function TermoModal({ onFechar }: { onFechar: () => void }) {
               • A remuneração é por conteúdo válido, conforme as regras do ciclo.<br />
               • Não há vínculo empregatício. Pagamentos acima do mínimo exigem Nota Fiscal (MEI).<br />
               • Você cede o uso dos conteúdos para as campanhas e mantém o rodapé legal em todos eles.<br />
-              <a href={TERMO_URL} target="_blank" rel="noopener">Ler o termo completo ↗</a>
+              <a href={TERMO_URL} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 4, marginTop: 6 }}>Ler o termo completo <ExternalLink size={13} /></a>
             </div>
             <div className="field"><label>Nome completo</label>
               <div className="input-wrap"><input required value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" /></div></div>
@@ -69,7 +71,7 @@ export default function TermoModal({ onFechar }: { onFechar: () => void }) {
               <div className="input-wrap"><input inputMode="numeric" value={cnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="Se já tiver" /></div></div>
             <Check on={aceite} onToggle={() => setAceite(!aceite)}>Li e aceito o Termo de Adesão v{TERMO_VERSAO}</Check>
             {erro && <div className="alert">{erro}</div>}
-            <button className="btn" disabled={!valido || salvando}>{salvando ? "Salvando…" : "Assinar termo ✍️"}</button>
+            <button className="btn" disabled={!valido || salvando}>{salvando ? "Salvando…" : "Assinar termo"}</button>
             <button type="button" className="link-btn" onClick={onFechar}>Agora não</button>
           </form>
         )}

@@ -32,16 +32,16 @@ export function Anel({ valor, meta, tamanho = 168 }: { valor: number; meta: numb
     <svg viewBox="0 0 168 168" width={tamanho} height={tamanho} role="img" aria-label={`${valor} de ${meta} vídeos`}>
       <defs>
         <linearGradient id="gAnel" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor={batida ? "#22D46E" : "#2A52FF"} />
-          <stop offset="1" stopColor={batida ? "#0FB6C6" : "#7B4DFF"} />
+          <stop offset="0" stopColor={batida ? "#2BD881" : "#3D5AFE"} />
+          <stop offset="1" stopColor={batida ? "#22C7F0" : "#7B4DFF"} />
         </linearGradient>
       </defs>
-      <circle cx="84" cy="84" r={r} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="14" />
-      <circle cx="84" cy="84" r={r} fill="none" stroke="url(#gAnel)" strokeWidth="14" strokeLinecap="round"
+      <circle cx="84" cy="84" r={r} fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="10" />
+      <circle cx="84" cy="84" r={r} fill="none" stroke="url(#gAnel)" strokeWidth="10" strokeLinecap="round"
         strokeDasharray={c} strokeDashoffset={c * (1 - p)} transform="rotate(-90 84 84)"
         style={{ transition: "stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)" }} />
-      <text x="84" y="80" textAnchor="middle" fill="#fff" fontFamily="Anton" fontSize="44">{valor}</text>
-      <text x="84" y="106" textAnchor="middle" fill="#9AA2CC" fontFamily="Poppins" fontSize="13">de {meta} vídeos</text>
+      <text x="84" y="80" textAnchor="middle" fill="#EEF0FB" fontFamily="Anton" fontSize="42">{valor}</text>
+      <text x="84" y="106" textAnchor="middle" fill="#A3A9CF" fontFamily="Poppins" fontSize="12.5">de {meta} vídeos</text>
     </svg>
   );
 }
@@ -54,7 +54,7 @@ export function Barras({ dias, meta }: { dias: Dia[]; meta: number }) {
     <div className="bars">
       <div className="bars__info">
         {ativo ? (
-          <><b>{ddmm(ativo.date)}</b> · {ativo.videos} vídeos <span className="dim">(⚽ {ativo.esp} · 📰 {ativo.cas})</span> {ativo.ok ? <span className="chip chip--green">Dia perfeito</span> : null}</>
+          <><b>{ddmm(ativo.date)}</b><span>{ativo.videos} vídeos</span><span className="dim">Esportes {ativo.esp} · Notícias {ativo.cas}</span>{ativo.ok ? <span className="chip chip--green">Dia perfeito</span> : null}</>
         ) : "—"}
       </div>
       <div className="bars__plot">
