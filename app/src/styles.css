@@ -572,3 +572,5 @@ a.missao:hover, button.missao:hover { background: var(--surface-2); }
 .missao.feita > div > b { text-decoration: line-through; text-decoration-color: var(--dim); }
 .missao--destaque { border-color: rgba(255,207,51,.35); }
 .missao__ok { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: rgba(43,216,129,.14); color: var(--t-green); flex: 0 0 auto; }
+.ob-bloco { margin-top: 22px; }
+.ob-bloco__t { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
