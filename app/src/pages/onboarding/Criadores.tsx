@@ -51,7 +51,7 @@ export default function Criadores() {
 
       <Dock>
         <button className="btn" disabled={vistos.size === 0 || salvando} onClick={concluir}>
-          {vistos.size ? <><Check size={18} /> Concluir missão</> : "Abra pelo menos um perfil"}
+          {vistos.size ? <><Check size={18} /> Concluir</> : "Abra pelo menos um perfil"}
         </button>
       </Dock>
     </Layout>

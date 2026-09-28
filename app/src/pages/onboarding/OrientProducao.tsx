@@ -61,7 +61,7 @@ export default function OrientProducao() {
 
       <Dock>
         <button className="btn" disabled={!tudo || salvando} onClick={seguir}>
-          {tudo ? <><Check size={18} /> Concluir missão</> : `Veja as ${PRODUCAO.length} dicas (${vistos.size}/${PRODUCAO.length})`}
+          {tudo ? <><Check size={18} /> Concluir</> : `Veja as ${PRODUCAO.length} dicas (${vistos.size}/${PRODUCAO.length})`}
         </button>
       </Dock>
     </Layout>

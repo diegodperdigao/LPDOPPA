@@ -53,7 +53,7 @@ export const TERMO_VERSAO = "1.0";
 export const TERMO_URL = "https://doppa.com.br/termo";
 export const WHATSAPP_SUPORTE = "https://wa.me/5511936242999";
 
-// Missões secundárias: aparecem na boas-vindas e no Início até serem feitas.
+// Depois dos perfis e dos primeiros vídeos (em ordem de prioridade): aparecem no Início até serem feitas.
 export const MISSOES: { k: Missao; to: string; icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
   { k: "gravar", to: "/missao/gravar", icon: Lightbulb, tom: "yellow", t: "Confira dicas de como gravar", d: "Teleprompter, React e o que faz um vídeo valer." },
   { k: "criadores", to: "/missao/criadores", icon: Sparkles, tom: "violet", t: "Conheça criadores que já criam com Doppa", d: "Veja como postam os perfis que já estão rodando." },

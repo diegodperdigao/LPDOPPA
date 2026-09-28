@@ -59,13 +59,6 @@ export default function Inicio() {
         <section className="card" style={{ marginBottom: 12 }}>
           <div className="card-h"><IconTile icon={ListChecks} tom="violet" size={30} /> Próximos passos <small>{feitas}/{MISSOES.length + 1}</small></div>
           <div className="missoes">
-            {!conta.termo_em && (
-              <button className="missao missao--destaque" onClick={() => setTermo(true)}>
-                <IconTile icon={FileSignature} tom="yellow" size={34} />
-                <div><b>Passo 2 · Assine o termo de adesão</b><span>Seus vídeos já contam. O pagamento só sai com o termo assinado.</span></div>
-                <ChevronRight size={18} />
-              </button>
-            )}
             {pendentes.map((m) => (
               <Link key={m.k} to={m.to} className="missao">
                 <IconTile icon={m.icon} tom={m.tom} size={34} />
@@ -73,6 +66,13 @@ export default function Inicio() {
                 <ChevronRight size={18} />
               </Link>
             ))}
+            {!conta.termo_em && (
+              <button className="missao missao--destaque" onClick={() => setTermo(true)}>
+                <IconTile icon={FileSignature} tom="yellow" size={34} />
+                <div><b>Assine o termo de adesão</b><span>Seus vídeos já contam. O pagamento só sai com o termo assinado.</span></div>
+                <ChevronRight size={18} />
+              </button>
+            )}
           </div>
         </section>
       )}

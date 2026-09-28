@@ -7,9 +7,9 @@ const NOMES: Record<Passo | Missao, string> = {
   criar: "Crie seus perfis",
   vincular: "Vincule seus perfis",
   perfil: "Ajuste seus perfis",
-  gravar: "Missão · Como gravar",
-  criadores: "Missão · Criadores Doppa",
-  grupo: "Missão · Comunidade",
+  gravar: "Como gravar",
+  criadores: "Criadores Doppa",
+  grupo: "Comunidade",
 };
 
 // Passos do onboarding mostram a barra de progresso; missões têm um "fechar" que volta pro app.

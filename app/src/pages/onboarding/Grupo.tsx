@@ -56,7 +56,7 @@ export default function Grupo() {
 
       <Dock>
         <button className="btn" disabled={(!!link && !abriu) || salvando} onClick={seguir}>
-          {abriu || !link ? <>Entrei no grupo, concluir missão <ArrowRight size={18} /></> : "Toque no grupo acima pra entrar"}
+          {abriu || !link ? <>Entrei no grupo, concluir <ArrowRight size={18} /></> : "Toque no grupo acima pra entrar"}
         </button>
       </Dock>
     </Layout>

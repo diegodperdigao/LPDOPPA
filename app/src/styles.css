@@ -559,11 +559,8 @@ img { max-width: 100%; display: block; }
 .fluxo b { display: block; font-size: 15px; font-weight: 600; margin-top: 2px; }
 .fluxo li > div > span { display: block; font-size: 13.5px; color: var(--muted); }
 
-/* Boas-vindas: blocos passo 1 / missões / passo 2 */
+/* Missões / próximos passos */
 .ob-top__row .ob-step { margin-left: auto; }
-.ob-bloco { margin-top: 22px; }
-.ob-bloco__t { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.ob-bloco__t small { font-size: 12.5px; color: var(--dim); font-weight: 500; }
 .missoes { display: flex; flex-direction: column; gap: 8px; }
 .missao { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); width: 100%; text-align: left; color: inherit; text-decoration: none; transition: background .2s, border-color .2s; }
 a.missao:hover, button.missao:hover { background: var(--surface-2); }
