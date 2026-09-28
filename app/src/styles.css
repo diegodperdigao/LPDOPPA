@@ -182,8 +182,9 @@ img { max-width: 100%; display: block; }
 .slides { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .slide-cap { text-align: center; min-height: 88px; max-width: 360px; }
 .slide-cap .num { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(123,92,255,.16); color: var(--t-violet); font-weight: 700; font-size: 13px; margin-bottom: 8px; }
-.slide-cap b { display: block; font-size: 17px; font-weight: 600; line-height: 1.35; }
-.slide-cap span { color: var(--muted); font-size: 14px; }
+.slide-cap > b { display: block; font-size: 17px; font-weight: 600; line-height: 1.35; }
+.slide-cap > span { display: block; color: var(--muted); font-size: 14px; margin-top: 4px; }
+.slide-cap > span b { color: var(--text); font-weight: 600; }
 .dots { display: flex; gap: 6px; justify-content: center; }
 .dots i { width: 6px; height: 6px; border-radius: 99px; background: var(--line-2); transition: all .3s var(--ease); }
 .dots i.on { width: 20px; background: var(--accent); }
