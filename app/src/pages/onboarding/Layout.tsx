@@ -17,7 +17,7 @@ export default function Layout({ passo, children }: { passo: Passo; children: Re
       <header className="ob-top">
         <div className="ob-top__row">
           <img className="ob-logo" src="/doppa-logo.webp" alt="DOPPA" />
-          <span className="ob-step">{i + 1} de {PASSOS.length} · {NOMES[passo]}</span>
+          <span className="ob-step">{NOMES[passo]}</span>
         </div>
         <div className="progress" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
           <i style={{ width: `${pct}%` }} />

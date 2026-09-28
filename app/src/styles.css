@@ -551,3 +551,10 @@ img { max-width: 100%; display: block; }
 .dia__ok { top: -6px !important; right: -6px !important; width: 18px; height: 18px; padding: 3px; border-radius: 50%; background: var(--green); color: #052415 !important; box-shadow: 0 0 0 2px var(--surface); }
 .card-h small.money { color: var(--t-green); font-weight: 600; }
 .adm-grid > *, .grid-main > *, .stack > * { min-width: 0; }
+/* fluxograma da tela de boas-vindas */
+.fluxo { list-style: none; display: flex; flex-direction: column; position: relative; }
+.fluxo li { position: relative; display: flex; gap: 14px; align-items: flex-start; padding-bottom: 18px; animation: rise .45s both; }
+.fluxo li:last-child { padding-bottom: 0; }
+.fluxo li:not(:last-child)::before { content: ""; position: absolute; left: 19px; top: 44px; bottom: 4px; width: 2px; border-radius: 2px; background: linear-gradient(var(--line-2), var(--line)); }
+.fluxo b { display: block; font-size: 15px; font-weight: 600; margin-top: 2px; }
+.fluxo li > div > span { display: block; font-size: 13.5px; color: var(--muted); }
