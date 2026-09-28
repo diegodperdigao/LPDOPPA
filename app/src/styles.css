@@ -77,7 +77,12 @@ body {
   min-height: 100dvh; -webkit-font-smoothing: antialiased; overflow-x: hidden;
   background-image: radial-gradient(900px 420px at 80% -120px, var(--glow), transparent 70%);
   background-repeat: no-repeat;
+  /* O Poppins não tem kerning e, com hinting, alguns navegadores arredondam o avanço das letras
+     ("ade são"). Posição geométrica + tracking levemente negativo deixam o espaçamento uniforme. */
+  text-rendering: geometricPrecision;
+  letter-spacing: -.01em;
 }
+b, strong, h1, h2, h3 { letter-spacing: -.015em; }
 button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
 input, textarea { font: inherit; color: inherit; }
 a { color: var(--accent); }
