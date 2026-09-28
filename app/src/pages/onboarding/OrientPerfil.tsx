@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowRight, Check, CircleAlert, Link2, PenLine, Scale, UserRound } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowRight, Check, CircleAlert, Link2, PartyPopper, PenLine, Scale, UserRound } from "lucide-react";
 import { BIO_LINK, BIO_TEXTO, DESTAQUES, RODAPE, RODAPE_ITENS, SEGMENTOS } from "../../content";
 import { api, type Segmento } from "../../lib/api";
 import { useConta } from "../../lib/conta";
 import { Phone } from "../../components/Phone";
 import { IconTile } from "../../components/Icon";
-import { CopyButton, Dock } from "../../components/ui";
+import { Confetti, CopyButton, Dock } from "../../components/ui";
 import Layout, { Cabeca } from "./Layout";
 
 function Guia({ n, titulo, feito, onFeito, children }: { n: number; titulo: string; feito: boolean; onFeito: () => void; children: React.ReactNode }) {
@@ -29,6 +29,7 @@ function Guia({ n, titulo, feito, onFeito, children }: { n: number; titulo: stri
 export default function OrientPerfil() {
   const { conta, recarregar } = useConta();
   const nav = useNavigate();
+  const festa = (useLocation().state as { festa?: boolean } | null)?.festa;
   const [seg, setSeg] = useState<Segmento>("esp");
   const [feitos, setFeitos] = useState<Record<string, boolean>>({});
   const [salvando, setSalvando] = useState(false);
@@ -40,16 +41,23 @@ export default function OrientPerfil() {
   async function seguir() {
     setSalvando(true);
     try {
-      const jaTinha = !!conta?.orient_producao_em;
+      const jaTinha = !!conta?.orient_perfil_em;
       await api.marcarEtapa("orient_perfil");
       await recarregar();
-      nav(jaTinha ? "/" : "/onboarding/producao", { replace: true });
+      nav("/", { replace: true, state: { liberado: !jaTinha } });
     } finally { setSalvando(false); }
   }
 
   return (
     <Layout passo="perfil">
-      <Cabeca icone={<IconTile icon={UserRound} size={52} />} titulo="Monte seu perfil">
+      {festa && <Confetti />}
+      {festa && (
+        <div className="card card--glow row" style={{ marginBottom: 6 }}>
+          <IconTile icon={PartyPopper} tom="green" size={40} />
+          <div><b style={{ fontWeight: 600 }}>Perfis vinculados!</b><div className="dim">Agora é só ajustar os perfis e os roteiros liberam.</div></div>
+        </div>
+      )}
+      <Cabeca icone={<IconTile icon={UserRound} size={52} />} titulo="Ajuste seus perfis">
         Perfil bem montado passa confiança e entrega mais.
       </Cabeca>
 
@@ -108,7 +116,7 @@ export default function OrientPerfil() {
 
       <Dock>
         <button className="btn" disabled={faltam > 0 || salvando} onClick={seguir}>
-          {faltam ? `Faltam ${faltam} ${faltam === 1 ? "item" : "itens"}` : <>Perfil pronto, próximo <ArrowRight size={18} /></>}
+          {faltam ? `Faltam ${faltam} ${faltam === 1 ? "item" : "itens"}` : <>Perfis prontos, liberar roteiros <ArrowRight size={18} /></>}
         </button>
       </Dock>
     </Layout>

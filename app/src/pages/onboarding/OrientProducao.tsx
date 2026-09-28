@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, ChevronDown, Clapperboard, LockOpen } from "lucide-react";
+import { Check, ChevronDown, Clapperboard } from "lucide-react";
 import { PRODUCAO } from "../../content";
 import { api } from "../../lib/api";
 import { useConta } from "../../lib/conta";
@@ -26,12 +26,12 @@ export default function OrientProducao() {
     try {
       await api.marcarEtapa("orient_producao");
       await recarregar();
-      nav("/", { replace: true, state: { liberado: true } });
+      nav("/", { replace: true });
     } finally { setSalvando(false); }
   }
 
   return (
-    <Layout passo="producao">
+    <Layout passo="gravar">
       <Cabeca icone={<IconTile icon={Clapperboard} size={52} />} titulo="Como gravar">
         {PRODUCAO.length} dicas pra gravar mais rápido e melhor. Toque em cada uma.
       </Cabeca>
@@ -61,7 +61,7 @@ export default function OrientProducao() {
 
       <Dock>
         <button className="btn" disabled={!tudo || salvando} onClick={seguir}>
-          {tudo ? <><LockOpen size={18} /> Liberar meus roteiros</> : `Veja as ${PRODUCAO.length} dicas (${vistos.size}/${PRODUCAO.length})`}
+          {tudo ? <><Check size={18} /> Concluir missão</> : `Veja as ${PRODUCAO.length} dicas (${vistos.size}/${PRODUCAO.length})`}
         </button>
       </Dock>
     </Layout>

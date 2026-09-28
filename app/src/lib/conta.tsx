@@ -34,15 +34,19 @@ export function ContaProvider({ children }: { children: React.ReactNode }) {
 
 export const useConta = () => useContext(ContaCtx);
 
-// Ordem do onboarding. "criar" não tem registro no banco: é o guia visual antes de vincular.
-export const PASSOS = ["regras", "criar", "vincular", "grupo", "perfil", "producao"] as const;
+// Onboarding obrigatório (passo 1). "criar" não tem registro no banco: é o guia visual antes de vincular.
+export const PASSOS = ["regras", "criar", "vincular", "perfil"] as const;
 export type Passo = (typeof PASSOS)[number];
 
 export function passoAtual(c: Conta): Passo | "pronto" {
   if (!c.regras_em) return "regras";
   if (!c.perfis_em) return "criar";
-  if (!c.grupo_em) return "grupo";
   if (!c.orient_perfil_em) return "perfil";
-  if (!c.orient_producao_em) return "producao";
   return "pronto";
+}
+
+// Missões secundárias: feitas quando a pessoa quiser, depois do passo 1.
+export type Missao = "gravar" | "criadores" | "grupo";
+export function missaoFeita(c: Conta, m: Missao) {
+  return !!(m === "gravar" ? c.orient_producao_em : m === "criadores" ? c.criadores_em : c.grupo_em);
 }

@@ -2,7 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { igValido, normalizaIg } from "./ig";
 
 export type Segmento = "esp" | "cas";
-export type Etapa = "regras" | "grupo" | "orient_perfil" | "orient_producao";
+export type Etapa = "regras" | "grupo" | "orient_perfil" | "orient_producao" | "criadores";
 
 export interface Conta {
   id: string;
@@ -16,6 +16,7 @@ export interface Conta {
   grupo_em: string | null;
   orient_perfil_em: string | null;
   orient_producao_em: string | null;
+  criadores_em: string | null;
   termo_em: string | null;
   wl_token: string | null;
   grupo_link: string | null;
@@ -272,7 +273,7 @@ function apiDemo(): Api {
       gravarJ(DEMO_KEY, {
         id: "demo", nome: email.split("@")[0], email, papel: email.startsWith("admin") ? "admin" : "criador",
         ig_esp: null, ig_cas: null, regras_em: null, perfis_em: null, grupo_em: null,
-        orient_perfil_em: null, orient_producao_em: null, termo_em: null, wl_token: null,
+        orient_perfil_em: null, orient_producao_em: null, criadores_em: null, termo_em: null, wl_token: null,
         grupo_link: "https://chat.whatsapp.com/EXEMPLO",
       } satisfies Conta);
     },

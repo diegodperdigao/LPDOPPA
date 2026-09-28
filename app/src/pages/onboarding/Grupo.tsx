@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowUpRight, Megaphone, MessageCircleQuestion, PartyPopper, Trophy } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, ArrowUpRight, Megaphone, MessageCircleQuestion, Trophy } from "lucide-react";
 import { api } from "../../lib/api";
 import { useConta } from "../../lib/conta";
 import { IconTile, WhatsAppLogo } from "../../components/Icon";
-import { Confetti, Dock } from "../../components/ui";
+import { Dock } from "../../components/ui";
 import Layout, { Cabeca } from "./Layout";
 
 const MOTIVOS = [
@@ -16,7 +16,6 @@ const MOTIVOS = [
 export default function Grupo() {
   const { conta, recarregar } = useConta();
   const nav = useNavigate();
-  const festa = (useLocation().state as { festa?: boolean } | null)?.festa;
   const [abriu, setAbriu] = useState(!!conta?.grupo_em);
   const [salvando, setSalvando] = useState(false);
   const link = conta?.grupo_link;
@@ -26,19 +25,12 @@ export default function Grupo() {
     try {
       await api.marcarEtapa("grupo");
       await recarregar();
-      nav("/onboarding/perfil", { replace: true });
+      nav("/", { replace: true });
     } finally { setSalvando(false); }
   }
 
   return (
     <Layout passo="grupo">
-      {festa && <Confetti />}
-      {festa && (
-        <div className="card card--glow row" style={{ marginBottom: 6 }}>
-          <IconTile icon={PartyPopper} tom="green" size={40} />
-          <div><b style={{ fontWeight: 600 }}>Perfis vinculados!</b><div className="dim">Você já é membro ativo da Doppa.</div></div>
-        </div>
-      )}
       <Cabeca icone={<span className="itile" style={{ width: 52, height: 52, background: "#25D366", color: "#fff", margin: "0 auto 16px" }}><WhatsAppLogo size={28} /></span>} titulo="Entre no grupo">
         O grupo do WhatsApp é só pra <b>membros ativos</b>. É onde tudo acontece no dia a dia.
       </Cabeca>
@@ -64,7 +56,7 @@ export default function Grupo() {
 
       <Dock>
         <button className="btn" disabled={(!!link && !abriu) || salvando} onClick={seguir}>
-          {abriu || !link ? <>Entrei no grupo, continuar <ArrowRight size={18} /></> : "Toque no grupo acima pra entrar"}
+          {abriu || !link ? <>Entrei no grupo, concluir missão <ArrowRight size={18} /></> : "Toque no grupo acima pra entrar"}
         </button>
       </Dock>
     </Layout>

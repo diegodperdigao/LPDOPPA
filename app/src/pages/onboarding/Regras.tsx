@@ -1,24 +1,21 @@
 import { useState } from "react";
-import { ArrowRight, Clapperboard, Link2, MessagesSquare, Smartphone, UserRound, Wallet, type LucideIcon } from "lucide-react";
+import { ArrowRight, Clapperboard, FileSignature, Smartphone, UserRound, type LucideIcon } from "lucide-react";
+import { MISSOES } from "../../content";
 import { api } from "../../lib/api";
 import { useConta } from "../../lib/conta";
 import { IconTile, type Tom } from "../../components/Icon";
-import { Check, Dock } from "../../components/ui";
+import { Dock } from "../../components/ui";
 import Layout from "./Layout";
 
-// Fluxograma do que a pessoa vai fazer (onboarding + rotina).
-const FLUXO: { icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
-  { icon: Smartphone, tom: "violet", t: "Crie 2 perfis novos no Instagram", d: "Categoria profissional (Criador de conteúdo): um de Esportes e um de Notícias." },
-  { icon: Link2, tom: "blue", t: "Vincule os perfis aqui", d: "É por eles que a gente conta os seus vídeos." },
-  { icon: MessagesSquare, tom: "cyan", t: "Entre no grupo dos criadores", d: "Avisos, dúvidas e desafios, tudo no WhatsApp." },
-  { icon: UserRound, tom: "pink", t: "Deixe os perfis prontos", d: "Bio, link e legenda do jeito certo." },
-  { icon: Clapperboard, tom: "yellow", t: "Grave e poste os roteiros do dia", d: "Os roteiros chegam prontos: é só gravar com o celular." },
-  { icon: Wallet, tom: "green", t: "Receba pelos seus vídeos", d: "Você ganha por vídeo válido, a cada ciclo." },
+// Passo 1: o que libera os vídeos.
+const PASSO1: { icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
+  { icon: Smartphone, tom: "violet", t: "Crie 2 perfis novos no Instagram e vincule aqui", d: "Conta profissional (Criador de conteúdo): um de Esportes e um de Notícias." },
+  { icon: UserRound, tom: "pink", t: "Ajuste os perfis", d: "Bio, link e legenda seguindo as nossas orientações." },
+  { icon: Clapperboard, tom: "yellow", t: "Grave e poste os vídeos do dia!", d: "Os roteiros chegam prontos no app, todos os dias." },
 ];
 
 export default function Regras() {
   const { conta, recarregar } = useConta();
-  const [aceito, setAceito] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const primeiroNome = (conta?.nome || "").split(" ")[0];
 
@@ -35,18 +32,40 @@ export default function Regras() {
         <p>Aqui na Doppa você posta <b>vídeos diários</b> e ganha por eles. Pra começar são só alguns passos rápidos:</p>
       </div>
 
-            <ol className="fluxo">
-        {FLUXO.map((f, i) => (
-          <li key={f.t} style={{ animationDelay: `${i * 70}ms` }}>
-            <IconTile icon={f.icon} tom={f.tom} size={40} />
-            <div><b>{f.t}</b><span>{f.d}</span></div>
-          </li>
-        ))}
-      </ol>
+      <section className="card">
+        <div className="ob-bloco__t"><span className="eyebrow">Passo 1 · Comece</span></div>
+        <ol className="fluxo">
+          {PASSO1.map((f, i) => (
+            <li key={f.t} style={{ animationDelay: `${i * 70}ms` }}>
+              <IconTile icon={f.icon} tom={f.tom} size={40} />
+              <div><b>{f.t}</b><span>{f.d}</span></div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <div className="ob-bloco">
+        <div className="ob-bloco__t"><span className="eyebrow" style={{ color: "var(--t-cyan)" }}>Missões secundárias</span><small>quando quiser</small></div>
+        <div className="missoes">
+          {MISSOES.map((m) => (
+            <div key={m.k} className="missao">
+              <IconTile icon={m.icon} tom={m.tom} size={34} />
+              <div><b>{m.t}</b></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="ob-bloco">
+        <div className="ob-bloco__t"><span className="eyebrow" style={{ color: "var(--t-green)" }}>Passo 2 · Depois de começar</span></div>
+        <div className="missao">
+          <IconTile icon={FileSignature} tom="green" size={34} />
+          <div><b>Assine o termo de adesão</b><span>É o que libera o seu pagamento.</span></div>
+        </div>
+      </div>
 
       <Dock>
-        <Check on={aceito} onToggle={() => setAceito(!aceito)}>Tenho 18 anos ou mais</Check>
-        <button className="btn" disabled={!aceito || salvando} onClick={seguir}>Começar <ArrowRight size={18} /></button>
+        <button className="btn" disabled={salvando} onClick={seguir}>Começar <ArrowRight size={18} /></button>
       </Dock>
     </Layout>
   );

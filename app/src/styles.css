@@ -558,3 +558,20 @@ img { max-width: 100%; display: block; }
 .fluxo li:not(:last-child)::before { content: ""; position: absolute; left: 19px; top: 44px; bottom: 4px; width: 2px; border-radius: 2px; background: linear-gradient(var(--line-2), var(--line)); }
 .fluxo b { display: block; font-size: 15px; font-weight: 600; margin-top: 2px; }
 .fluxo li > div > span { display: block; font-size: 13.5px; color: var(--muted); }
+
+/* Boas-vindas: blocos passo 1 / missões / passo 2 */
+.ob-top__row .ob-step { margin-left: auto; }
+.ob-bloco { margin-top: 22px; }
+.ob-bloco__t { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ob-bloco__t small { font-size: 12.5px; color: var(--dim); font-weight: 500; }
+.missoes { display: flex; flex-direction: column; gap: 8px; }
+.missao { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); width: 100%; text-align: left; color: inherit; text-decoration: none; transition: background .2s, border-color .2s; }
+a.missao:hover, button.missao:hover { background: var(--surface-2); }
+.missao > div { flex: 1; min-width: 0; }
+.missao > div > b { display: block; font-size: 14.5px; font-weight: 600; }
+.missao > div > span { display: block; font-size: 13px; color: var(--muted); }
+.missao > svg { color: var(--dim); flex: 0 0 auto; }
+.missao.feita { opacity: .6; }
+.missao.feita > div > b { text-decoration: line-through; text-decoration-color: var(--dim); }
+.missao--destaque { border-color: rgba(255,207,51,.35); }
+.missao__ok { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: rgba(43,216,129,.14); color: var(--t-green); flex: 0 0 auto; }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ArrowRight, CalendarRange, ChevronRight, Clock3, FileSignature, LockOpen } from "lucide-react";
-import { SEGMENTOS } from "../content";
+import { ArrowRight, CalendarRange, ChevronRight, Clock3, FileSignature, ListChecks, LockOpen } from "lucide-react";
+import { MISSOES, SEGMENTOS } from "../content";
 import { api, ddmm, hojeSP, type Roteiro } from "../lib/api";
-import { useConta } from "../lib/conta";
+import { missaoFeita, useConta } from "../lib/conta";
 import { useAvisos } from "../lib/avisos";
 import { ultimaContagem, usePainel } from "../lib/painel";
 import Shell from "../components/Shell";
@@ -32,6 +32,9 @@ export default function Inicio() {
     return () => clearTimeout(t);
   }, [conta, liberado, temPopup]);
 
+  const pendentes = conta ? MISSOES.filter((m) => !missaoFeita(conta, m.k)) : [];
+  const feitas = MISSOES.length - pendentes.length + (conta?.termo_em ? 1 : 0);
+
   const ult = dados ? ultimaContagem(dados) : null;
   const handles = [
     conta?.ig_esp && { tag: "ESP", h: conta.ig_esp },
@@ -52,12 +55,26 @@ export default function Inicio() {
         </div>
       )}
 
-      {conta && !conta.termo_em && (
-        <button className="banner" style={{ marginBottom: 12 }} onClick={() => setTermo(true)}>
-          <IconTile icon={FileSignature} tom="yellow" size={38} />
-          <span style={{ flex: 1 }}><b>Assine o termo pra receber</b><span>Seus vídeos já contam. O pagamento só sai com o termo assinado.</span></span>
-          <ChevronRight size={18} />
-        </button>
+      {conta && (!conta.termo_em || pendentes.length > 0) && (
+        <section className="card" style={{ marginBottom: 12 }}>
+          <div className="card-h"><IconTile icon={ListChecks} tom="violet" size={30} /> Próximos passos <small>{feitas}/{MISSOES.length + 1}</small></div>
+          <div className="missoes">
+            {!conta.termo_em && (
+              <button className="missao missao--destaque" onClick={() => setTermo(true)}>
+                <IconTile icon={FileSignature} tom="yellow" size={34} />
+                <div><b>Passo 2 · Assine o termo de adesão</b><span>Seus vídeos já contam. O pagamento só sai com o termo assinado.</span></div>
+                <ChevronRight size={18} />
+              </button>
+            )}
+            {pendentes.map((m) => (
+              <Link key={m.k} to={m.to} className="missao">
+                <IconTile icon={m.icon} tom={m.tom} size={34} />
+                <div><b>{m.t}</b><span>{m.d}</span></div>
+                <ChevronRight size={18} />
+              </Link>
+            ))}
+          </div>
+        </section>
       )}
 
       {dados ? (

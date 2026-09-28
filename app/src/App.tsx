@@ -19,6 +19,7 @@ import Vincular from "./pages/onboarding/Vincular";
 import Grupo from "./pages/onboarding/Grupo";
 import OrientPerfil from "./pages/onboarding/OrientPerfil";
 import OrientProducao from "./pages/onboarding/OrientProducao";
+import Criadores from "./pages/onboarding/Criadores";
 
 // Onboarding: pode voltar a passos já feitos, nunca pular pra frente.
 function Onboarding() {
@@ -30,19 +31,24 @@ function Onboarding() {
     regras: !conta.regras_em,
     criar: !!conta.regras_em,
     vincular: !!conta.regras_em,
-    grupo: !!conta.perfis_em,
-    perfil: !!conta.grupo_em,
-    producao: !!conta.orient_perfil_em && !conta.orient_producao_em,
+    perfil: !!conta.perfis_em,
   };
   if (!passo || !liberado[passo]) return <Navigate to={atual === "pronto" ? "/" : `/onboarding/${atual}`} replace />;
   switch (passo) {
     case "regras": return <Regras />;
     case "criar": return <CriarPerfis />;
     case "vincular": return <Vincular />;
-    case "grupo": return <Grupo />;
     case "perfil": return <OrientPerfil />;
-    case "producao": return <OrientProducao />;
   }
+  return <Navigate to="/" replace />;
+}
+
+// Missões secundárias: telas cheias, fora do Shell, depois do passo 1.
+function MissaoPag() {
+  const { m } = useParams();
+  if (m === "gravar") return <OrientProducao />;
+  if (m === "criadores") return <Criadores />;
+  if (m === "grupo") return <Grupo />;
   return <Navigate to="/" replace />;
 }
 
@@ -70,6 +76,7 @@ export default function App() {
       <Routes>
         <Route path="/entrar" element={conta ? <Navigate to="/" replace /> : <Entrar />} />
         <Route path="/onboarding/:passo?" element={<Onboarding />} />
+        <Route path="/missao/:m" element={p(<MissaoPag />)} />
         <Route path="/" element={p(<Inicio />)} />
         <Route path="/roteiros" element={p(<Roteiros />)} />
         <Route path="/carteira" element={p(<Carteira />)} />

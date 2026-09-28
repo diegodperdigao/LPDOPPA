@@ -1,7 +1,8 @@
 // Textos do app num lugar só, pra editar sem mexer nas telas.
 // ⚠️ RASCUNHO: RODAPE (aviso do Ministério da Fazenda) e as dicas de produção
 // precisam ser trocados pelos textos oficiais dos fóruns de orientação do Discord.
-import { Ban, Bot, HeartHandshake, ImageIcon, Newspaper, ScrollText, ShieldCheck, Timer, Trophy, Video, type LucideIcon } from "lucide-react";
+import { Ban, Bot, HeartHandshake, ImageIcon, Lightbulb, MessagesSquare, Newspaper, ScrollText, ShieldCheck, Sparkles, Timer, Trophy, Video, type LucideIcon } from "lucide-react";
+import type { Missao } from "./lib/conta";
 import type { Tom } from "./components/Icon";
 
 export const SEGMENTOS: Record<"esp" | "cas", { nome: string; curto: string; icon: LucideIcon; tom: Tom; exemploNome: string; exemploUser: string }> = {
@@ -51,3 +52,17 @@ export const MARCAS: Record<string, string> = { kingpanda: "King Panda", superbe
 export const TERMO_VERSAO = "1.0";
 export const TERMO_URL = "https://doppa.com.br/termo";
 export const WHATSAPP_SUPORTE = "https://wa.me/5511936242999";
+
+// Missões secundárias: aparecem na boas-vindas e no Início até serem feitas.
+export const MISSOES: { k: Missao; to: string; icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
+  { k: "gravar", to: "/missao/gravar", icon: Lightbulb, tom: "yellow", t: "Confira dicas de como gravar", d: "Teleprompter, React e o que faz um vídeo valer." },
+  { k: "criadores", to: "/missao/criadores", icon: Sparkles, tom: "violet", t: "Conheça criadores que já criam com Doppa", d: "Veja como postam os perfis que já estão rodando." },
+  { k: "grupo", to: "/missao/grupo", icon: MessagesSquare, tom: "cyan", t: "Entre na nossa comunidade do WhatsApp", d: "Avisos, dúvidas e desafios com os outros criadores." },
+];
+
+// ⚠️ RASCUNHO: trocar pelos @ reais de criadores que toparam aparecer.
+export const CRIADORES_DESTAQUE: { nome: string; ig: string; segmento: "esp" | "cas"; frase: string }[] = [
+  { nome: "Criador exemplo 1", ig: "exemplo.esportes", segmento: "esp", frase: "Posta notícia de futebol todo dia com React." },
+  { nome: "Criador exemplo 2", ig: "exemplo.noticias", segmento: "cas", frase: "Fofoca e notícia com teleprompter, direto ao ponto." },
+  { nome: "Criador exemplo 3", ig: "exemplo.bola", segmento: "esp", frase: "Grava na rua, reage aos lances da rodada." },
+];

@@ -1,18 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarClock, DoorOpen, Film, Flame, Moon, NotebookPen, Search, Smartphone, Tag, BookOpen, MessagesSquare, FileSignature, type LucideIcon } from "lucide-react";
+import { CalendarClock, DoorOpen, Film, Flame, Moon, NotebookPen, Search, Smartphone, Tag, BookOpen, FileSignature, type LucideIcon } from "lucide-react";
 import { api, ddmm, type ContaAdmin, type Funil } from "../../lib/api";
 import { igUrl } from "../../lib/ig";
 import Shell, { Avatar } from "../../components/Shell";
 import { Contador } from "../../components/viz";
 import { IconTile, InstagramLogo, WhatsAppLogo, type Tom } from "../../components/Icon";
 
-type Etapa = "regras" | "perfis" | "grupo" | "orient" | "produzir" | "ativo";
+type Etapa = "regras" | "perfis" | "orient" | "produzir" | "ativo";
 
 const ETAPAS: { k: Etapa; nome: string; icon: LucideIcon; tom: Tom; msg: (n: string) => string }[] = [
   { k: "regras", nome: "Não começou", icon: DoorOpen, tom: "neutral", msg: (n) => `Oi ${n}! Vi que você criou sua conta na Doppa mas ainda não começou o passo a passo. Leva 5 minutinhos: https://app.doppa.com.br` },
   { k: "perfis", nome: "Sem perfis vinculados", icon: Smartphone, tom: "blue", msg: (n) => `Oi ${n}! Falta só criar e vincular seus 2 perfis profissionais na Doppa pra você começar. Precisa de ajuda? https://app.doppa.com.br` },
-  { k: "grupo", nome: "Fora do grupo", icon: MessagesSquare, tom: "cyan", msg: (n) => `Oi ${n}! Seus perfis já estão vinculados! Entra no grupo dos criadores pra receber os roteiros: https://app.doppa.com.br` },
-  { k: "orient", nome: "Faltam orientações", icon: BookOpen, tom: "violet", msg: (n) => `Oi ${n}! Falta pouco: termina as orientações de perfil e produção no app que seus roteiros liberam: https://app.doppa.com.br` },
+  { k: "orient", nome: "Perfis sem ajuste", icon: BookOpen, tom: "violet", msg: (n) => `Oi ${n}! Seus perfis já estão vinculados! Falta só ajustar bio, link e legenda no app que seus roteiros liberam: https://app.doppa.com.br` },
   { k: "produzir", nome: "Pronto, sem vídeo (7d)", icon: Moon, tom: "red", msg: (n) => `Oi ${n}! Seus roteiros estão liberados no app e ainda não vimos vídeos seus essa semana. Bora gravar o primeiro? https://app.doppa.com.br` },
   { k: "ativo", nome: "Produzindo", icon: Flame, tom: "green", msg: (n) => `Oi ${n}! Mandando bem nos vídeos!` },
 ];
@@ -20,8 +19,7 @@ const ETAPAS: { k: Etapa; nome: string; icon: LucideIcon; tom: Tom; msg: (n: str
 function etapaDe(c: ContaAdmin): Etapa {
   if (!c.regras_em) return "regras";
   if (!c.perfis_em) return "perfis";
-  if (!c.grupo_em) return "grupo";
-  if (!c.orient_producao_em) return "orient";
+  if (!c.orient_perfil_em) return "orient";
   return c.videos_7d > 0 ? "ativo" : "produzir";
 }
 function desde(c: ContaAdmin) {
