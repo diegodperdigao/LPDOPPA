@@ -9,6 +9,7 @@ import { Aprender, Carteira, Comunidade, Perfil, Temporada } from "./pages/Secun
 import AdminRoteiros from "./pages/admin/AdminRoteiros";
 import AdminCriadores from "./pages/admin/AdminCriadores";
 import AdminConfig from "./pages/admin/AdminConfig";
+import AdminNotas from "./pages/admin/AdminNotas";
 import Regras from "./pages/onboarding/Regras";
 import CriarPerfis from "./pages/onboarding/CriarPerfis";
 import Vincular from "./pages/onboarding/Vincular";
@@ -75,6 +76,7 @@ export default function App() {
         <Route path="/admin/roteiros" element={p(<AdminRoteiros />, true)} />
         <Route path="/admin/criadores" element={p(<AdminCriadores />, true)} />
         <Route path="/admin/config" element={p(<AdminConfig />, true)} />
+        <Route path="/admin/notas" element={p(<AdminNotas />, true)} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

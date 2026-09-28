@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Portal from "./Portal";
 import { TERMO_URL, TERMO_VERSAO } from "../content";
 import { api, ErroApp } from "../lib/api";
 import { useConta } from "../lib/conta";
@@ -35,6 +36,7 @@ export default function TermoModal({ onFechar }: { onFechar: () => void }) {
   }
 
   return (
+    <Portal>
     <div className="modal" onClick={(e) => e.target === e.currentTarget && onFechar()}>
       <div className="modal__sheet" role="dialog" aria-modal="true" aria-labelledby="termo-t">
         <div className="grab" />
@@ -77,5 +79,6 @@ export default function TermoModal({ onFechar }: { onFechar: () => void }) {
         )}
       </div>
     </div>
+    </Portal>
   );
 }

@@ -61,6 +61,11 @@ export interface ContaAdmin {
 export interface Legado { id: string; nome: string; ig_esp: string | null; ig_cas: string | null; status: string; videos_7d: number; ultimo_video: string | null }
 export interface Funil { contas: ContaAdmin[]; legado: Legado[] }
 
+export type StatusNf = "enviada" | "aprovada" | "recusada";
+export interface NotaFiscal { id: string; ciclo_start: string; ciclo_end: string; numero: string; valor: number; status: StatusNf; motivo: string | null; enviada_em: string; arquivo_path: string }
+export interface NotaAdmin extends NotaFiscal { criador_id: string; nome: string; ig_esp: string | null; email: string | null; telefone: string | null }
+export interface EnvioNf { ciclo_start: string; ciclo_end: string; numero: string; valor: number; arquivo: File }
+
 export interface Api {
   modo: "demo" | "supabase";
   conta(): Promise<Conta | null>;
@@ -76,6 +81,12 @@ export interface Api {
   salvarRoteiro(r: RoteiroNovo): Promise<void>;
   excluirRoteiro(id: string): Promise<void>;
   enviarImagem(arquivo: File): Promise<string>;
+  minhasNfs(): Promise<NotaFiscal[]>;
+  nfPrazoDias(): Promise<number>;
+  enviarNf(e: EnvioNf): Promise<void>;
+  nfUrl(path: string): Promise<string>;
+  adminNfs(ciclo?: string): Promise<NotaAdmin[]>;
+  adminNfRevisar(id: string, status: "aprovada" | "recusada", motivo?: string): Promise<void>;
   adminCriadores(): Promise<Funil>;
   adminConfig(): Promise<Record<string, string>>;
   adminConfigSalvar(chave: string, valor: string): Promise<void>;
@@ -161,6 +172,28 @@ function apiSupabase(sb: SupabaseClient): Api {
       if (error) throw new ErroApp(error.message);
       return sb.storage.from("roteiros").getPublicUrl(caminho).data.publicUrl;
     },
+    async minhasNfs() {
+      const { data, error } = await sb.from("notas_fiscais").select("id,ciclo_start,ciclo_end,numero,valor,status,motivo,enviada_em,arquivo_path").order("ciclo_start", { ascending: false });
+      if (error) throw new ErroApp(error.message);
+      return (data ?? []) as NotaFiscal[];
+    },
+    async nfPrazoDias() { return rpc<number>("app_nf_prazo_dias"); },
+    async enviarNf(e) {
+      const criador = await rpc<string | null>("app_meu_criador_id");
+      if (!criador) throw new ErroApp("Vincule seus perfis primeiro.");
+      const ext = (e.arquivo.name.split(".").pop() || "pdf").toLowerCase();
+      const caminho = `${criador}/${e.ciclo_start}/${crypto.randomUUID()}.${ext}`;
+      const up = await sb.storage.from("notas").upload(caminho, e.arquivo, { contentType: e.arquivo.type || undefined });
+      if (up.error) throw new ErroApp(up.error.message.includes("mime") ? "Envie um PDF ou uma foto (JPG/PNG)." : up.error.message.includes("size") ? "Arquivo muito grande (máx. 10 MB)." : "Não deu pra enviar o arquivo.");
+      await rpc("app_enviar_nf", { p_ciclo_start: e.ciclo_start, p_ciclo_end: e.ciclo_end, p_numero: e.numero, p_valor: e.valor, p_path: caminho });
+    },
+    async nfUrl(path) {
+      const { data, error } = await sb.storage.from("notas").createSignedUrl(path, 300);
+      if (error || !data) throw new ErroApp("Não deu pra abrir o arquivo.");
+      return data.signedUrl;
+    },
+    async adminNfs(ciclo) { return rpc<NotaAdmin[]>("app_admin_nfs", ciclo ? { p_ciclo_start: ciclo } : {}); },
+    async adminNfRevisar(id, status, motivo) { await rpc("app_admin_nf_revisar", { p_id: id, p_status: status, p_motivo: motivo ?? null }); },
     async adminCriadores() { return rpc<Funil>("app_admin_criadores"); },
     async adminConfig() { return rpc<Record<string, string>>("app_admin_config"); },
     async adminConfigSalvar(chave, valor) { await rpc("app_admin_config_salvar", { p_chave: chave, p_valor: valor }); },
@@ -172,6 +205,7 @@ function apiSupabase(sb: SupabaseClient): Api {
 // ---------------------------------------------------------------------------
 const DEMO_KEY = "doppa_demo_conta";
 const DEMO_ROT = "doppa_demo_roteiros";
+const DEMO_NF = "doppa_demo_nfs";
 
 function apiDemo(): Api {
   const lerJ = <T,>(k: string, pad: T): T => { try { return JSON.parse(localStorage.getItem(k) || "null") ?? pad; } catch { return pad; } };
@@ -219,15 +253,20 @@ function apiDemo(): Api {
       mudar({ termo_em: agora() });
     },
     async roteiros(data) { return todos().filter((r) => r.data === data); },
-    async painel() {
-      // ciclo de exemplo: dia 24 do mês passado até hoje
-      const hoje = new Date(hojeSP() + "T12:00:00");
-      const ini = new Date(hoje); ini.setDate(24); if (hoje.getDate() < 24) ini.setMonth(ini.getMonth() - 1);
-      const fim = new Date(ini); fim.setMonth(fim.getMonth() + 1); fim.setDate(23);
+    async painel(_token, ciclo) {
+      // ciclos de exemplo ancorados no dia 24: o atual e os 2 anteriores
       const iso = (d: Date) => d.toISOString().slice(0, 10);
+      const dm = (x: string) => x.slice(8, 10) + "/" + x.slice(5, 7);
+      const hoje = new Date(hojeSP() + "T12:00:00");
+      const atualIni = new Date(hoje); atualIni.setDate(24); if (hoje.getDate() < 24) atualIni.setMonth(atualIni.getMonth() - 1);
+      const bounds = (k: number) => { const i = new Date(atualIni); i.setMonth(i.getMonth() - k); const f = new Date(i); f.setMonth(f.getMonth() + 1); f.setDate(23); return { i, f }; };
+      const cycles = [2, 1, 0].map((k) => { const { i, f } = bounds(k); return { start: iso(i), end: iso(f), label: `${dm(iso(i))} — ${dm(iso(f))}`, current: k === 0 }; });
+      const alvo = cycles.find((c) => c.start === ciclo) ?? cycles[2];
+      const ini = new Date(alvo.start + "T12:00:00"), fim = new Date(alvo.end + "T12:00:00");
+      const ate = alvo.current ? hoje : fim;
       const days: Dia[] = [];
-      let seed = 7;
-      for (const d = new Date(ini); d <= hoje; d.setDate(d.getDate() + 1)) {
+      let seed = 7 + ini.getMonth();
+      for (const d = new Date(ini); d <= ate; d.setDate(d.getDate() + 1)) {
         seed = (seed * 9301 + 49297) % 233280;
         const t = Math.round((seed / 233280) * 40);
         const esp = Math.round(t * 0.6), cas = t - esp;
@@ -236,19 +275,17 @@ function apiDemo(): Api {
       let perfect = 0, streak = 0, run = 0;
       for (const d of days) { if (d.ok) { perfect++; run++; streak = Math.max(streak, run); } else run = 0; }
       const total = days.reduce((s, d) => s + d.videos, 0);
-      const dm = (s: string) => s.slice(8, 10) + "/" + s.slice(5, 7);
-      const label = `${dm(iso(ini))} — ${dm(iso(fim))}`;
-      const restantes = Math.max(0, Math.round((fim.getTime() - hoje.getTime()) / 864e5));
+      const restantes = alvo.current ? Math.max(0, Math.round((fim.getTime() - hoje.getTime()) / 864e5)) : 0;
       return {
         params: { meta: 30 },
-        cycle: { start: iso(ini), end: iso(fim), label, isCurrent: true },
-        cycles: [{ start: iso(ini), end: iso(fim), label, current: true }],
+        cycle: { start: alvo.start, end: alvo.end, label: alvo.label, isCurrent: alvo.current },
+        cycles,
         my: { days, total, totalEsp: days.reduce((s, d) => s + d.esp, 0), totalCas: days.reduce((s, d) => s + d.cas, 0), perfect, streak, tickets: perfect * streak },
         atingiuMinimo: true,
         incentivo: { diasRestantes: restantes, potencial: restantes * 30 * 1.56 },
         mgmTotal: 42.5, mgmPagoTotal: 0, mgmItens: [{ nome: "Amigo Exemplo", videos: 540, valor: 42.5, pago: false, pago_em: null }],
         pagamento: null,
-        premios: [{ origem: "Piñata", descricao: "Exemplo de prêmio", valor: 50, data: iso(ini) }],
+        premios: [{ origem: "Piñata", descricao: "Exemplo de prêmio", valor: 50, data: alvo.start }],
         premiosTotal: 50,
       };
     },
@@ -260,6 +297,21 @@ function apiDemo(): Api {
     async excluirRoteiro(id) { gravarJ(DEMO_ROT, todos().filter((x) => x.id !== id)); },
     async enviarImagem(arquivo) {
       return await new Promise<string>((ok) => { const f = new FileReader(); f.onload = () => ok(String(f.result)); f.readAsDataURL(arquivo); });
+    },
+    async minhasNfs() { return lerJ<NotaFiscal[]>(DEMO_NF, []); },
+    async nfPrazoDias() { return 5; },
+    async enviarNf(e) {
+      if (e.ciclo_end >= hojeSP()) throw new ErroApp("A NF desse ciclo só pode ser enviada depois que ele fechar.");
+      const url = await new Promise<string>((ok) => { const f = new FileReader(); f.onload = () => ok(String(f.result)); f.readAsDataURL(e.arquivo); });
+      const lista = lerJ<NotaFiscal[]>(DEMO_NF, []).filter((n) => n.ciclo_start !== e.ciclo_start);
+      gravarJ(DEMO_NF, [{ id: String(Date.now()), ciclo_start: e.ciclo_start, ciclo_end: e.ciclo_end, numero: e.numero, valor: e.valor, status: "enviada", motivo: null, enviada_em: agora(), arquivo_path: url }, ...lista]);
+    },
+    async nfUrl(path) { return path; },
+    async adminNfs() {
+      return lerJ<NotaFiscal[]>(DEMO_NF, []).map((n) => ({ ...n, criador_id: "demo", nome: ler()?.nome ?? "Criador", ig_esp: ler()?.ig_esp ?? null, email: ler()?.email ?? null, telefone: null }));
+    },
+    async adminNfRevisar(id, status, motivo) {
+      gravarJ(DEMO_NF, lerJ<NotaFiscal[]>(DEMO_NF, []).map((n) => (n.id === id ? { ...n, status, motivo: status === "recusada" ? motivo ?? null : null } : n)));
     },
     async adminCriadores() {
       const d = (n: number) => new Date(Date.now() - n * 864e5).toISOString();

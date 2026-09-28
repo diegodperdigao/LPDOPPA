@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Portal from "../../components/Portal";
 import { ArrowLeft, ArrowRight, Check, ImagePlus, Pencil, Plus, Trash2 } from "lucide-react";
 import { MARCAS, SEGMENTOS } from "../../content";
 import { api, ErroApp, hojeSP, type Roteiro, type RoteiroNovo, type Segmento } from "../../lib/api";
@@ -24,6 +25,7 @@ function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar
   }
 
   return (
+    <Portal>
     <div className="modal" onClick={(e) => e.target === e.currentTarget && onFechar()}>
       <form className="modal__sheet stack" onSubmit={salvar} role="dialog" aria-modal="true">
         <div className="grab" />
@@ -65,6 +67,7 @@ function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar
         <button type="button" className="link-btn" onClick={onFechar}>Cancelar</button>
       </form>
     </div>
+    </Portal>
   );
 }
 

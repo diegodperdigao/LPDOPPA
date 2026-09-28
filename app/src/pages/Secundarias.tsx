@@ -13,6 +13,7 @@ import Shell from "../components/Shell";
 import TermoModal from "../components/TermoModal";
 import { IconTile, WhatsAppLogo } from "../components/Icon";
 import { CopyButton } from "../components/ui";
+import { NfDoCiclo, NfModal, STATUS_NF, useNfs } from "../components/NotaFiscal";
 import { Calendario, Contador } from "../components/viz";
 
 // ---------------------------------------------------------------- Carteira
@@ -21,7 +22,10 @@ export function Carteira() {
   const [ciclo, setCiclo] = useState<string | undefined>();
   const { dados, erro, semCarteira } = usePainel(ciclo);
   const [termo, setTermo] = useState(false);
+  const [nfAberta, setNfAberta] = useState(false);
+  const { nfs, prazo, recarregar: recarregarNfs } = useNfs();
   const pago = dados?.pagamento?.pago;
+  const nf = dados ? nfs?.find((n) => n.ciclo_start === dados.cycle.start) : undefined;
 
   return (
     <Shell titulo="Carteira">
@@ -67,9 +71,16 @@ export function Carteira() {
               <button className={"checklist__i" + (conta?.termo_em ? " ok" : "")} onClick={() => !conta?.termo_em && setTermo(true)}>
                 <span>{conta?.termo_em ? <Check size={14} strokeWidth={2.8} /> : 2}</span>Termo de adesão assinado {!conta?.termo_em && <em>Assinar</em>}
               </button>
-              <div className="checklist__i"><span>3</span>Nota fiscal do ciclo (MEI) <em className="dim" style={{ color: "var(--dim)" }}>Em breve</em></div>
+              <button className={"checklist__i" + (nf?.status === "aprovada" ? " ok" : "")} onClick={() => !dados.cycle.isCurrent && (!nf || nf.status === "recusada") && setNfAberta(true)}>
+                <span>{nf?.status === "aprovada" ? <Check size={14} strokeWidth={2.8} /> : 3}</span>Nota fiscal do ciclo (MEI)
+                {dados.cycle.isCurrent ? <em style={{ color: "var(--dim)" }}>Após o fechamento</em>
+                  : nf ? <em style={{ color: nf.status === "recusada" ? "#FF93A6" : nf.status === "aprovada" ? "#5CE6A0" : "#FFD95C" }}>{STATUS_NF[nf.status].rot}</em>
+                  : <em>Enviar</em>}
+              </button>
             </div>
           </section>
+
+          {nfs && <NfDoCiclo ciclo={dados.cycle} nf={nf} prazo={prazo} onEnviar={() => setNfAberta(true)} />}
 
           <section className="card" style={{ marginTop: 12 }}>
             <div className="row between"><span className="card__t"><CalendarDays size={17} /> Seus dias</span><span className="dim">meta {dados.params.meta}/dia</span></div>
@@ -101,6 +112,7 @@ export function Carteira() {
       )}
       {!dados && !semCarteira && !erro && <div className="stack">{[220, 140, 260].map((h, i) => <div key={i} className="skel" style={{ height: h, borderRadius: 18 }} />)}</div>}
       {termo && <TermoModal onFechar={() => setTermo(false)} />}
+      {nfAberta && dados && <NfModal ciclo={dados.cycle} onFechar={() => setNfAberta(false)} onEnviada={() => { setNfAberta(false); recarregarNfs(); }} />}
     </Shell>
   );
 }

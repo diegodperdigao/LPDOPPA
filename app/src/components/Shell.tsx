@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Clapperboard, FilePenLine, House, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
+import { BookOpen, Clapperboard, FilePenLine, House, Receipt, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
 import { api } from "../lib/api";
 import { useConta } from "../lib/conta";
 import "./Shell.css";
@@ -27,6 +27,7 @@ const GRUPOS: Grupo[] = [
   { titulo: "Admin", admin: true, itens: [
     { to: "/admin/criadores", icon: Users, nome: "Criadores" },
     { to: "/admin/roteiros", icon: FilePenLine, nome: "Publicar roteiros" },
+    { to: "/admin/notas", icon: Receipt, nome: "Notas fiscais" },
     { to: "/admin/config", icon: Settings, nome: "Configurações" },
   ] },
 ];
