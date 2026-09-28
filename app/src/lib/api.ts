@@ -74,6 +74,12 @@ export interface Aviso { id: string; titulo: string; corpo: string; tipo: TipoAv
 export interface AvisoAdmin extends Omit<Aviso, "lido"> { publico: PublicoAviso; fim: string | null; ativo: boolean; criado_em: string; alcance: number; vistos: number; cliques: number }
 export type AvisoNovo = { id?: string; titulo: string; corpo: string; tipo: TipoAviso; tom: TomAviso; publico: PublicoAviso; cta_texto: string | null; cta_url: string | null; inicio: string; fim: string | null; ativo: boolean };
 
+export interface Campanha {
+  id: string; titulo: string; ciclo: string | null; inicio: string; fim: string | null; marcas: string[];
+  meta_dia: number | null; duracao_min: number | null; valor_mes: number | null; regras: string[]; corpo: string; publicado: boolean;
+}
+export type CampanhaNova = Omit<Campanha, "id"> & { id?: string };
+
 export interface Api {
   modo: "demo" | "supabase";
   conta(): Promise<Conta | null>;
@@ -100,6 +106,10 @@ export interface Api {
   adminAvisos(): Promise<AvisoAdmin[]>;
   salvarAviso(a: AvisoNovo): Promise<void>;
   excluirAviso(id: string): Promise<void>;
+  campanhas(): Promise<Campanha[]>;
+  adminCampanhas(): Promise<Campanha[]>;
+  salvarCampanha(c: CampanhaNova): Promise<void>;
+  excluirCampanha(id: string): Promise<void>;
   adminCriadores(): Promise<Funil>;
   adminConfig(): Promise<Record<string, string>>;
   adminConfigSalvar(chave: string, valor: string): Promise<void>;
@@ -219,6 +229,25 @@ function apiSupabase(sb: SupabaseClient): Api {
       const { error } = await sb.from("avisos").delete().eq("id", id);
       if (error) throw new ErroApp(error.message);
     },
+    async campanhas() {
+      const { data, error } = await sb.from("campanhas").select("*").eq("publicado", true).order("inicio", { ascending: false });
+      if (error) throw new ErroApp(error.message);
+      return (data ?? []) as Campanha[];
+    },
+    async adminCampanhas() {
+      const { data, error } = await sb.from("campanhas").select("*").order("inicio", { ascending: false });
+      if (error) throw new ErroApp(error.message);
+      return (data ?? []) as Campanha[];
+    },
+    async salvarCampanha(c) {
+      const { id, ...campos } = c;
+      const { error } = id ? await sb.from("campanhas").update(campos).eq("id", id) : await sb.from("campanhas").insert(campos);
+      if (error) throw new ErroApp(error.message);
+    },
+    async excluirCampanha(id) {
+      const { error } = await sb.from("campanhas").delete().eq("id", id);
+      if (error) throw new ErroApp(error.message);
+    },
     async adminCriadores() { return rpc<Funil>("app_admin_criadores"); },
     async adminConfig() { return rpc<Record<string, string>>("app_admin_config"); },
     async adminConfigSalvar(chave, valor) { await rpc("app_admin_config_salvar", { p_chave: chave, p_valor: valor }); },
@@ -233,6 +262,17 @@ const DEMO_ROT = "doppa_demo_roteiros";
 const DEMO_NF = "doppa_demo_nfs";
 const DEMO_AVISOS = "doppa_demo_avisos";
 const DEMO_LIDOS = "doppa_demo_avisos_lidos";
+const DEMO_CAMP = "doppa_demo_campanhas";
+// Exemplo com os números do post do ciclo 3 no Discord (#campanhas-ativas).
+const campanhasExemplo = (): Campanha[] => {
+  const base = { marcas: ["kingpanda", "superbet"], meta_dia: 30, duracao_min: 30, valor_mes: 1400, publicado: true,
+    regras: ["Vídeos com no mínimo 30 segundos", "Nada de IA: é você gravando", "Rodapé legal completo em toda legenda", "Hashtag da marca do roteiro (#kingpanda, #superbet)"] };
+  return [
+    { ...base, id: "c4", titulo: "King Panda + Superbet", ciclo: "Ciclo 4", inicio: "2026-09-25", fim: "2026-10-25",
+      corpo: "EXEMPLO: aqui entra o texto do post da campanha, do jeito que ia pro Discord. Metas, bônus, datas importantes e o que muda nesse ciclo." },
+    { ...base, id: "c3", titulo: "King Panda + Superbet", ciclo: "Ciclo 3", inicio: "2026-08-25", fim: "2026-09-25", corpo: "" },
+  ];
+};
 const avisosExemplo = (): AvisoAdmin[] => {
   const ontem = new Date(Date.now() - 864e5).toISOString();
   return [
@@ -365,6 +405,14 @@ function apiDemo(): Api {
       else gravarJ(DEMO_AVISOS, [{ ...a, id: String(Date.now()), criado_em: agora(), alcance: 1, vistos: 0, cliques: 0 } as AvisoAdmin, ...lista]);
     },
     async excluirAviso(id) { gravarJ(DEMO_AVISOS, lerJ<AvisoAdmin[]>(DEMO_AVISOS, avisosExemplo()).filter((x) => x.id !== id)); },
+    async campanhas() { return lerJ<Campanha[]>(DEMO_CAMP, campanhasExemplo()).filter((c) => c.publicado).sort((a, b) => b.inicio.localeCompare(a.inicio)); },
+    async adminCampanhas() { return lerJ<Campanha[]>(DEMO_CAMP, campanhasExemplo()).sort((a, b) => b.inicio.localeCompare(a.inicio)); },
+    async salvarCampanha(c) {
+      const lista = lerJ<Campanha[]>(DEMO_CAMP, campanhasExemplo());
+      if (c.id) gravarJ(DEMO_CAMP, lista.map((x) => (x.id === c.id ? { ...x, ...c } as Campanha : x)));
+      else gravarJ(DEMO_CAMP, [{ ...c, id: String(Date.now()) }, ...lista]);
+    },
+    async excluirCampanha(id) { gravarJ(DEMO_CAMP, lerJ<Campanha[]>(DEMO_CAMP, campanhasExemplo()).filter((x) => x.id !== id)); },
     async adminCriadores() {
       const d = (n: number) => new Date(Date.now() - n * 864e5).toISOString();
       const base = { btag: null, papel: "criador", telefone: "11999990000", status: "ativo", ig_esp: null, ig_cas: null, regras_em: null, perfis_em: null, grupo_em: null, orient_perfil_em: null, orient_producao_em: null, termo_em: null, videos_7d: 0, ultimo_video: null };

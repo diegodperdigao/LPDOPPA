@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Bell, BookOpen, Megaphone, Clapperboard, FilePenLine, House, Receipt, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
+import { Bell, BookOpen, Flag, Megaphone, Clapperboard, FilePenLine, House, Receipt, LogOut, Menu, MessagesSquare, Settings, Trophy, UserRound, Users, Wallet, type LucideIcon } from "lucide-react";
 import { api } from "../lib/api";
 import { useConta } from "../lib/conta";
 import SeletorTema from "./SeletorTema";
@@ -15,6 +15,7 @@ const GRUPOS: Grupo[] = [
   { titulo: "Criar", itens: [
     { to: "/", icon: House, nome: "Início" },
     { to: "/roteiros", icon: Clapperboard, nome: "Roteiros" },
+    { to: "/campanha", icon: Flag, nome: "Campanha" },
     { to: "/aprender", icon: BookOpen, nome: "Aprender" },
   ] },
   { titulo: "Ganhos", itens: [
@@ -32,6 +33,7 @@ const GRUPOS: Grupo[] = [
     { to: "/admin/avisos", icon: Megaphone, nome: "Enviar avisos" },
     { to: "/admin/criadores", icon: Users, nome: "Criadores" },
     { to: "/admin/roteiros", icon: FilePenLine, nome: "Publicar roteiros" },
+    { to: "/admin/campanhas", icon: Flag, nome: "Campanhas" },
     { to: "/admin/notas", icon: Receipt, nome: "Notas fiscais" },
     { to: "/admin/config", icon: Settings, nome: "Configurações" },
   ] },

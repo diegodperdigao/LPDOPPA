@@ -17,7 +17,7 @@ const COMECO: { icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
 const IMPORTANTES: { icon: LucideIcon; tom: Tom; t: string; d: string }[] = [
   { icon: FileSignature, tom: "green", t: "Termo de adesão", d: "Assine depois que começar a postar. É o que libera o seu pagamento." },
   { icon: Wallet, tom: "blue", t: "Orientações para pagamentos", d: "Ciclos, nota fiscal e quando o dinheiro cai." },
-  { icon: Megaphone, tom: "pink", t: "Detalhes sobre a campanha", d: "Marcas, regras e prêmios do momento." },
+  { icon: Megaphone, tom: "pink", t: "Detalhes sobre a campanha", d: "Marcas, meta, regras e valores do ciclo." },
 ];
 
 export default function Regras() {

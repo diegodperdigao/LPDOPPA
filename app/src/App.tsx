@@ -20,6 +20,8 @@ import Grupo from "./pages/onboarding/Grupo";
 import OrientPerfil from "./pages/onboarding/OrientPerfil";
 import OrientProducao from "./pages/onboarding/OrientProducao";
 import Criadores from "./pages/onboarding/Criadores";
+import Campanha from "./pages/Campanha";
+import AdminCampanhas from "./pages/admin/AdminCampanhas";
 
 // Onboarding: pode voltar a passos já feitos, nunca pular pra frente.
 function Onboarding() {
@@ -79,6 +81,7 @@ export default function App() {
         <Route path="/missao/:m" element={p(<MissaoPag />)} />
         <Route path="/" element={p(<Inicio />)} />
         <Route path="/roteiros" element={p(<Roteiros />)} />
+        <Route path="/campanha" element={p(<Campanha />)} />
         <Route path="/carteira" element={p(<Carteira />)} />
         <Route path="/temporada" element={p(<Temporada />)} />
         <Route path="/aprender" element={p(<Aprender />)} />
@@ -86,6 +89,7 @@ export default function App() {
         <Route path="/perfil" element={p(<Perfil />)} />
         <Route path="/avisos" element={p(<Mural />)} />
         <Route path="/admin/avisos" element={p(<AdminAvisos />, true)} />
+        <Route path="/admin/campanhas" element={p(<AdminCampanhas />, true)} />
         <Route path="/admin/roteiros" element={p(<AdminRoteiros />, true)} />
         <Route path="/admin/criadores" element={p(<AdminCriadores />, true)} />
         <Route path="/admin/config" element={p(<AdminConfig />, true)} />
