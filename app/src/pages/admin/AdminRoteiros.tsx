@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import Portal from "../../components/Portal";
-import { ArrowLeft, ArrowRight, Check, Film, ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, FileDown, Film, ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react";
+import ImportarRoteiros from "./ImportarRoteiros";
 import { MARCAS, SEGMENTOS } from "../../content";
 import { api, ErroApp, hojeSP, type Midia, type Roteiro, type RoteiroNovo, type Segmento } from "../../lib/api";
 import Shell from "../../components/Shell";
 
-const vazio = (data: string, segmento: Segmento): RoteiroNovo => ({ data, segmento, marca: "kingpanda", titulo: "", texto: "", midias: [], legenda: null, instrucoes: null, ordem: 0, publicado: true });
+export const TIPOS: { k: Roteiro["tipo"]; rot: string }[] = [
+  { k: "roteiro", rot: "Roteiro falado" },
+  { k: "react", rot: "React" },
+  { k: "fofoca", rot: "Fofoca (2 imagens)" },
+];
+
+const vazio = (data: string, segmento: Segmento): RoteiroNovo => ({ data, segmento, marca: "kingpanda", titulo: "", texto: "", midias: [], legenda: null, instrucoes: null, tipo: "roteiro", creditos: null, pronuncia: null, ordem: 0, publicado: true });
 
 function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar: () => void; onSalvo: () => void }) {
   const [r, setR] = useState<RoteiroNovo>(inicial);
@@ -44,12 +51,21 @@ function Editor({ inicial, onFechar, onSalvo }: { inicial: RoteiroNovo; onFechar
             <button type="button" key={k} className={"pill-opt" + (r.marca === k ? " on" : "")} onClick={() => set("marca", k)}>{v}</button>
           ))}</div>
         </div>
+        <div className="field"><label>Tipo</label>
+          <div className="pills">{TIPOS.map((t) => (
+            <button type="button" key={t.k} className={"pill-opt" + (r.tipo === t.k ? " on" : "")} onClick={() => set("tipo", t.k)}>{t.rot}</button>
+          ))}</div>
+        </div>
         <div className="field"><label>Título</label>
           <div className="input-wrap"><input required value={r.titulo} onChange={(e) => set("titulo", e.target.value)} placeholder="Ex.: Virada histórica no clássico" /></div></div>
-        <div className="field"><label>Roteiro</label>
-          <textarea className="textarea" required rows={9} value={r.texto} onChange={(e) => set("texto", e.target.value)} placeholder="Cole o roteiro completo aqui…" />
+        <div className="field"><label>Créditos <span className="dim">(opcional)</span></label>
+          <div className="input-wrap"><input value={r.creditos ?? ""} onChange={(e) => set("creditos", e.target.value || null)} placeholder="Ex.: Créditos: @tntsportsbr" /></div></div>
+        <div className="field"><label>Roteiro {r.tipo === "react" && <span className="dim">(opcional no React)</span>}</label>
+          <textarea className="textarea" required={r.tipo !== "react"} rows={9} value={r.texto} onChange={(e) => set("texto", e.target.value)} placeholder="Cole o roteiro completo aqui…" />
           <span className="hint">{r.texto.trim().split(/\s+/).filter(Boolean).length} palavras · ~{Math.round(r.texto.trim().split(/\s+/).filter(Boolean).length / 2.6)}s de fala</span>
         </div>
+        <div className="field"><label>Pronúncia <span className="dim">(opcional)</span></label>
+          <div className="input-wrap"><input value={r.pronuncia ?? ""} onChange={(e) => set("pronuncia", e.target.value || null)} placeholder="Ex.: Haaland = HÁ-land" /></div></div>
         <div className="field"><label>Legenda do post <span className="dim">(opcional)</span></label>
           <textarea className="textarea" style={{ minHeight: 90 }} value={r.legenda ?? ""} onChange={(e) => set("legenda", e.target.value || null)} placeholder="Legenda pronta, com hashtags e rodapé" /></div>
         <div className="field"><label>Instruções de postagem <span className="dim">(opcional)</span></label>
@@ -90,6 +106,7 @@ export default function AdminRoteiros() {
   const [data, setData] = useState(hojeSP());
   const [lista, setLista] = useState<Roteiro[] | null>(null);
   const [editando, setEditando] = useState<RoteiroNovo | null>(null);
+  const [importando, setImportando] = useState(false);
   const [erro, setErro] = useState("");
 
   const carregar = () => { setLista(null); api.roteiros(data).then(setLista).catch((e) => { setErro(e.message); setLista([]); }); };
@@ -103,7 +120,7 @@ export default function AdminRoteiros() {
   const mudarDia = (d: number) => { const x = new Date(data + "T12:00:00"); x.setDate(x.getDate() + d); setData(x.toISOString().slice(0, 10)); };
 
   return (
-    <Shell titulo="Publicar roteiros" acao={<button className="btn btn--sm" onClick={() => setEditando(vazio(data, "esp"))}><Plus size={17} /> Novo</button>}>
+    <Shell titulo="Publicar roteiros" acao={<div className="row" style={{ gap: 8 }}><button className="btn btn--sm btn--ghost" onClick={() => setImportando(true)}><FileDown size={17} /> Importar do Doc</button><button className="btn btn--sm" onClick={() => setEditando(vazio(data, "esp"))}><Plus size={17} /> Novo</button></div>}>
       <div className="daybar">
         <button className="icon-btn" onClick={() => mudarDia(-1)} aria-label="Dia anterior"><ArrowLeft size={17} /></button>
         <div className="input-wrap" style={{ flex: 1, minHeight: 46 }}><input type="date" value={data} onChange={(e) => setData(e.target.value)} /></div>
@@ -135,6 +152,7 @@ export default function AdminRoteiros() {
           );
         })}
       </div>
+      {importando && <ImportarRoteiros data={data} existentes={lista ?? []} onFechar={() => setImportando(false)} onPronto={(d) => { setImportando(false); setData(d); carregar(); }} />}
       {editando && <Editor inicial={editando} onFechar={() => setEditando(null)} onSalvo={() => { setEditando(null); carregar(); }} />}
     </Shell>
   );

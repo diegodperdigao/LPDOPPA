@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, ChevronDown, Clapperboard, Clock3, Download, Film, Hourglass, Info, ListChecks, Loader2, MoonStar, Newspaper, Timer } from "lucide-react";
+import { CalendarDays, ChevronDown, Mic, Clapperboard, Clock3, Download, Film, Hourglass, Info, ListChecks, Loader2, MoonStar, Newspaper, Timer } from "lucide-react";
 import { MARCAS, SEGMENTOS } from "../content";
 import { api, hojeSP, type Midia, type Roteiro, type Segmento } from "../lib/api";
 import { useConta } from "../lib/conta";
@@ -47,40 +47,75 @@ function MidiaItem({ m }: { m: Midia }) {
     <button className="midia" onClick={baixar} disabled={baixando} title={`Baixar ${m.nome}`}>
       {m.tipo === "imagem" ? <img src={m.url} alt="" loading="lazy" /> : <span className="midia__vid"><Film size={22} /></span>}
       <span className="midia__dl">{baixando ? <Loader2 size={15} className="gira" /> : <Download size={15} />}</span>
-      <span className="midia__tipo">{m.tipo === "imagem" ? "Imagem" : "Vídeo base"}</span>
+      <span className="midia__tipo">{m.rotulo ?? (m.tipo === "imagem" ? "Imagem" : "Vídeo base")}</span>
     </button>
   );
 }
 
+const TIPO_CHIP: Record<Roteiro["tipo"], { rot: string; cls: string } | null> = {
+  roteiro: null,
+  react: { rot: "React", cls: "chip--cyan" },
+  fofoca: { rot: "Fofoca · 2 imagens", cls: "chip--pink" },
+};
+const MARCADOR_CARD = /^card a partir daqui\.?$/im;
+
+// Texto do roteiro com o ponto do card da fofoca destacado.
+function TextoRoteiro({ texto }: { texto: string }) {
+  const partes = texto.split(MARCADOR_CARD);
+  if (partes.length < 2) return <>{texto}</>;
+  return <>{partes[0].trim()}<span className="rot__card">Card a partir daqui</span>{partes.slice(1).join("").trim()}</>;
+}
+
 function Card({ r, perfil, i }: { r: Roteiro; perfil: string | null; i: number }) {
   const [aberto, setAberto] = useState(false);
+  const [instAberta, setInstAberta] = useState(false);
   const [zipando, setZipando] = useState(false);
   const midias = r.midias ?? [];
+  const numero = r.ordem > 0 ? r.ordem : i + 1;
+  const tipo = TIPO_CHIP[r.tipo ?? "roteiro"];
+  const instLonga = (r.instrucoes?.length ?? 0) > 220;
   async function baixarTudo() {
     setZipando(true);
-    try { await baixarZip([{ pasta: r.titulo, midias }], `${String(i + 1).padStart(2, "0")} - ${r.titulo}.zip`); }
+    try { await baixarZip([{ pasta: r.titulo, midias }], `${String(numero).padStart(2, "0")} - ${r.titulo}.zip`); }
     catch (e) { alert((e as Error).message); } finally { setZipando(false); }
   }
   return (
     <article className="rot" style={{ animation: `rise .45s ${Math.min(i, 8) * 50}ms both` }}>
       <div className="rot__head">
-        <span className="chip chip--violet">{r.marca ? MARCAS[r.marca] ?? r.marca : "Roteiro"}</span>
-        <span className="dim">#{i + 1}</span>
+        <span className="row" style={{ gap: 6, flexWrap: "wrap" }}>
+          <span className="chip chip--violet">{r.marca ? MARCAS[r.marca] ?? r.marca : "Roteiro"}</span>
+          {tipo && <span className={"chip " + tipo.cls}>{tipo.rot}</span>}
+        </span>
+        <span className="dim">#{numero}</span>
       </div>
       <div className="rot__title">{r.titulo}</div>
-      {r.instrucoes && <div className="rot__inst"><Info size={16} /><span>{r.instrucoes}</span></div>}
-      <div className={"rot__text" + (aberto ? " open" : "")}>{r.texto}</div>
-      <div className="rot__actions">
-        <CopyButton texto={r.texto} label="Copiar roteiro" />
-        <button className="copy-btn" onClick={() => setAberto(!aberto)}>
-          <ChevronDown size={16} style={{ transform: aberto ? "rotate(180deg)" : "none", transition: "transform .2s" }} /> {aberto ? "Recolher" : "Ler tudo"}
-        </button>
-      </div>
+      {r.creditos && <div className="rot__cred">{r.creditos}</div>}
+      {r.instrucoes && (
+        <div className="rot__inst">
+          <Info size={16} />
+          <div>
+            <span className={instLonga && !instAberta ? "clamp" : ""}>{r.instrucoes}</span>
+            {instLonga && <button className="link-btn" style={{ padding: 0, fontSize: 12.5 }} onClick={() => setInstAberta(!instAberta)}>{instAberta ? "Ver menos" : "Ver instruções completas"}</button>}
+          </div>
+        </div>
+      )}
+      {r.texto.trim() && (
+        <>
+          <div className={"rot__text" + (aberto ? " open" : "")}><TextoRoteiro texto={r.texto} /></div>
+          {r.pronuncia && <div className="rot__pron"><Mic size={14} /> <span><b>Pronúncia:</b> {r.pronuncia}</span></div>}
+          <div className="rot__actions">
+            <CopyButton texto={r.texto.replace(MARCADOR_CARD, "").replace(/\n{3,}/g, "\n\n")} label="Copiar roteiro" />
+            <button className="copy-btn" onClick={() => setAberto(!aberto)}>
+              <ChevronDown size={16} style={{ transform: aberto ? "rotate(180deg)" : "none", transition: "transform .2s" }} /> {aberto ? "Recolher" : "Ler tudo"}
+            </button>
+          </div>
+        </>
+      )}
 
       {midias.length > 0 && (
         <div className="rot__bloco">
           <div className="rot__bloco-t">
-            <span>Arquivos pro vídeo <span className="count">{midias.length}</span></span>
+            <span>{r.tipo === "react" ? "Vídeo base" : "Arquivos pro vídeo"} <span className="count">{midias.length}</span></span>
             {midias.length > 1 && <button className="link-btn" style={{ padding: 0 }} onClick={baixarTudo} disabled={zipando}>{zipando ? <Loader2 size={14} className="gira" /> : <Download size={14} />} Baixar todos</button>}
           </div>
           <div className="midias">{midias.map((m) => <MidiaItem key={m.url} m={m} />)}</div>
@@ -119,7 +154,7 @@ export default function Roteiros() {
     setZip("0");
     try {
       await baixarZip(
-        lista.filter((r) => r.midias?.length).map((r) => ({ pasta: `${String(lista.indexOf(r) + 1).padStart(2, "0")} - ${r.titulo}`, midias: r.midias })),
+        lista.filter((r) => r.midias?.length).map((r) => ({ pasta: `${String(r.ordem > 0 ? r.ordem : lista.indexOf(r) + 1).padStart(2, "0")} - ${r.titulo}`, midias: r.midias })),
         `Roteiros ${SEGMENTOS[seg].curto} ${hojeSP()}.zip`,
         (f, t) => setZip(`${f}/${t}`),
       );

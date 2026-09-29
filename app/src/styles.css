@@ -652,3 +652,28 @@ a.missao:hover, button.missao:hover { background: var(--surface-2); }
 .busca__enter { color: var(--dim); flex: 0 0 auto; }
 .busca__vazio { padding: 24px; text-align: center; color: var(--muted); font-size: 14px; }
 .busca__campo input:focus-visible { box-shadow: none; }
+
+/* Importador de roteiros */
+.importar { max-width: 720px; }
+.imp-n { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 700; margin-right: 4px; }
+.imp-resumo { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.imp-resumo b { font-size: 16px; }
+.imp-resumo span { font-size: 13px; color: var(--muted); }
+.imp-lista { display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow-y: auto; padding-right: 2px; }
+.imp-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.imp-item.aviso { border-color: rgba(255,207,51,.35); }
+.imp-item__n { flex: 0 0 auto; min-width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-2); font-weight: 700; font-size: 12.5px; }
+.imp-item b { display: block; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.imp-item__chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+.imp-item__chips .chip { font-size: 11px; padding: 2px 8px; }
+.imp-item__av { display: flex; gap: 5px; align-items: center; margin-top: 5px; font-size: 12.5px; color: var(--t-yellow); }
+.chip--cyan { background: rgba(110,216,245,.13); border-color: transparent; color: var(--t-cyan); }
+.chip--pink { background: rgba(240,138,227,.13); border-color: transparent; color: var(--t-pink); }
+.rot__cred { font-size: 12.5px; color: var(--dim); margin-top: -4px; }
+.rot__inst > div { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.rot__inst > div > span { white-space: pre-line; }
+.rot__inst .clamp { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.rot__card { display: block; margin: 10px 0; padding: 6px 10px; border-radius: 8px; border: 1px dashed rgba(240,138,227,.5); color: var(--t-pink); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; text-align: center; }
+.rot__pron { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; color: var(--muted); }
+.rot__pron svg { flex: 0 0 auto; margin-top: 2px; color: var(--t-violet); }
+.rot__pron b { color: var(--text-2); font-weight: 600; }

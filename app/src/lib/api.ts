@@ -33,10 +33,14 @@ export interface Roteiro {
   midias: Midia[];
   legenda: string | null;
   instrucoes: string | null;
+  // "roteiro" (texto falado), "react" (reagir em cima do vídeo base), "fofoca" (2 imagens: foto + card)
+  tipo: "roteiro" | "react" | "fofoca";
+  creditos: string | null;
+  pronuncia: string | null;
   ordem: number;
   publicado: boolean;
 }
-export interface Midia { url: string; tipo: "imagem" | "video"; nome: string }
+export interface Midia { url: string; tipo: "imagem" | "video"; nome: string; rotulo?: string }
 export type RoteiroNovo = Omit<Roteiro, "id"> & { id?: string };
 
 export interface DadosTermo { nome: string; cpf: string; cnpj: string; telefone: string }
@@ -169,7 +173,7 @@ function apiSupabase(sb: SupabaseClient): Api {
     },
     async roteiros(data) {
       const { data: rows, error } = await sb.from("roteiros")
-        .select("id,data,segmento,marca,titulo,texto,midias,legenda,instrucoes,ordem,publicado")
+        .select("id,data,segmento,marca,titulo,texto,midias,legenda,instrucoes,tipo,creditos,pronuncia,ordem,publicado")
         .eq("data", data).order("segmento").order("ordem").order("criado_em");
       if (error) throw new ErroApp(error.message);
       return (rows ?? []) as Roteiro[];
@@ -195,9 +199,9 @@ function apiSupabase(sb: SupabaseClient): Api {
     async enviarMidia(arquivo) {
       const ext = (arquivo.name.split(".").pop() || "jpg").toLowerCase();
       const caminho = `${hojeSP()}/${crypto.randomUUID()}.${ext}`;
-      const { error } = await sb.storage.from("roteiros").upload(caminho, arquivo, { contentType: arquivo.type, upsert: false });
-      if (error) throw new ErroApp(error.message);
-      return { url: sb.storage.from("roteiros").getPublicUrl(caminho).data.publicUrl, tipo: arquivo.type.startsWith("video/") ? "video" : "imagem", nome: arquivo.name };
+      const { error } = await sb.storage.from("roteiros").upload(caminho, arquivo, { contentType: arquivo.type || undefined, upsert: false });
+      if (error) throw new ErroApp(/exceeded|too large|size/i.test(error.message) ? `${arquivo.name}: arquivo maior que o limite do Storage.` : error.message);
+      return { url: sb.storage.from("roteiros").getPublicUrl(caminho).data.publicUrl, tipo: arquivo.type.startsWith("video/") || /\.(mp4|mov|m4v|webm)$/i.test(arquivo.name) ? "video" : "imagem", nome: arquivo.name };
     },
     async minhasNfs() {
       const { data, error } = await sb.from("notas_fiscais").select("id,ciclo_start,ciclo_end,numero,valor,status,motivo,enviada_em,arquivo_path").order("ciclo_start", { ascending: false });
@@ -299,7 +303,7 @@ function apiDemo(): Api {
   const exemplo = (): Roteiro[] => {
     const d = hojeSP();
     const img = (nome: string, url: string): Midia => ({ url, tipo: "imagem", nome });
-    const base = { ordem: 0, publicado: true, legenda: null as string | null, instrucoes: null as string | null };
+    const base = { ordem: 0, publicado: true, legenda: null as string | null, instrucoes: null as string | null, tipo: "roteiro" as const, creditos: null, pronuncia: null };
     return [
       { ...base, id: "1", data: d, segmento: "esp", marca: "kingpanda", titulo: "Virada histórica no clássico",
         midias: [img("placar.webp", "/mascote.webp"), img("jogador.png", "/doppa-eye.png")],
@@ -315,7 +319,22 @@ function apiDemo(): Api {
         texto: "EXEMPLO — Gente, vocês não vão acreditar no que aconteceu com aquela famosa ontem à noite...\n\nE falando em surpresa, no King Panda a Hora do Panda turbina as odds. Link na bio." },
     ];
   };
-  const todos = () => lerJ<Roteiro[]>(DEMO_ROT, exemplo());
+  // Demo abre com os 30 roteiros reais do Doc de 25/09 como se fossem de hoje.
+  // As imagens são o mascote no lugar dos arquivos do Drive (os reais entram pelo importador).
+  let docExemplo: Roteiro[] | null = null;
+  async function carregarDoc() {
+    if (docExemplo) return;
+    const [{ default: bruto }, { lerRoteiros }] = await Promise.all([import("../demo/roteiros-25-09.md?raw"), import("./importar")]);
+    const d = hojeSP();
+    docExemplo = lerRoteiros(bruto).roteiros.map((r) => ({
+      id: `doc-${r.numero}`, data: d, segmento: r.segmento, marca: r.marca, titulo: r.titulo, texto: r.texto,
+      legenda: r.legenda, instrucoes: r.instrucoes, tipo: r.tipo, creditos: r.creditos, pronuncia: r.pronuncia, ordem: r.numero, publicado: true,
+      midias: r.tipo === "react" ? [] : r.tipo === "fofoca"
+        ? [{ url: "/mascote.webp", tipo: "imagem", nome: `${r.numero}.jpg`, rotulo: "Foto inicial" }, { url: "/doppa-eye.png", tipo: "imagem", nome: `${r.numero}.1.png`, rotulo: "Card" }]
+        : [{ url: "/mascote.webp", tipo: "imagem", nome: `${r.numero}.png`, rotulo: "Imagem" }],
+    }));
+  }
+  const todos = () => lerJ<Roteiro[]>(DEMO_ROT, docExemplo ?? exemplo());
   return {
     modo: "demo",
     async conta() { return ler(); },
@@ -339,7 +358,7 @@ function apiDemo(): Api {
       if (d.cpf.replace(/\D/g, "").length !== 11) throw new ErroApp("CPF precisa ter 11 números.");
       mudar({ termo_em: agora() });
     },
-    async roteiros(data) { return todos().filter((r) => r.data === data); },
+    async roteiros(data) { await carregarDoc().catch(() => {}); return todos().filter((r) => r.data === data); },
     async painel(_token, ciclo) {
       // ciclos de exemplo ancorados no dia 24: o atual e os 2 anteriores
       const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -379,14 +398,15 @@ function apiDemo(): Api {
       };
     },
     async salvarRoteiro(r) {
+      await carregarDoc().catch(() => {});
       const lista = todos();
       if (r.id) gravarJ(DEMO_ROT, lista.map((x) => (x.id === r.id ? { ...x, ...r } as Roteiro : x)));
-      else gravarJ(DEMO_ROT, [...lista, { ...r, id: String(Date.now()) } as Roteiro]);
+      else gravarJ(DEMO_ROT, [...lista, { ...r, id: crypto.randomUUID() } as Roteiro]);
     },
-    async excluirRoteiro(id) { gravarJ(DEMO_ROT, todos().filter((x) => x.id !== id)); },
+    async excluirRoteiro(id) { await carregarDoc().catch(() => {}); gravarJ(DEMO_ROT, todos().filter((x) => x.id !== id)); },
     async enviarMidia(arquivo) {
-      const url = await new Promise<string>((ok) => { const f = new FileReader(); f.onload = () => ok(String(f.result)); f.readAsDataURL(arquivo); });
-      return { url, tipo: arquivo.type.startsWith("video/") ? "video" : "imagem", nome: arquivo.name };
+      // Na demo o arquivo fica só na memória desta aba (some ao recarregar).
+      return { url: URL.createObjectURL(arquivo), tipo: arquivo.type.startsWith("video/") || /\.(mp4|mov|m4v|webm)$/i.test(arquivo.name) ? "video" : "imagem", nome: arquivo.name };
     },
     async minhasNfs() { return lerJ<NotaFiscal[]>(DEMO_NF, []); },
     async nfPrazoDias() { return 5; },
