@@ -26,6 +26,8 @@ export async function baixarZip(grupos: { pasta: string; midias: Midia[] }[], no
   for (const g of grupos) {
     const dir = grupos.length > 1 ? zip.folder(limpa(g.pasta))! : zip;
     for (const m of g.midias) {
+      // Arquivo que ficou no Drive entra no .zip como atalho (.txt com o link).
+      if (/^https:\/\/(drive|docs)\.google\.com\//.test(m.url)) { dir.file(`${limpa(m.nome)} (link do Drive).txt`, m.url); onProgresso?.(++feitos, total); continue; }
       const r = await fetch(m.url);
       if (!r.ok) throw new Error(`Não deu pra baixar ${m.nome}.`);
       dir.file(limpa(m.nome) || "arquivo", await r.blob());

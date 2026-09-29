@@ -25,6 +25,7 @@ export function ContaProvider({ children }: { children: React.ReactNode }) {
     })();
     const sub = supabase?.auth.onAuthStateChange((ev) => {
       if (ev === "SIGNED_OUT") setConta(null);
+      if (ev === "SIGNED_IN") recarregar();
     });
     return () => sub?.data.subscription.unsubscribe();
   }, [recarregar]);

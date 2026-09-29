@@ -58,7 +58,7 @@ export default function Entrar() {
           <form className="stack" onSubmit={verificar}>
             <div>
               <h1 className="entrar__t">Confira seu e-mail</h1>
-              <p className="muted">Digite o código de 6 números que mandamos para <b style={{ color: "var(--text)", fontWeight: 600 }}>{email}</b>.</p>
+              <p className="muted">Digite o código de 6 números que mandamos para <b style={{ color: "var(--text)", fontWeight: 600 }}>{email}</b>, ou toque no link do e-mail.</p>
             </div>
             <div className="input-wrap">
               <input className="code-input" required autoFocus inputMode="numeric" autoComplete="one-time-code" maxLength={6}

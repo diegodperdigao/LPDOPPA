@@ -127,31 +127,30 @@ export default function AdminRoteiros() {
         <button className="icon-btn" onClick={() => mudarDia(1)} aria-label="Próximo dia"><ArrowRight size={17} /></button>
       </div>
       {erro && <div className="alert">{erro}</div>}
-      <div className="grid-2" style={{ marginTop: 14 }}>
-        {(["esp", "cas"] as Segmento[]).map((seg) => {
-          const itens = (lista ?? []).filter((r) => r.segmento === seg);
-          return (
-            <section key={seg} className="card stack">
-              <div className="row" style={{ justifyContent: "space-between" }}>
-                <span className="card__t">{(() => { const S = SEGMENTOS[seg]; return <S.icon size={17} />; })()} {SEGMENTOS[seg].nome} <span className="count">{itens.length}</span></span>
-                <button className="icon-btn" onClick={() => setEditando(vazio(data, seg))} aria-label="Novo roteiro"><Plus size={17} /></button>
+      <section className="card stack" style={{ marginTop: 14, maxWidth: 720, marginInline: "auto" }}>
+        <div className="row" style={{ justifyContent: "space-between" }}>
+          <span className="card__t">Roteiros do dia <span className="count">{lista?.length ?? 0}</span></span>
+          <button className="icon-btn" onClick={() => setEditando(vazio(data, "esp"))} aria-label="Novo roteiro"><Plus size={17} /></button>
+        </div>
+        {lista === null && <div className="skel" style={{ height: 64, borderRadius: 14 }} />}
+        {lista !== null && lista.length === 0 && <span className="dim">Nenhum roteiro neste dia. Use “Importar do Doc” ou “Novo”.</span>}
+        {[...(lista ?? [])].sort((a, b) => (a.ordem || 999) - (b.ordem || 999)).map((r, i, arr) => (
+          <div key={r.id}>
+            {(i === 0 || arr[i - 1].segmento !== r.segmento) && (
+              <div className="adm-secao">{(() => { const S = SEGMENTOS[r.segmento]; return <><S.icon size={14} /> {i === 0 ? "" : "A partir daqui: "}{S.nome}</>; })()}</div>
+            )}
+            <div className={"adm-rot" + (r.publicado ? "" : " off")}>
+              <span className="imp-item__n">{r.ordem || i + 1}</span>
+              <div style={{ flex: 1, minWidth: 0 }} onClick={() => setEditando(r)} role="button">
+                <b>{r.titulo}</b>
+                <span>{[r.marca && (MARCAS[r.marca] ?? r.marca), r.tipo === "react" ? "React" : r.tipo === "fofoca" ? "Fofoca" : "", r.midias?.length ? `${r.midias.length} ${r.midias.length === 1 ? "arquivo" : "arquivos"}` : "", r.publicado ? "" : "rascunho"].filter(Boolean).join(" · ")}</span>
               </div>
-              {lista === null && <div className="skel" style={{ height: 64, borderRadius: 14 }} />}
-              {lista !== null && itens.length === 0 && <span className="dim">Nenhum roteiro neste dia.</span>}
-              {itens.map((r) => (
-                <div key={r.id} className={"adm-rot" + (r.publicado ? "" : " off")}>
-                  <div style={{ flex: 1, minWidth: 0 }} onClick={() => setEditando(r)} role="button">
-                    <b>{r.titulo}</b>
-                    <span>{r.marca ? MARCAS[r.marca] ?? r.marca : ""} {r.publicado ? "" : "· rascunho"} {r.midias?.length ? `· ${r.midias.length} ${r.midias.length === 1 ? "arquivo" : "arquivos"}` : ""}</span>
-                  </div>
-                  <button className="icon-btn" onClick={() => setEditando(r)} aria-label="Editar"><Pencil size={16} /></button>
-                  <button className="icon-btn" onClick={() => excluir(r)} aria-label="Excluir"><Trash2 size={16} /></button>
-                </div>
-              ))}
-            </section>
-          );
-        })}
-      </div>
+              <button className="icon-btn" onClick={() => setEditando(r)} aria-label="Editar"><Pencil size={16} /></button>
+              <button className="icon-btn" onClick={() => excluir(r)} aria-label="Excluir"><Trash2 size={16} /></button>
+            </div>
+          </div>
+        ))}
+      </section>
       {importando && <ImportarRoteiros data={data} existentes={lista ?? []} onFechar={() => setImportando(false)} onPronto={(d) => { setImportando(false); setData(d); carregar(); }} />}
       {editando && <Editor inicial={editando} onFechar={() => setEditando(null)} onSalvo={() => { setEditando(null); carregar(); }} />}
     </Shell>

@@ -155,7 +155,8 @@ function apiSupabase(sb: SupabaseClient): Api {
       return rpc<Conta>("app_minha_conta");
     },
     async enviarCodigo(email) {
-      const { error } = await sb.auth.signInWithOtp({ email });
+      // O e-mail traz o código de 6 números (template com {{ .Token }}) e/ou o link: os dois entram no app.
+      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin } });
       if (error) throw new ErroApp(error.status === 429 ? "Muitas tentativas. Espera um pouquinho e tenta de novo." : "Não deu pra enviar o código. Confere o e-mail.");
     },
     async verificarCodigo(email, codigo) {

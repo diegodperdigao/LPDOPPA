@@ -677,3 +677,18 @@ a.missao:hover, button.missao:hover { background: var(--surface-2); }
 .rot__pron { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; color: var(--muted); }
 .rot__pron svg { flex: 0 0 auto; margin-top: 2px; color: var(--t-violet); }
 .rot__pron b { color: var(--text-2); font-weight: 600; }
+
+/* Roteiros numa lista só, como no Doc */
+.rot-lista { display: flex; flex-direction: column; gap: 12px; max-width: 720px; margin: 0 auto; width: 100%; }
+.rot-lista .baixar-dia { margin-bottom: 0; }
+.rot-indice { display: flex; gap: 8px; flex-wrap: wrap; }
+.rot-indice a { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-size: 13px; text-decoration: none; }
+.rot-indice a b { color: var(--text); font-weight: 600; }
+.rot-bloco { display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 84px; }
+.rot-divisor { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: var(--r-lg); background: var(--surface-2); border: 1px solid var(--line-2); }
+.rot-divisor.troca { margin-top: 14px; border-color: rgba(110,216,245,.4); background: linear-gradient(90deg, rgba(110,216,245,.1), transparent 70%), var(--surface-2); }
+.rot-divisor b { display: block; font-size: 15px; font-weight: 600; }
+.rot-divisor > span > span { display: block; font-size: 13px; color: var(--muted); }
+.rot-divisor > span > span b { display: inline; font-size: inherit; color: var(--text-2); }
+.adm-secao { display: flex; align-items: center; gap: 6px; margin: 10px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--t-cyan); }
+.midia--link { display: block; text-decoration: none; color: inherit; }

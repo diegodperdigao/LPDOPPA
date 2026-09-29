@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, ChevronDown, Mic, Clapperboard, Clock3, Download, Film, Hourglass, Info, ListChecks, Loader2, MoonStar, Newspaper, Timer } from "lucide-react";
+import { CalendarDays, ChevronDown, ExternalLink, Mic, Clapperboard, Clock3, Download, Film, Hourglass, Info, ListChecks, Loader2, MoonStar, Newspaper, Timer } from "lucide-react";
 import { MARCAS, SEGMENTOS } from "../content";
 import { api, hojeSP, type Midia, type Roteiro, type Segmento } from "../lib/api";
 import { useConta } from "../lib/conta";
@@ -37,8 +37,20 @@ function Intro({ onFechar }: { onFechar: () => void }) {
   );
 }
 
+// Arquivo que ficou no Drive (maior que o limite do Storage): abre o link em vez de baixar.
+const externo = (m: Midia) => /^https:\/\/(drive|docs)\.google\.com\//.test(m.url);
+
 function MidiaItem({ m }: { m: Midia }) {
   const [baixando, setBaixando] = useState(false);
+  if (externo(m)) {
+    return (
+      <a className="midia midia--link" href={m.url} target="_blank" rel="noopener" title={`Abrir ${m.nome} no Drive`}>
+        <span className="midia__vid"><Film size={22} /></span>
+        <span className="midia__dl"><ExternalLink size={14} /></span>
+        <span className="midia__tipo">{m.rotulo ?? "Vídeo base"} · Drive</span>
+      </a>
+    );
+  }
   async function baixar() {
     setBaixando(true);
     try { await baixarMidia(m); } catch (e) { alert((e as Error).message); } finally { setBaixando(false); }
@@ -66,12 +78,12 @@ function TextoRoteiro({ texto }: { texto: string }) {
   return <>{partes[0].trim()}<span className="rot__card">Card a partir daqui</span>{partes.slice(1).join("").trim()}</>;
 }
 
-function Card({ r, perfil, i }: { r: Roteiro; perfil: string | null; i: number }) {
+function Card({ r, perfil, i, n }: { r: Roteiro; perfil: string | null; i: number; n: number }) {
   const [aberto, setAberto] = useState(false);
   const [instAberta, setInstAberta] = useState(false);
   const [zipando, setZipando] = useState(false);
   const midias = r.midias ?? [];
-  const numero = r.ordem > 0 ? r.ordem : i + 1;
+  const numero = n;
   const tipo = TIPO_CHIP[r.tipo ?? "roteiro"];
   const instLonga = (r.instrucoes?.length ?? 0) > 220;
   async function baixarTudo() {
@@ -135,9 +147,19 @@ function Card({ r, perfil, i }: { r: Roteiro; perfil: string | null; i: number }
   );
 }
 
+// Um bloco por conta, na ordem do Doc (1…24 Esportes, 25…30 Notícias/Variedades).
+type Bloco = { seg: Segmento; itens: Roteiro[] };
+function blocos(lista: Roteiro[]): Bloco[] {
+  const out: Bloco[] = [];
+  for (const r of lista) {
+    const ult = out[out.length - 1];
+    if (ult && ult.seg === r.segmento) ult.itens.push(r); else out.push({ seg: r.segmento, itens: [r] });
+  }
+  return out;
+}
+
 export default function Roteiros() {
   const { conta } = useConta();
-  const [seg, setSeg] = useState<Segmento>("esp");
   const [roteiros, setRoteiros] = useState<Roteiro[] | null>(null);
   const [intro, setIntro] = useState(() => { try { return localStorage.getItem(INTRO_KEY) !== "1"; } catch { return false; } });
   const [zip, setZip] = useState<string | null>(null);
@@ -145,17 +167,19 @@ export default function Roteiros() {
   useEffect(() => { api.roteiros(hojeSP()).then(setRoteiros).catch(() => setRoteiros([])); }, []);
   function fecharIntro() { setIntro(false); try { localStorage.setItem(INTRO_KEY, "1"); } catch { /* sem storage */ } }
 
-  const lista = (roteiros ?? []).filter((r) => r.segmento === seg && r.publicado);
-  const perfil = seg === "esp" ? conta?.ig_esp ?? null : conta?.ig_cas ?? null;
+  const lista = (roteiros ?? []).filter((r) => r.publicado).sort((a, b) => (a.ordem || 999) - (b.ordem || 999) || a.segmento.localeCompare(b.segmento));
+  const numero = (r: Roteiro) => (r.ordem > 0 ? r.ordem : lista.indexOf(r) + 1);
+  const perfilDe = (s: Segmento) => (s === "esp" ? conta?.ig_esp : conta?.ig_cas) ?? null;
   const hoje = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long", timeZone: "America/Sao_Paulo" }).format(new Date());
   const totalMidias = lista.reduce((n, r) => n + (r.midias?.length ?? 0), 0);
+  const grupos = blocos(lista);
 
   async function baixarDia() {
     setZip("0");
     try {
       await baixarZip(
-        lista.filter((r) => r.midias?.length).map((r) => ({ pasta: `${String(r.ordem > 0 ? r.ordem : lista.indexOf(r) + 1).padStart(2, "0")} - ${r.titulo}`, midias: r.midias })),
-        `Roteiros ${SEGMENTOS[seg].curto} ${hojeSP()}.zip`,
+        lista.filter((r) => r.midias?.length).map((r) => ({ pasta: `${String(numero(r)).padStart(2, "0")} - ${r.titulo}`, midias: r.midias })),
+        `Roteiros ${hojeSP()}.zip`,
         (f, t) => setZip(`${f}/${t}`),
       );
     } catch (e) { alert((e as Error).message); } finally { setZip(null); }
@@ -163,33 +187,55 @@ export default function Roteiros() {
 
   return (
     <Shell titulo="Roteiros" acao={<button className="icon-btn" onClick={() => setIntro(true)} aria-label="Como funcionam os roteiros"><ListChecks size={18} /></button>}>
-      <p className="dim row" style={{ marginBottom: 12, textTransform: "capitalize" }}><CalendarDays size={15} /> {hoje}</p>
-      <div className="seg-tabs" style={{ marginBottom: 12, position: "sticky", top: 70, zIndex: 5, background: "var(--bg)" }}>
-        {(["esp", "cas"] as Segmento[]).map((k) => {
-          const S = SEGMENTOS[k];
-          const n = (roteiros ?? []).filter((r) => r.segmento === k && r.publicado).length;
-          return <button key={k} className={seg === k ? "on" : ""} onClick={() => setSeg(k)}><S.icon size={16} strokeWidth={1.9} /> {S.curto} {roteiros && <span className="count">{n}</span>}</button>;
-        })}
-      </div>
+      <div className="rot-lista">
+        <p className="dim row" style={{ textTransform: "capitalize" }}><CalendarDays size={15} /> {hoje}</p>
 
-      {totalMidias > 0 && (
-        <button className="baixar-dia" onClick={baixarDia} disabled={!!zip}>
-          <IconTile icon={zip ? Timer : Download} tom="green" size={38} />
-          <span style={{ flex: 1 }}><b>{zip ? `Preparando… ${zip === "0" ? "" : zip}` : `Baixar todos os arquivos de ${SEGMENTOS[seg].curto}`}</b><span>{totalMidias} arquivos (imagens e vídeos base) num .zip, separados por roteiro</span></span>
-        </button>
-      )}
-
-      <div className="rot-grid">
-        {roteiros === null && [0, 1, 2].map((i) => <div key={i} className="skel" style={{ height: 180, borderRadius: 18 }} />)}
-        {roteiros !== null && lista.length === 0 && (
-          <div className="empty" style={{ gridColumn: "1 / -1" }}>
-            <IconTile icon={MoonStar} tom="neutral" size={52} />
-            Os roteiros de {SEGMENTOS[seg].curto} ainda não saíram hoje.<br />A gente avisa no grupo assim que chegarem.
+        {lista.length > 0 && (
+          <div className="rot-indice">
+            {grupos.map((g, k) => {
+              const S = SEGMENTOS[g.seg];
+              return (
+                <a key={k} href={`#bloco-${k}`} onClick={(e) => { e.preventDefault(); document.getElementById(`bloco-${k}`)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+                  <S.icon size={15} /> {S.curto} <b>{numero(g.itens[0])}–{numero(g.itens[g.itens.length - 1])}</b>
+                </a>
+              );
+            })}
           </div>
         )}
-        {lista.map((r, i) => <Card key={r.id} r={r} perfil={perfil} i={i} />)}
+
+        {totalMidias > 0 && (
+          <button className="baixar-dia" onClick={baixarDia} disabled={!!zip}>
+            <IconTile icon={zip ? Timer : Download} tom="green" size={38} />
+            <span style={{ flex: 1 }}><b>{zip ? `Preparando… ${zip === "0" ? "" : zip}` : "Baixar todos os arquivos do dia"}</b><span>{totalMidias} arquivos (imagens e vídeos base) num .zip, uma pasta por roteiro</span></span>
+          </button>
+        )}
+
+        {roteiros === null && [0, 1, 2].map((i) => <div key={i} className="skel" style={{ height: 180, borderRadius: 18 }} />)}
+        {roteiros !== null && lista.length === 0 && (
+          <div className="empty">
+            <IconTile icon={MoonStar} tom="neutral" size={52} />
+            Os roteiros de hoje ainda não saíram.<br />A gente avisa no grupo assim que chegarem.
+          </div>
+        )}
+
+        {grupos.map((g, k) => {
+          const S = SEGMENTOS[g.seg];
+          const perfil = perfilDe(g.seg);
+          return (
+            <section key={k} id={`bloco-${k}`} className="rot-bloco">
+              <div className={"rot-divisor" + (k > 0 ? " troca" : "")}>
+                <IconTile icon={S.icon} tom={S.tom} size={36} />
+                <span>
+                  <b>{k > 0 ? `A partir daqui: conta de ${S.nome}` : `Conta de ${S.nome}`}</b>
+                  <span>{g.itens.length} roteiros{perfil ? <> · poste em <b>@{perfil}</b></> : ""}</span>
+                </span>
+              </div>
+              {g.itens.map((r, i) => <Card key={r.id} r={r} perfil={perfil} i={i} n={numero(r)} />)}
+            </section>
+          );
+        })}
+        <div className="lembrete"><Clock3 size={18} /> <span>Prazo: os vídeos de hoje valem <b>até os roteiros de amanhã saírem</b>.</span></div>
       </div>
-      <div className="lembrete"><Clock3 size={18} /> <span>Prazo: os vídeos de hoje valem <b>até os roteiros de amanhã saírem</b>.</span></div>
       {intro && <Intro onFechar={fecharIntro} />}
     </Shell>
   );
