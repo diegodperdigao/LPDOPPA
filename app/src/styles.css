@@ -726,3 +726,23 @@ a.missao:hover, button.missao:hover { background: var(--surface-2); }
 .check-todos { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); color: var(--t-green); font-weight: 600; font-size: 14px; }
 .check-todos:active { background: var(--surface-3); }
 .toast { left: 0; right: 0; margin-inline: auto; width: max-content; max-width: calc(100% - 32px); transform: none; }
+.rot-intro { display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: var(--r-lg); background: linear-gradient(135deg, rgba(123,92,255,.14), transparent 70%), var(--surface); border: 1px solid rgba(123,92,255,.35); }
+.rot-intro__t { display: flex; align-items: center; justify-content: space-between; }
+.rot-intro__t b { font-size: 15.5px; font-weight: 600; }
+.rot-intro__t .icon-btn { width: 32px; height: 32px; }
+.rot-intro__itens { display: flex; flex-direction: column; gap: 10px; }
+.rot-intro__itens > div { display: flex; gap: 10px; align-items: flex-start; }
+.rot-intro__itens b { display: block; font-size: 14px; font-weight: 600; }
+.rot-intro__itens span span { display: block; font-size: 13px; color: var(--muted); }
+.rot-intro .btn { align-self: flex-start; }
+.passos { margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; }
+.passos__t { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; }
+.passos__t > span:not(.itile) { flex: 1; min-width: 0; }
+.passos__t b { display: block; font-size: 15px; font-weight: 600; }
+.passos__t > span:not(.itile) > span { display: block; font-size: 12.5px; color: var(--muted); }
+.passos__t > svg { color: var(--dim); }
+.carteira-breve { display: flex; gap: 12px; align-items: center; margin-top: 12px; }
+.carteira-breve b { display: block; font-size: 14.5px; font-weight: 600; }
+.carteira-breve > div > span { display: block; font-size: 13px; color: var(--muted); }
+.main__body > .sec-t:first-child, .main__body > .stack:first-child + .sec-t { margin-top: 0; }
+.checklist + .passos, .card--glow + .passos { margin-top: 12px; }

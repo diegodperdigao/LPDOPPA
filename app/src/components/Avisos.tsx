@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Megaphone, PartyPopper, Siren, TriangleAlert, X, type LucideIcon } from "lucide-react";
 import type { Aviso, TomAviso } from "../lib/api";
 import { useAvisos } from "../lib/avisos";
 import { IconTile, type Tom } from "./Icon";
 import Portal from "./Portal";
+import { podeAbrirPopup, registrarPopup } from "../lib/popups";
 
 export const TONS: Record<TomAviso, { icon: LucideIcon; tom: Tom; rot: string }> = {
   info: { icon: Megaphone, tom: "violet", rot: "Informativo" },
@@ -48,7 +50,10 @@ export function AvisoPopup() {
   const { avisos, marcar } = useAvisos();
   const abrir = useAbrirCta();
   const a = avisos.find((x) => x.tipo === "popup" && !x.lido);
-  if (!a) return null;
+  // Um pop-up por dia: decide uma vez ao abrir o app; se já teve hoje, o aviso fica só no sino.
+  const [pode] = useState(podeAbrirPopup);
+  useEffect(() => { if (a && pode) registrarPopup(); }, [a, pode]);
+  if (!a || !pode) return null;
   return (
     <Portal>
       <div className="modal modal--center" onClick={(e) => e.target === e.currentTarget && marcar(a.id)}>

@@ -20,6 +20,8 @@ export interface Conta {
   termo_em: string | null;
   wl_token: string | null;
   grupo_link: string | null;
+  // Já tem vídeo contado na planilha (usado pra não encher o criador novo).
+  produzindo?: boolean;
 }
 
 export interface Roteiro {
@@ -77,7 +79,7 @@ export interface EnvioNf { ciclo_start: string; ciclo_end: string; numero: strin
 
 export type TipoAviso = "popup" | "faixa" | "mural";
 export type TomAviso = "info" | "sucesso" | "alerta" | "urgente";
-export type PublicoAviso = "todos" | "sem_termo" | "onboarding" | "sem_video_7d";
+export type PublicoAviso = "todos" | "sem_termo" | "onboarding" | "sem_video_7d" | "produzindo";
 export interface Aviso { id: string; titulo: string; corpo: string; tipo: TipoAviso; tom: TomAviso; cta_texto: string | null; cta_url: string | null; inicio: string; lido: boolean }
 export interface AvisoAdmin extends Omit<Aviso, "lido"> { publico: PublicoAviso; fim: string | null; ativo: boolean; criado_em: string; alcance: number; vistos: number; cliques: number }
 export type AvisoNovo = { id?: string; titulo: string; corpo: string; tipo: TipoAviso; tom: TomAviso; publico: PublicoAviso; cta_texto: string | null; cta_url: string | null; inicio: string; fim: string | null; ativo: boolean };
@@ -306,7 +308,7 @@ const avisosExemplo = (): AvisoAdmin[] => {
   const ontem = new Date(Date.now() - 864e5).toISOString();
   return [
     { id: "a1", titulo: "Live de resultados na sexta", corpo: "Vamos mostrar quem mais postou na semana e tirar dúvidas ao vivo, às 19h.", tipo: "mural", tom: "sucesso", publico: "todos", cta_texto: "Ver roteiros", cta_url: "/roteiros", inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 41, cliques: 18 },
-    { id: "a2", titulo: "NF do ciclo 3 até 28/09", corpo: "Envie sua nota fiscal pela Carteira pra receber sem atraso.", tipo: "faixa", tom: "alerta", publico: "todos", cta_texto: "Enviar NF", cta_url: "/carteira", inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 22, cliques: 9 },
+    { id: "a2", titulo: "NF do ciclo 3 até 28/09", corpo: "Envie sua nota fiscal pela Carteira pra receber sem atraso.", tipo: "faixa", tom: "alerta", publico: "produzindo", cta_texto: "Enviar NF", cta_url: "/carteira", inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 22, cliques: 9 },
     { id: "a3", titulo: "Dica: grave em lote", corpo: "Separe um horário fixo e grave vários roteiros de uma vez. Rende muito mais.", tipo: "mural", tom: "info", publico: "todos", cta_texto: null, cta_url: null, inicio: ontem, fim: null, ativo: true, criado_em: ontem, alcance: 60, vistos: 12, cliques: 0 },
   ];
 };
@@ -455,6 +457,7 @@ function apiDemo(): Api {
       const agoraMs = Date.now();
       return lerJ<AvisoAdmin[]>(DEMO_AVISOS, avisosExemplo())
         .filter((a) => a.ativo && new Date(a.inicio).getTime() <= agoraMs && (!a.fim || new Date(a.fim).getTime() > agoraMs))
+        .filter((a) => a.publico !== "produzindo" || !!ler()?.produzindo)
         .map((a) => ({ id: a.id, titulo: a.titulo, corpo: a.corpo, tipo: a.tipo, tom: a.tom, cta_texto: a.cta_texto, cta_url: a.cta_url, inicio: a.inicio, lido: !!lidos[a.id] }));
     },
     async marcarAviso(id) { gravarJ(DEMO_LIDOS, { ...lerJ<Record<string, boolean>>(DEMO_LIDOS, {}), [id]: true }); },

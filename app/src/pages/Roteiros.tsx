@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, Check, CheckCheck, ChevronDown, ExternalLink, LayoutList, Mic, Clapperboard, Clock3, Download, Film, Hourglass, Info, ListChecks, Loader2, MoonStar, Newspaper, Timer } from "lucide-react";
+import { CalendarDays, Check, CheckCheck, ChevronDown, X, ExternalLink, LayoutList, Mic, Clapperboard, Clock3, Download, Film, Hourglass, Info, ListChecks, Loader2, MoonStar, Newspaper, Timer } from "lucide-react";
 import { MARCAS, SEGMENTOS } from "../content";
 import { api, hojeSP, type Midia, type Roteiro, type Segmento } from "../lib/api";
 import { useConta } from "../lib/conta";
@@ -14,28 +14,23 @@ import { CopyButton } from "../components/ui";
 const INTRO_KEY = "doppa_rot_intro";
 const MODO_KEY = "doppa_rot_modo";
 
-// Explicação que aparece no primeiro acesso (e no botão "Como funciona").
+// Explicação no topo da página no primeiro acesso (some com "Entendi"; o botão do topo mostra de novo).
 function Intro({ onFechar }: { onFechar: () => void }) {
   const itens = [
-    { icon: Clapperboard, tom: "violet" as const, t: "30 roteiros por dia", d: "São vídeos rápidos: dá pra gravar tudo investindo no máximo 2 horas por dia." },
-    { icon: Hourglass, tom: "yellow" as const, t: "Prazo: até sair o próximo lote", d: "Os vídeos de um dia valem até os roteiros do dia seguinte serem publicados aqui. Chegaram os novos? O prazo dos anteriores acabou." },
-    { icon: Newspaper, tom: "cyan" as const, t: "Esportes e Notícias/Variedades", d: "Cada roteiro diz de qual segmento é: poste no perfil certo e siga as instruções de postagem e a legenda de cada um." },
+    { icon: Clapperboard, tom: "violet" as const, t: "30 roteiros por dia", d: "Vídeos rápidos: dá pra gravar tudo em até 2 horas." },
+    { icon: Hourglass, tom: "yellow" as const, t: "Prazo: até sair o próximo lote", d: "Vale até os roteiros do dia seguinte serem publicados aqui." },
+    { icon: Newspaper, tom: "cyan" as const, t: "Cada um no seu perfil", d: "Siga a instrução de postagem e a legenda de cada roteiro." },
   ];
   return (
-    <Portal>
-      <div className="modal" onClick={(e) => e.target === e.currentTarget && onFechar()}>
-        <div className="modal__sheet stack" role="dialog" aria-modal="true">
-          <span className="eyebrow">Antes de começar</span>
-          <h2 className="h-display" style={{ fontSize: 30 }}>Como funcionam os roteiros</h2>
-          <div className="ico-list">
-            {itens.map((x) => (
-              <div className="ico-item" key={x.t}><IconTile icon={x.icon} tom={x.tom} size={38} /><div><b>{x.t}</b><span>{x.d}</span></div></div>
-            ))}
-          </div>
-          <button className="btn" onClick={onFechar}>Entendi, bora gravar</button>
-        </div>
+    <section className="rot-intro">
+      <div className="rot-intro__t"><b>Como funcionam os roteiros</b><button className="icon-btn" onClick={onFechar} aria-label="Fechar explicação"><X size={16} /></button></div>
+      <div className="rot-intro__itens">
+        {itens.map((x) => (
+          <div key={x.t}><IconTile icon={x.icon} tom={x.tom} size={32} /><span><b>{x.t}</b><span>{x.d}</span></span></div>
+        ))}
       </div>
-    </Portal>
+      <button className="btn btn--sm" onClick={onFechar}>Entendi</button>
+    </section>
   );
 }
 
@@ -234,6 +229,7 @@ export default function Roteiros() {
     <Shell titulo="Roteiros" acao={<button className="icon-btn" onClick={() => setIntro(true)} aria-label="Como funcionam os roteiros"><ListChecks size={18} /></button>}>
       <div className="rot-lista">
         <p className="dim row" style={{ textTransform: "capitalize" }}><CalendarDays size={15} /> {hoje}</p>
+        {intro && <Intro onFechar={fecharIntro} />}
 
         {lista.length > 0 && (
           <div className="rot-prog">
@@ -320,7 +316,6 @@ export default function Roteiros() {
           </div>
         </Portal>
       )}
-      {intro && <Intro onFechar={fecharIntro} />}
     </Shell>
   );
 }

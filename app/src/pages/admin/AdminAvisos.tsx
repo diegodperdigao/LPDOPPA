@@ -18,6 +18,7 @@ const PUBLICOS: { k: PublicoAviso; rot: string }[] = [
   { k: "sem_termo", rot: "Sem termo assinado" },
   { k: "onboarding", rot: "Ainda no onboarding" },
   { k: "sem_video_7d", rot: "Sem vídeo há 7 dias" },
+  { k: "produzindo", rot: "Quem já produz" },
 ];
 const ATALHOS = [
   { rot: "Roteiros", url: "/roteiros" }, { rot: "Campanha", url: "/campanha" }, { rot: "Carteira", url: "/carteira" }, { rot: "Aprender", url: "/aprender" },
