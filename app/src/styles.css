@@ -692,3 +692,37 @@ a.missao:hover, button.missao:hover { background: var(--surface-2); }
 .rot-divisor > span > span b { display: inline; font-size: inherit; color: var(--text-2); }
 .adm-secao { display: flex; align-items: center; gap: 6px; margin: 10px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--t-cyan); }
 .midia--link { display: block; text-decoration: none; color: inherit; }
+
+/* Checks dos roteiros */
+.feito-btn { flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--line-2); background: var(--surface-2); color: transparent; transition: background .15s, border-color .15s, color .15s, transform .1s; position: relative; }
+.feito-btn::before { content: ""; position: absolute; inset: -5px; }
+.feito-btn:hover { border-color: var(--green); color: var(--t-green); }
+.feito-btn:active { transform: scale(.92); }
+.feito-btn.on { background: var(--green); border-color: var(--green); color: #052415; }
+.rot--feito { display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 10px 14px; opacity: .78; }
+.rot--feito__t { flex: 1; min-width: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: var(--muted); }
+.rot--feito__t b { font-weight: 600; color: var(--text-2); text-decoration: line-through; text-decoration-color: var(--dim); }
+.rot-prog { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); }
+.rot-prog__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.rot-prog__top > span { font-size: 14px; color: var(--muted); }
+.rot-prog__top b { font-family: var(--display); font-weight: 400; font-size: 24px; color: var(--text); letter-spacing: .01em; }
+.rot-prog__bar { height: 8px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
+.rot-prog__bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green), #7EF0B8); transition: width .35s ease; }
+.seg-mini { display: inline-flex; padding: 3px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.seg-mini button { display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 9px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.seg-mini button.on { background: var(--surface-3); color: var(--text); }
+.checklist { display: flex; flex-direction: column; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); overflow: hidden; }
+.check-row { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--line); transition: background .12s; }
+.check-row:last-child { border-bottom: 0; }
+.check-row:active { background: var(--surface-2); }
+.check-row__box { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; border: 2px solid var(--line-2); color: transparent; transition: background .12s, border-color .12s; }
+.check-row.on .check-row__box { background: var(--green); border-color: var(--green); color: #052415; }
+.check-row__n { flex: 0 0 auto; min-width: 22px; font-weight: 700; font-size: 13px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.check-row__t { flex: 1; min-width: 0; font-size: 14.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.check-row.on .check-row__t { color: var(--dim); text-decoration: line-through; }
+.check-row .chip { font-size: 11px; padding: 2px 8px; }
+.toast { position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 70; display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 16px; border-radius: 14px; background: var(--surface-3); border: 1px solid var(--line-2); box-shadow: 0 16px 40px -16px rgba(0,0,0,.6); font-size: 14px; white-space: nowrap; animation: rise .25s both; }
+@media (min-width: 960px) { .toast { bottom: 24px; } }
+.check-todos { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); color: var(--t-green); font-weight: 600; font-size: 14px; }
+.check-todos:active { background: var(--surface-3); }
+.toast { left: 0; right: 0; margin-inline: auto; width: max-content; max-width: calc(100% - 32px); transform: none; }

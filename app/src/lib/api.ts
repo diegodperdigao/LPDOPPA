@@ -98,6 +98,9 @@ export interface Api {
   vincularPerfis(esp: string, cas: string): Promise<void>;
   aceitarTermo(dados: DadosTermo): Promise<void>;
   roteiros(data: string): Promise<Roteiro[]>;
+  // Checks do criador: quais desses roteiros ele já marcou como feitos.
+  feitos(ids: string[]): Promise<string[]>;
+  marcarFeitos(ids: string[], feito: boolean): Promise<void>;
   painel(token: string, ciclo?: string): Promise<Painel>;
   // admin
   salvarRoteiro(r: RoteiroNovo): Promise<void>;
@@ -178,6 +181,22 @@ function apiSupabase(sb: SupabaseClient): Api {
         .eq("data", data).order("segmento").order("ordem").order("criado_em");
       if (error) throw new ErroApp(error.message);
       return (rows ?? []) as Roteiro[];
+    },
+    async feitos(ids) {
+      if (!ids.length) return [];
+      const { data, error } = await sb.from("roteiros_feitos").select("roteiro_id").in("roteiro_id", ids);
+      if (error) throw new ErroApp(error.message);
+      return (data ?? []).map((x) => x.roteiro_id as string);
+    },
+    async marcarFeitos(ids, feito) {
+      if (!ids.length) return;
+      const { data: u } = await sb.auth.getSession();
+      const uid = u.session?.user.id;
+      if (!uid) throw new ErroApp("Sessão expirada.");
+      const { error } = feito
+        ? await sb.from("roteiros_feitos").upsert(ids.map((roteiro_id) => ({ conta_id: uid, roteiro_id })), { onConflict: "conta_id,roteiro_id", ignoreDuplicates: true })
+        : await sb.from("roteiros_feitos").delete().in("roteiro_id", ids);
+      if (error) throw new ErroApp("Não deu pra salvar o check. Confere a internet.");
     },
     async painel(token, ciclo) {
       const u = new URL(`${URL_}/functions/v1/wl/data`);
@@ -268,6 +287,7 @@ function apiSupabase(sb: SupabaseClient): Api {
 // ---------------------------------------------------------------------------
 const DEMO_KEY = "doppa_demo_conta";
 const DEMO_ROT = "doppa_demo_roteiros";
+const DEMO_FEITOS = "doppa_demo_feitos";
 const DEMO_NF = "doppa_demo_nfs";
 const DEMO_AVISOS = "doppa_demo_avisos";
 const DEMO_LIDOS = "doppa_demo_avisos_lidos";
@@ -360,6 +380,12 @@ function apiDemo(): Api {
       mudar({ termo_em: agora() });
     },
     async roteiros(data) { await carregarDoc().catch(() => {}); return todos().filter((r) => r.data === data); },
+    async feitos(ids) { const f = lerJ<string[]>(DEMO_FEITOS, []); return ids.filter((id) => f.includes(id)); },
+    async marcarFeitos(ids, feito) {
+      const f = new Set(lerJ<string[]>(DEMO_FEITOS, []));
+      ids.forEach((id) => (feito ? f.add(id) : f.delete(id)));
+      gravarJ(DEMO_FEITOS, [...f]);
+    },
     async painel(_token, ciclo) {
       // ciclos de exemplo ancorados no dia 24: o atual e os 2 anteriores
       const iso = (d: Date) => d.toISOString().slice(0, 10);

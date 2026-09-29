@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, ChevronDown, ExternalLink, Mic, Clapperboard, Clock3, Download, Film, Hourglass, Info, ListChecks, Loader2, MoonStar, Newspaper, Timer } from "lucide-react";
+import { CalendarDays, Check, CheckCheck, ChevronDown, ExternalLink, LayoutList, Mic, Clapperboard, Clock3, Download, Film, Hourglass, Info, ListChecks, Loader2, MoonStar, Newspaper, Timer } from "lucide-react";
 import { MARCAS, SEGMENTOS } from "../content";
 import { api, hojeSP, type Midia, type Roteiro, type Segmento } from "../lib/api";
 import { useConta } from "../lib/conta";
+import { useFeitos } from "../lib/feitos";
 import { igUrl } from "../lib/ig";
 import { baixarMidia, baixarZip } from "../lib/baixar";
 import Shell from "../components/Shell";
@@ -11,6 +12,7 @@ import { IconTile, InstagramLogo } from "../components/Icon";
 import { CopyButton } from "../components/ui";
 
 const INTRO_KEY = "doppa_rot_intro";
+const MODO_KEY = "doppa_rot_modo";
 
 // Explicação que aparece no primeiro acesso (e no botão "Como funciona").
 function Intro({ onFechar }: { onFechar: () => void }) {
@@ -78,7 +80,32 @@ function TextoRoteiro({ texto }: { texto: string }) {
   return <>{partes[0].trim()}<span className="rot__card">Card a partir daqui</span>{partes.slice(1).join("").trim()}</>;
 }
 
-function Card({ r, perfil, i, n }: { r: Roteiro; perfil: string | null; i: number; n: number }) {
+// Botão de check grande (área de toque de 44px).
+function BotaoFeito({ feito, onClick, rotulo }: { feito: boolean; onClick: () => void; rotulo: string }) {
+  return (
+    <button className={"feito-btn" + (feito ? " on" : "")} onClick={onClick} aria-pressed={feito} aria-label={rotulo}>
+      <Check size={18} strokeWidth={3} />
+    </button>
+  );
+}
+
+function Card({ r, perfil, i, n, feito, onFeito }: { r: Roteiro; perfil: string | null; i: number; n: number; feito: boolean; onFeito: () => void }) {
+  const [expandido, setExpandido] = useState(false);
+  if (feito && !expandido) {
+    return (
+      <article className="rot rot--feito">
+        <BotaoFeito feito onClick={onFeito} rotulo={`Desmarcar roteiro ${n}`} />
+        <button className="rot--feito__t" onClick={() => setExpandido(true)}>
+          <span className="dim">#{n}</span> <b>{r.titulo}</b>
+        </button>
+        <span className="chip chip--green">Feito</span>
+      </article>
+    );
+  }
+  return <CardCompleto r={r} perfil={perfil} i={i} n={n} feito={feito} onFeito={onFeito} />;
+}
+
+function CardCompleto({ r, perfil, i, n, feito, onFeito }: { r: Roteiro; perfil: string | null; i: number; n: number; feito: boolean; onFeito: () => void }) {
   const [aberto, setAberto] = useState(false);
   const [instAberta, setInstAberta] = useState(false);
   const [zipando, setZipando] = useState(false);
@@ -98,7 +125,10 @@ function Card({ r, perfil, i, n }: { r: Roteiro; perfil: string | null; i: numbe
           <span className="chip chip--violet">{r.marca ? MARCAS[r.marca] ?? r.marca : "Roteiro"}</span>
           {tipo && <span className={"chip " + tipo.cls}>{tipo.rot}</span>}
         </span>
-        <span className="dim">#{numero}</span>
+        <span className="row" style={{ gap: 10 }}>
+          <span className="dim">#{numero}</span>
+          <BotaoFeito feito={feito} onClick={onFeito} rotulo={feito ? `Desmarcar roteiro ${numero}` : `Marcar roteiro ${numero} como feito`} />
+        </span>
       </div>
       <div className="rot__title">{r.titulo}</div>
       {r.creditos && <div className="rot__cred">{r.creditos}</div>}
@@ -163,6 +193,9 @@ export default function Roteiros() {
   const [roteiros, setRoteiros] = useState<Roteiro[] | null>(null);
   const [intro, setIntro] = useState(() => { try { return localStorage.getItem(INTRO_KEY) !== "1"; } catch { return false; } });
   const [zip, setZip] = useState<string | null>(null);
+  const [modo, setModoEstado] = useState<"completo" | "checklist">(() => { try { return localStorage.getItem(MODO_KEY) === "checklist" ? "checklist" : "completo"; } catch { return "completo"; } });
+  const [desfazer, setDesfazer] = useState<{ ids: string[]; feito: boolean; msg: string } | null>(null);
+  const setModo = (m: "completo" | "checklist") => { setModoEstado(m); try { localStorage.setItem(MODO_KEY, m); } catch { /* sem storage */ } };
 
   useEffect(() => { api.roteiros(hojeSP()).then(setRoteiros).catch(() => setRoteiros([])); }, []);
   function fecharIntro() { setIntro(false); try { localStorage.setItem(INTRO_KEY, "1"); } catch { /* sem storage */ } }
@@ -173,6 +206,18 @@ export default function Roteiros() {
   const hoje = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long", timeZone: "America/Sao_Paulo" }).format(new Date());
   const totalMidias = lista.reduce((n, r) => n + (r.midias?.length ?? 0), 0);
   const grupos = blocos(lista);
+  const { feitos, marcar, erro: erroFeito } = useFeitos(lista.length ? lista : null);
+  const nFeitos = lista.filter((r) => feitos.has(r.id)).length;
+
+  function alternar(r: Roteiro) { marcar([r.id], !feitos.has(r.id)); }
+  function marcarBloco(g: Bloco) {
+    const faltam = g.itens.filter((r) => !feitos.has(r.id)).map((r) => r.id);
+    const feito = faltam.length > 0;
+    const ids = feito ? faltam : g.itens.map((r) => r.id);
+    marcar(ids, feito);
+    setDesfazer({ ids, feito, msg: `${ids.length} ${feito ? "marcados como feitos" : "desmarcados"}` });
+  }
+  useEffect(() => { if (!desfazer) return; const t = setTimeout(() => setDesfazer(null), 6000); return () => clearTimeout(t); }, [desfazer]);
 
   async function baixarDia() {
     setZip("0");
@@ -189,6 +234,20 @@ export default function Roteiros() {
     <Shell titulo="Roteiros" acao={<button className="icon-btn" onClick={() => setIntro(true)} aria-label="Como funcionam os roteiros"><ListChecks size={18} /></button>}>
       <div className="rot-lista">
         <p className="dim row" style={{ textTransform: "capitalize" }}><CalendarDays size={15} /> {hoje}</p>
+
+        {lista.length > 0 && (
+          <div className="rot-prog">
+            <div className="rot-prog__top">
+              <span><b>{nFeitos}</b> de {lista.length} feitos</span>
+              <div className="seg-mini" role="tablist" aria-label="Modo de visualização">
+                <button role="tab" aria-selected={modo === "completo"} className={modo === "completo" ? "on" : ""} onClick={() => setModo("completo")}><LayoutList size={15} /> Completo</button>
+                <button role="tab" aria-selected={modo === "checklist"} className={modo === "checklist" ? "on" : ""} onClick={() => setModo("checklist")}><ListChecks size={15} /> Checklist</button>
+              </div>
+            </div>
+            <div className="rot-prog__bar"><i style={{ width: `${(nFeitos / lista.length) * 100}%` }} /></div>
+            {erroFeito && <span className="alert" style={{ padding: "8px 12px", fontSize: 13 }}>{erroFeito}</span>}
+          </div>
+        )}
 
         {lista.length > 0 && (
           <div className="rot-indice">
@@ -227,15 +286,40 @@ export default function Roteiros() {
                 <IconTile icon={S.icon} tom={S.tom} size={36} />
                 <span>
                   <b>{k > 0 ? `A partir daqui: conta de ${S.nome}` : `Conta de ${S.nome}`}</b>
-                  <span>{g.itens.length} roteiros{perfil ? <> · poste em <b>@{perfil}</b></> : ""}</span>
+                  <span>{g.itens.filter((r) => feitos.has(r.id)).length}/{g.itens.length} feitos{perfil ? <> · poste em <b>@{perfil}</b></> : ""}</span>
                 </span>
               </div>
-              {g.itens.map((r, i) => <Card key={r.id} r={r} perfil={perfil} i={i} n={numero(r)} />)}
+              {modo === "checklist" ? (
+                <div className="checklist">
+                  <button className="check-todos" onClick={() => marcarBloco(g)}>
+                    <CheckCheck size={17} /> {g.itens.every((r) => feitos.has(r.id)) ? `Desmarcar todos de ${S.curto}` : `Marcar todos de ${S.curto} (${g.itens.filter((r) => !feitos.has(r.id)).length})`}
+                  </button>
+                  {g.itens.map((r) => {
+                    const on = feitos.has(r.id);
+                    return (
+                      <button key={r.id} className={"check-row" + (on ? " on" : "")} onClick={() => alternar(r)} aria-pressed={on}>
+                        <span className="check-row__box"><Check size={17} strokeWidth={3} /></span>
+                        <span className="check-row__n">{numero(r)}</span>
+                        <span className="check-row__t">{r.titulo}</span>
+                        {r.tipo !== "roteiro" && <span className={"chip " + (r.tipo === "react" ? "chip--cyan" : "chip--pink")}>{r.tipo === "react" ? "React" : "Fofoca"}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : g.itens.map((r, i) => <Card key={r.id} r={r} perfil={perfil} i={i} n={numero(r)} feito={feitos.has(r.id)} onFeito={() => alternar(r)} />)}
             </section>
           );
         })}
         <div className="lembrete"><Clock3 size={18} /> <span>Prazo: os vídeos de hoje valem <b>até os roteiros de amanhã saírem</b>.</span></div>
       </div>
+      {desfazer && (
+        <Portal>
+          <div className="toast" role="status">
+            <span>{desfazer.msg}</span>
+            <button className="link-btn" onClick={() => { marcar(desfazer.ids, !desfazer.feito); setDesfazer(null); }}>Desfazer</button>
+          </div>
+        </Portal>
+      )}
       {intro && <Intro onFechar={fecharIntro} />}
     </Shell>
   );
